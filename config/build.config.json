@@ -1,0 +1,17 @@
+{
+  "course": {
+    "id": "porsche-safety-001",
+    "title": "High-Voltage Safety",
+    "version": "0.1.0",
+    "language": "en-US",
+    "pass_threshold": 80
+  },
+  "paths": {
+    "storyboard_markdown": "storyboard/course.md",
+    "pronunciation_map": "storyboard/pronunciation-map.json",
+    "output_root": "output/course",
+    "slides_output": "output/course/slides",
+    "data_output": "output/course/data",
+    "captions_output": "output/course/assets/captions"
+  }
+}
