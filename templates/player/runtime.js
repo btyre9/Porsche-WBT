@@ -167,12 +167,16 @@
     const correct = String(answer).trim() === String(q.correct_answer || "").trim();
 
     if (state.quizMode === "knowledge") {
-      $("feedback").textContent = correct ? "Correct." : "Incorrect.";
+      $("feedback").textContent = correct
+        ? "Correct! Click Next to Continue."
+        : "Incorrect, let's go back to review";
       playSfx(correct ? "correct" : "incorrect");
     } else {
       state.finalAnswered += 1;
       if (correct) state.finalCorrect += 1;
-      $("feedback").textContent = "Answer recorded.";
+      $("feedback").textContent = correct
+        ? "Correct! Click Next to Continue."
+        : "Incorrect, let's go back to review";
     }
   }
 
