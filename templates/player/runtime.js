@@ -135,6 +135,7 @@
 
     $("quiz-title").textContent = mode === "final" ? "Final Quiz" : "Knowledge Checks";
     $("quiz-panel").classList.remove("hidden");
+    $("btn-next-question").disabled = mode === "final";
 
     if (!state.questions.length) {
       $("quiz-progress").textContent = "";
@@ -174,26 +175,9 @@
     } else {
       state.finalAnswered += 1;
       if (correct) state.finalCorrect += 1;
-      $("feedback").textContent = correct
-        ? "Correct! Click Next to Continue."
-        : "Incorrect, let's go back to review";
-    }
-  }
 
-  function onNextQuestion() {
-    if (!state.questions.length) return;
-
-    if (state.quizMode === "knowledge") {
-      if (state.qIndex < state.questions.length - 1) {
-        state.qIndex += 1;
-        loadQuestion();
-        return;
-      }
-      $("feedback").textContent = "Knowledge checks complete.";
-      return;
-    }
-
-    if (state.quizMode === "final") {
+      // Final quiz: no correctness feedback; submit advances immediately.
+      $("feedback").textContent = "";
       if (state.qIndex < state.questions.length - 1) {
         state.qIndex += 1;
         loadQuestion();
@@ -205,9 +189,24 @@
       $("quiz-progress").textContent = "Final score: " + score + "% (pass: " + threshold + "%)";
       $("quiz-question").textContent = score >= threshold ? "Passed." : "Not passed.";
       $("quiz-form").innerHTML = "";
-      $("feedback").textContent = "";
       window.CourseRuntime.submitFinalQuiz(score);
     }
+  }
+
+  function onNextQuestion() {
+    if (!state.questions.length) return;
+    if (state.quizMode === "final") return;
+
+    if (state.quizMode === "knowledge") {
+      if (state.qIndex < state.questions.length - 1) {
+        state.qIndex += 1;
+        loadQuestion();
+        return;
+      }
+      $("feedback").textContent = "Knowledge checks complete.";
+      return;
+    }
+
   }
 
   async function init() {
