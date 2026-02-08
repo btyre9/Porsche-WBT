@@ -2,6 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 import argparse
 import json
+import shutil
 
 from parse_markdown import parse_storyboard_markdown
 from normalize_schema import normalize_and_validate
@@ -23,6 +24,42 @@ def write_json(path: Path, data: dict) -> None:
 
 def _extract_choices(raw: dict) -> list[str]:
     return [v for k, v in raw.items() if k.startswith("Choice-") and v]
+
+
+def _copy_assets(project_root: Path, output_root: Path) -> None:
+    src_assets = project_root / "assets"
+    if not src_assets.exists():
+        return
+
+    dst_assets = output_root / "assets"
+    for src in src_assets.rglob("*"):
+        if not src.is_file():
+            continue
+        rel = src.relative_to(src_assets)
+        dst = dst_assets / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+
+
+def _sanitize_missing_sfx(course_data: dict, project_root: Path) -> list[str]:
+    missing: list[str] = []
+    runtime = course_data.get("quiz", {}).get("runtime", {})
+    sfx = runtime.get("sfx")
+    if not isinstance(sfx, dict):
+        return missing
+
+    for key in ("correct", "incorrect"):
+        rel = sfx.get(key)
+        if not rel:
+            continue
+        if not (project_root / rel).exists():
+            missing.append(rel)
+            sfx.pop(key, None)
+
+    if not sfx:
+        runtime.pop("sfx", None)
+
+    return missing
 
 
 def build_quiz_schema(slides: list[dict], pass_threshold: int) -> dict:
@@ -93,6 +130,13 @@ def run(project_root: Path) -> None:
     data_output = project_root / cfg["paths"]["data_output"]
     captions_output = project_root / cfg["paths"]["captions_output"]
     slides_output = project_root / cfg["paths"]["slides_output"]
+
+    _copy_assets(project_root, output_root)
+    missing_sfx = _sanitize_missing_sfx(course_data, project_root)
+    if missing_sfx:
+        print("Warning: missing SFX files were removed from runtime config:")
+        for rel in missing_sfx:
+            print(f"  - {rel}")
 
     write_json(data_output / "course.data.json", course_data)
 

@@ -4,3 +4,7 @@ __pycache__/
 
 # Build artifacts
 output/
+
+# Misplaced local SSH keys (never commit)
+brian.tyre@icloud.com
+brian.tyre@icloud.com.pub
