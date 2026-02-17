@@ -5,6 +5,18 @@ __pycache__/
 # Build artifacts
 output/
 
+# Dependencies
+node_modules/
+
+# Temp files
+.tmp/
+
+# Claude local settings (may contain API tokens)
+.claude/settings.local.json
+
+# MCP config (contains API tokens)
+.mcp.json
+
 # Misplaced local SSH keys (never commit)
 brian.tyre@icloud.com
 brian.tyre@icloud.com.pub

@@ -63,6 +63,7 @@ python3 /Users/home/Documents/Porsche-WBT-Project/builder/main.py --project-root
 `/Users/home/Documents/Porsche-WBT-Project/builder/normalize_schema.py`
 - Converts raw parsed slide dictionaries into a normalized schema:
   - `id`, `template_id`, `slide_title`, `voiceover`, `audio_vo`, `raw`.
+  - Also includes `caption_text`, `on_screen_text`, `intro_animation`, and `element_animations`.
 
 `/Users/home/Documents/Porsche-WBT-Project/builder/export_tts_script.py`
 - Applies pronunciation substitutions using whole-word regex matching.
@@ -83,6 +84,42 @@ python3 /Users/home/Documents/Porsche-WBT-Project/builder/main.py --project-root
 `/Users/home/Documents/Porsche-WBT-Project/builder/build_scorm_manifest.py`
 - Writes a minimal SCORM manifest referencing `player/index.html`.
 
+`/Users/home/Documents/Porsche-WBT-Project/builder/package_scorm_zip.py`
+- Packages a built output folder into a `.zip` for LMS upload.
+- Requires `imsmanifest.xml` in the output root.
+- CLI:
+```bash
+python3 /Users/home/Documents/Porsche-WBT-Project/builder/package_scorm_zip.py
+# or with explicit paths
+python3 /Users/home/Documents/Porsche-WBT-Project/builder/package_scorm_zip.py --output-root /Users/home/Documents/Porsche-WBT-Project/output/course --zip-path /Users/home/Documents/Porsche-WBT-Project/output/course-scorm.zip
+```
+
+`/Users/home/Documents/Porsche-WBT-Project/builder/create_module_starter.py`
+- Creates a clean new-module folder from this project.
+- Copies builder/templates/config/shared assets while excluding local repo/build clutter.
+- Replaces `storyboard/course.md` with a starter storyboard.
+- Updates `config/build.config.json` course title and id.
+- Clears module-specific content in the new folder:
+  - `assets/audio/vo`
+  - `assets/images`
+  - `output/course`
+- CLI:
+```bash
+python3 /Users/home/Documents/Porsche-WBT-Project/builder/create_module_starter.py \
+  --destination /Users/home/Documents/New-Module \
+  --course-title "Customer Communications - Module 2"
+```
+
+`/Users/home/Documents/Porsche-WBT-Project/builder/import_storyboard_docx.py`
+- Converts a Word storyboard (`.docx`) into build-ready markdown.
+- Writes output in the same key/value slide contract used by `builder/main.py`.
+- CLI:
+```bash
+python3 /Users/home/Documents/Porsche-WBT-Project/builder/import_storyboard_docx.py \
+  --docx /Users/home/Documents/Porsche-WBT-Project/storyboard/source.docx \
+  --output /Users/home/Documents/Porsche-WBT-Project/storyboard/course.md
+```
+
 `/Users/home/Documents/Porsche-WBT-Project/builder/grade_quiz.py`
 - Utility helpers for score percentage and pass/fail checks.
 - Not currently invoked by `main.py`.
@@ -102,7 +139,7 @@ python3 /Users/home/Documents/Porsche-WBT-Project/builder/main.py --project-root
 
 `/Users/home/Documents/Porsche-WBT-Project/config/animation-presets.json`
 - Animation preset definitions.
-- Currently not referenced by the active Python build pipeline.
+- Used by the builder to apply a default `Animation-Intro` for each slide.
 
 ## Storyboard Contract
 
@@ -112,6 +149,10 @@ Each slide section in `storyboard/course.md` can include:
 - `Slide-Title`
 - `Audio-VO`
 - `Voiceover`
+- `Caption-Text` (optional caption fallback text)
+- `On-Screen-Text` (display text rendered by slide templates)
+- `Animation-Intro` (`FadeIn`, `SlideUp`, `ScaleIn` by default)
+- `Animation-Element-*` (optional per-element animation preset mapping)
 - Quiz fields (for question slides):
   - `Interaction-Type`
   - `Question`
@@ -147,6 +188,7 @@ Expected generated files:
 From `/Users/home/Documents/Porsche-WBT-Project/requirements.txt`:
 - `Jinja2>=3.1`
 - `faster-whisper>=1.0` (optional in practice; build falls back if missing)
+- `python-docx>=1.1` (used by Word storyboard importer)
 
 Install and run:
 ```bash
@@ -157,6 +199,11 @@ python3 builder/main.py
 
 ## Current Project Notes
 
-- There is no `/Users/home/Documents/Porsche-WBT-Project/assets` directory right now, so asset copying is skipped.
-- If `assets/sfx/correct.mp3` and `assets/sfx/incorrect.mp3` are missing, runtime SFX config is automatically removed with a warning.
+- Shared slide animation runtime lives at `assets/js/slide-runtime.js` and expects GSAP at `assets/vendor/gsap/gsap.min.js`.
+- VO-synced per-slide animation cue sheets live in `assets/animation-cues/*.json` and are enabled per slide with `data-vo-cues="true"` plus `data-anim-key` targets.
+- Player includes a built-in cue editor (`Cues` button in top-right) for timestamp capture and cue JSON export.
+- Dedicated cue authoring tool is available at `player/cue-studio.html` for slide/audio loading, click-to-select element targeting, and cue export.
+- Interaction-triggered voiceover clip maps live in `assets/interaction-audio/*.json` and are callable from slide scripts through `window.parent.CourseRuntime.playInteractionClip(...)`.
+- Cross-team Figma-to-code conventions are defined in `COMPONENT_CONTRACT.md`.
+- If `assets/audio/sfx/correct.mp3` and `assets/audio/sfx/incorrect.mp3` are missing, runtime SFX config is automatically removed with a warning.
 - `templates/player/index.html` exists, but the build uses `templates/player/index.html.j2` as the source template.

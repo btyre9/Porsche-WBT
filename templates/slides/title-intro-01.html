@@ -2,9 +2,15 @@
 <html lang="en">
 <head><meta charset="utf-8"><title>{{ slide.slide_title }}</title></head>
 <body>
-  <section class="slide slide-title-intro" data-slide-id="{{ slide.id }}">
-    <h1>{{ slide.slide_title }}</h1>
-    <p>{{ slide.voiceover }}</p>
+  <section class="slide slide-title-intro" data-slide-id="{{ slide.id }}" data-intro-animation="{{ slide.intro_animation }}">
+    <h1 data-anim-item>{{ slide.slide_title }}</h1>
+    {% if slide.on_screen_text %}
+    <p data-anim-item>{{ slide.on_screen_text }}</p>
+    {% else %}
+    <p data-anim-item>{{ slide.voiceover }}</p>
+    {% endif %}
   </section>
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../assets/js/slide-runtime.js"></script>
 </body>
 </html>

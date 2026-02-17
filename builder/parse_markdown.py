@@ -4,7 +4,7 @@ import re
 from typing import Any
 
 
-KV_RE = re.compile(r"^([A-Za-z0-9_-]+):\s*(.+)$")
+KV_RE = re.compile(r"^([A-Za-z0-9_-]+):\s*(.*)$")
 
 
 def parse_storyboard_markdown(markdown_path: Path) -> list[dict[str, Any]]:

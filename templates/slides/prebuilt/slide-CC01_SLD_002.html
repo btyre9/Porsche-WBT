@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Beyond the Wrench</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 1920px;
+      height: 920px;
+      background: #2a2a2e;
+      font-family: 'Porsche Next TT', Arial, Helvetica, sans-serif;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 920px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* --- Right-side background image --- */
+    .slide__bg-image {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 860px;
+      height: 920px;
+      z-index: 1;
+    }
+    .slide__bg-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    /* Soft fade on the left edge of the image */
+    .slide__bg-image::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 200px;
+      height: 100%;
+      background: linear-gradient(to right, #2a2a2e, transparent);
+    }
+
+    /* --- Main content (left side) --- */
+    .slide__content {
+      position: absolute;
+      z-index: 3;
+      left: 120px;
+      top: 140px;
+    }
+
+    /* Eyebrow */
+    .slide__eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .slide__eyebrow-line {
+      width: 48px;
+      height: 3px;
+      background: #D5001C;
+    }
+    .slide__eyebrow-text {
+      color: #D5001C;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* Heading */
+    .slide__heading {
+      margin-bottom: 36px;
+    }
+    .slide__heading-line1 {
+      color: #fff;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.05;
+    }
+    .slide__heading-line2 {
+      color: #fff;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1.05;
+    }
+    .slide__heading-accent {
+      color: #D5001C;
+    }
+
+    /* Description */
+    .slide__description {
+      border-left: 3px solid rgba(255,255,255,0.2);
+      padding-left: 20px;
+      max-width: 500px;
+    }
+    .slide__description p {
+      color: rgba(255,255,255,0.75);
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    /* --- Feature cards (bottom left) --- */
+    .slide__features {
+      position: absolute;
+      z-index: 3;
+      left: 120px;
+      bottom: 80px;
+      display: flex;
+      gap: 32px;
+    }
+
+    .slide__feature-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 20px 24px;
+      width: 280px;
+    }
+
+    .slide__feature-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide__feature-icon img {
+      width: 32px;
+      height: 32px;
+      filter: brightness(0) invert(1);
+    }
+
+    .slide__feature-content h3 {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .slide__feature-content p {
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .slide__audio { display: none; }
+  </style>
+</head>
+<body>
+  <div class="slide" data-slide-id="slide-CC01_SLD_002" data-vo-cues="true">
+    <!-- Right-side background image -->
+    <div class="slide__bg-image" data-anim-key="bg-image">
+      <img src="../assets/images/PTech-w-customer2.webp" alt="Porsche technician consulting with customer">
+    </div>
+
+    <!-- Main content (left side) -->
+    <div class="slide__content">
+      <div class="slide__eyebrow" data-anim-key="eyebrow">
+        <div class="slide__eyebrow-line"></div>
+        <span class="slide__eyebrow-text">The Evolution of Mastery</span>
+      </div>
+
+      <div class="slide__heading" data-anim-key="heading">
+        <h1 class="slide__heading-line1">Beyond</h1>
+        <h1 class="slide__heading-line2">the <span class="slide__heading-accent">Wrench</span></h1>
+      </div>
+
+      <div class="slide__description" data-anim-key="description">
+        <p>The transition from technical expert to brand ambassador.</p>
+      </div>
+    </div>
+
+    <!-- Feature cards (bottom) -->
+    <div class="slide__features">
+      <div class="slide__feature-card" data-anim-key="feature-1">
+        <div class="slide__feature-icon">
+          <img src="../assets/icons/star.svg" alt="Elite Tier">
+        </div>
+        <div class="slide__feature-content">
+          <h3>Elite Tier</h3>
+          <p>Global top 1% recognition.</p>
+        </div>
+      </div>
+
+      <div class="slide__feature-card" data-anim-key="feature-2">
+        <div class="slide__feature-icon">
+          <img src="../assets/icons/steering-wheel.svg" alt="Command Performance">
+        </div>
+        <div class="slide__feature-content">
+          <h3>Command Performance</h3>
+          <p>Direct customer engagement.</p>
+        </div>
+      </div>
+
+      <div class="slide__feature-card" data-anim-key="feature-3">
+        <div class="slide__feature-icon">
+          <img src="../assets/icons/stack.svg" alt="12 Modules">
+        </div>
+        <div class="slide__feature-content">
+          <h3>12 Modules</h3>
+          <p>Communication mastery.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide__audio">
+      <audio data-vo-audio preload="auto">
+        <source src="../assets/audio/CC01_SLD_002.mp3" type="audio/mpeg">
+        <track kind="captions" label="English" src="../assets/audio/slide-CC01_SLD_002.vtt" srclang="en" default>
+      </audio>
+    </div>
+  </div>
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../assets/js/slide-runtime.js"></script>
+</body>
+</html>

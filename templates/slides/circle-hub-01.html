@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ slide.slide_title }}</title>
+<style>
+  @font-face {
+    font-family: 'Porsche Next TT';
+    src: local('Porsche Next TT');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Porsche Next TT';
+    src: local('Porsche Next TT Bold');
+    font-weight: 700;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+    background: #404044;
+    color: #fff;
+  }
+
+  /* --- Slide layout --- */
+  .slide-circle-hub {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 64px;
+  }
+
+  .slide-title {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  /* --- Circle Hub Container --- */
+  .circle-hub {
+    --center-size: {{ slide.raw.get('Center-Size', '240') }}px;
+    --outer-size: {{ slide.raw.get('Outer-Size', '100') }}px;
+    --radius: {{ slide.raw.get('Radius', '280') }}px;
+    --circle-color: {{ slide.raw.get('Circle-Color', '#d5001c') }};
+    --border-color: {{ slide.raw.get('Border-Color', '#6b6d70') }};
+
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .circle-hub-inner {
+    position: relative;
+    width: calc(var(--radius) * 2 + var(--outer-size));
+    height: calc(var(--radius) * 2 + var(--outer-size));
+  }
+
+  /* --- Connecting lines (SVG) --- */
+  .circle-hub-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .circle-hub-lines line {
+    stroke: #000;
+    stroke-width: 2;
+    stroke-dasharray: 8 4;
+    opacity: 0.3;
+  }
+
+  /* --- Center circle --- */
+  .center-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--center-size);
+    height: var(--center-size);
+  }
+  .center-circle-inner {
+    width: 100%;
+    height: 100%;
+    background: #5d5d5d;
+    border-radius: 50%;
+    box-shadow: 0 0 24px rgba(0,0,0,0.24);
+    padding: 4px;
+    border: 4px solid #010205;
+  }
+  .center-circle-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+  /* --- Outer circles --- */
+  .outer-circle {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transform: translate(-50%, -50%);
+  }
+
+  .outer-circle-btn {
+    width: var(--outer-size);
+    height: var(--outer-size);
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--circle-color);
+    box-shadow: 0 0 24px rgba(0,0,0,0.24);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .outer-circle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 32px rgba(0,0,0,0.35);
+  }
+  .outer-circle-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(213, 0, 28, 0.5), 0 0 24px rgba(0,0,0,0.24);
+  }
+  .outer-circle-btn:active {
+    transform: scale(1.05);
+  }
+  .outer-circle-btn img,
+  .outer-circle-btn svg {
+    width: 48px;
+    height: 48px;
+    fill: #fff;
+  }
+
+  .outer-circle-label {
+    background: var(--circle-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 16px;
+    box-shadow: 0 0 24px rgba(0,0,0,0.24);
+  }
+  .outer-circle-label span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  /* --- Modal --- */
+  .circle-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .circle-modal-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .circle-modal {
+    background: #2a2a2e;
+    border-radius: 8px;
+    width: 580px;
+    max-width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+  }
+  .circle-modal-backdrop.open .circle-modal {
+    transform: scale(1);
+  }
+
+  .circle-modal-header {
+    position: sticky;
+    top: 0;
+    background: #2a2a2e;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .circle-modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .circle-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+  .circle-modal-close:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  .circle-modal-close svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+  }
+
+  .circle-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .circle-modal-image {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .circle-modal-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .circle-modal-paragraph {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+  }
+  .circle-modal-list-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .circle-modal-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .circle-modal-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+  }
+  .circle-modal-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #d5001c;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+  <section class="slide slide-circle-hub" data-slide-id="{{ slide.id }}" data-intro-animation="{{ slide.intro_animation }}">
+
+    {% if slide.slide_title %}
+    <h1 class="slide-title" data-anim-item>{{ slide.slide_title }}</h1>
+    {% endif %}
+
+    <div class="circle-hub" data-anim-item>
+      <div class="circle-hub-inner" id="circleHubInner">
+
+        <!-- SVG for connecting lines (generated by JS) -->
+        <svg class="circle-hub-lines" id="circleHubLines"></svg>
+
+        <!-- Center circle -->
+        <div class="center-circle">
+          <div class="center-circle-inner">
+            {% set center_img = slide.raw.get('Center-Image', '') %}
+            {% if center_img %}
+            <img src="{{ center_img }}" alt="Center image">
+            {% else %}
+            <div style="width:100%;height:100%;background:#3e4146;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:12px;color:rgba(255,255,255,0.5);">Image</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Outer circles -->
+        {% for i in range(1, 9) %}
+        {% set prefix = 'Circle-' ~ i ~ '-' %}
+        {% set label = slide.raw.get(prefix ~ 'Label', '') %}
+        {% if label %}
+        <div class="outer-circle"
+             data-circle-index="{{ i }}"
+             data-position="{{ slide.raw.get(prefix ~ 'Position', (i - 1) * 60) }}">
+          <button class="outer-circle-btn"
+                  aria-label="Open {{ label }}"
+                  data-modal-trigger="{{ i }}">
+            {% set icon = slide.raw.get(prefix ~ 'Icon', '') %}
+            {% if icon %}
+            <img src="../assets/icons/{{ icon }}" alt="">
+            {% else %}
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
+            {% endif %}
+          </button>
+          <div class="outer-circle-label">
+            <span>{{ label }}</span>
+          </div>
+        </div>
+
+        <!-- Modal for this circle -->
+        <div class="circle-modal-backdrop" data-modal-id="{{ i }}">
+          <div class="circle-modal" role="dialog" aria-modal="true">
+            <div class="circle-modal-header">
+              <h2 class="circle-modal-title">{{ slide.raw.get(prefix ~ 'Headline', label) }}</h2>
+              <button class="circle-modal-close" aria-label="Close" data-modal-close="{{ i }}">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              </button>
+            </div>
+            <div class="circle-modal-body">
+              {% set modal_img = slide.raw.get(prefix ~ 'Image', '') %}
+              {% if modal_img %}
+              <div class="circle-modal-image">
+                <img src="{{ modal_img }}" alt="">
+              </div>
+              {% endif %}
+
+              {% for p in range(1, 5) %}
+              {% set para = slide.raw.get(prefix ~ 'Paragraph-' ~ p, '') %}
+              {% if para %}
+              <p class="circle-modal-paragraph">{{ para }}</p>
+              {% endif %}
+              {% endfor %}
+
+              {% set list_title = slide.raw.get(prefix ~ 'List-Title', '') %}
+              {% set has_list_items = slide.raw.get(prefix ~ 'List-Item-1', '') %}
+              {% if has_list_items %}
+              <div class="circle-modal-list-section">
+                {% if list_title %}
+                <h3 class="circle-modal-list-title">{{ list_title }}</h3>
+                {% endif %}
+                <ul class="circle-modal-list">
+                  {% for li in range(1, 9) %}
+                  {% set item = slide.raw.get(prefix ~ 'List-Item-' ~ li, '') %}
+                  {% if item %}
+                  <li>{{ item }}</li>
+                  {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../assets/js/slide-runtime.js"></script>
+  <script>
+  (function() {
+    // Configuration from CSS variables
+    const hub = document.querySelector('.circle-hub');
+    const inner = document.getElementById('circleHubInner');
+    const linesContainer = document.getElementById('circleHubLines');
+
+    if (!hub || !inner) return;
+
+    const styles = getComputedStyle(hub);
+    const centerSize = parseFloat(styles.getPropertyValue('--center-size'));
+    const outerSize = parseFloat(styles.getPropertyValue('--outer-size'));
+    const radius = parseFloat(styles.getPropertyValue('--radius'));
+
+    // Position outer circles and draw lines
+    const outerCircles = inner.querySelectorAll('.outer-circle');
+    const containerWidth = radius * 2 + outerSize;
+    const containerHeight = radius * 2 + outerSize;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
+
+    // Set SVG viewBox
+    linesContainer.setAttribute('viewBox', `0 0 ${containerWidth} ${containerHeight}`);
+    linesContainer.style.width = containerWidth + 'px';
+    linesContainer.style.height = containerHeight + 'px';
+
+    outerCircles.forEach(circle => {
+      const angle = parseFloat(circle.dataset.position) || 0;
+      const radians = ((angle - 90) * Math.PI) / 180;
+      const x = Math.cos(radians) * radius;
+      const y = Math.sin(radians) * radius;
+
+      // Position the circle
+      circle.style.left = `calc(50% + ${x}px)`;
+      circle.style.top = `calc(50% + ${y}px)`;
+
+      // Draw connecting line
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', centerX);
+      line.setAttribute('y1', centerY);
+      line.setAttribute('x2', centerX + x);
+      line.setAttribute('y2', centerY + y);
+      linesContainer.appendChild(line);
+    });
+
+    // Modal functionality
+    const modalTriggers = document.querySelectorAll('[data-modal-trigger]');
+    const modalCloses = document.querySelectorAll('[data-modal-close]');
+    const modalBackdrops = document.querySelectorAll('.circle-modal-backdrop');
+
+    function openModal(id) {
+      const modal = document.querySelector(`[data-modal-id="${id}"]`);
+      if (modal) {
+        modal.classList.add('open');
+        modal.querySelector('.circle-modal-close').focus();
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.querySelector(`[data-modal-id="${id}"]`);
+      if (modal) {
+        modal.classList.remove('open');
+        // Return focus to trigger button
+        const trigger = document.querySelector(`[data-modal-trigger="${id}"]`);
+        if (trigger) trigger.focus();
+      }
+    }
+
+    function closeAllModals() {
+      modalBackdrops.forEach(backdrop => backdrop.classList.remove('open'));
+    }
+
+    modalTriggers.forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        openModal(trigger.dataset.modalTrigger);
+      });
+    });
+
+    modalCloses.forEach(btn => {
+      btn.addEventListener('click', () => {
+        closeModal(btn.dataset.modalClose);
+      });
+    });
+
+    // Close on backdrop click
+    modalBackdrops.forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          backdrop.classList.remove('open');
+        }
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllModals();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

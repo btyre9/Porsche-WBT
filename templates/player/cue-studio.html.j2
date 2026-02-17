@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ course_title }} - Cue Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #181b20;
+      color: #eef1f5;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: #22262d;
+    }
+    .top-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    label { font-size: 12px; color: #b7bfc9; }
+    select, input, button, textarea {
+      font: inherit;
+      color: #fff;
+      background: #2d333d;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 4px;
+      padding: 6px 8px;
+    }
+    button { cursor: pointer; font-weight: 600; }
+    button:hover { background: #3a424f; }
+    .btn-primary { background: #d5001c; border-color: #d5001c; }
+    .btn-primary:hover { background: #b0001a; }
+    .layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(460px, 1fr) 420px;
+    }
+    .left-pane {
+      min-height: 0;
+      padding: 12px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 10px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+    }
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      font-size: 12px;
+      color: #c4cbd5;
+    }
+    .audio-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #audio-seek { flex: 1; min-width: 180px; }
+    .frame-wrap {
+      min-height: 0;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0f1115;
+    }
+    #slide-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #0f1115;
+    }
+    .right-pane {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+      padding: 12px;
+      overflow: auto;
+    }
+    .panel {
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 10px;
+      background: rgba(255,255,255,0.02);
+    }
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .field {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    .field-full { grid-column: 1 / -1; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .cue-table-wrap {
+      max-height: 280px;
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 6px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td {
+      padding: 6px 7px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #232933; color: #c9d0da; }
+    tr:last-child td { border-bottom: none; }
+    .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+    }
+    #cue-json-output {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    #studio-status {
+      margin: 0;
+      font-size: 12px;
+      color: #b7c2d1;
+      min-height: 18px;
+    }
+    #studio-status.error { color: #ff9a9a; }
+    #studio-status.ok { color: #9de6a7; }
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(420px, 1fr) auto;
+      }
+      .left-pane { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.12); }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="top-title">Cue Studio</div>
+    <div class="group">
+      <label for="slide-select">Slide</label>
+      <select id="slide-select"></select>
+      <button id="btn-load-slide">Load</button>
+    </div>
+    <div class="group">
+      <button id="btn-open-player">Open Player</button>
+      <button id="btn-open-player-cues">Open Player + Cues</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <section class="left-pane">
+      <div class="status-row">
+        <div>Slide ID: <strong id="status-slide-id">-</strong></div>
+        <div>Audio: <strong id="status-audio">-</strong></div>
+        <div>Element: <strong id="status-element">none</strong></div>
+      </div>
+
+      <div class="audio-row">
+        <button id="btn-audio-play">Play</button>
+        <button id="btn-audio-pause">Pause</button>
+        <button id="btn-capture-time">Capture Time</button>
+        <input id="audio-seek" type="range" min="0" max="0" step="0.01" value="0" />
+        <span id="audio-time" class="mono">0.00 / 0.00</span>
+      </div>
+
+      <div class="frame-wrap">
+        <iframe id="slide-frame" title="Slide"></iframe>
+      </div>
+    </section>
+
+    <aside class="right-pane">
+      <div class="panel">
+        <h3>1) Pick Element</h3>
+        <div class="actions">
+          <button id="btn-pick-mode" class="btn-primary">Pick From Slide</button>
+        </div>
+        <div class="field-grid" style="margin-top:8px;">
+          <div class="field field-full">
+            <label for="cue-selector">Selector / target</label>
+            <input id="cue-selector" type="text" placeholder="[data-anim-key=&quot;title&quot;]">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>2) Define Cue</h3>
+        <div class="field-grid">
+          <div class="field">
+            <label for="cue-time">At (seconds)</label>
+            <input id="cue-time" type="number" min="0" step="0.01" value="0.00">
+          </div>
+          <div class="field">
+            <label for="cue-action">Action</label>
+            <select id="cue-action">
+              <option value="in">in</option>
+              <option value="out">out</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cue-preset">Animation</label>
+            <select id="cue-preset">
+              <option value="fade">fade</option>
+              <option value="fadeUp">fadeUp</option>
+              <option value="fadeDown">fadeDown</option>
+              <option value="slideLeft">slideLeft</option>
+              <option value="slideRight">slideRight</option>
+              <option value="scaleIn">scaleIn</option>
+              <option value="scaleOut">scaleOut</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cue-duration">Duration</label>
+            <input id="cue-duration" type="number" min="0" step="0.01" value="0.60">
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btn-add-cue" class="btn-primary">Add Cue</button>
+          <button id="btn-sort-cues">Sort</button>
+          <button id="btn-clear-cues">Clear</button>
+          <button id="btn-reload-cues">Reload Existing</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>3) Cue List</h3>
+        <div class="cue-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>at</th>
+                <th>action</th>
+                <th>selector/target</th>
+                <th>anim</th>
+                <th>dur</th>
+                <th>del</th>
+              </tr>
+            </thead>
+            <tbody id="cue-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>4) Export JSON</h3>
+        <div class="actions">
+          <button id="btn-copy-json">Copy JSON</button>
+          <button id="btn-download-json">Download JSON</button>
+        </div>
+        <textarea id="cue-json-output" readonly></textarea>
+      </div>
+
+      <p id="studio-status"></p>
+    </aside>
+  </div>
+
+  <script src="./cue-studio.js"></script>
+</body>
+</html>

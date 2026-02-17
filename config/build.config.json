@@ -1,13 +1,18 @@
 {
+  "build": {
+    "slide_source": "prebuilt"
+  },
   "course": {
     "id": "porsche-safety-001",
-    "title": "High-Voltage Safety",
+    "title": "Customer Communications - Module 1",
     "version": "0.1.0",
     "language": "en-US",
-    "pass_threshold": 80
+    "pass_threshold": 80,
+    "vo_start_delay_ms": 1000
   },
   "paths": {
     "storyboard_markdown": "storyboard/course.md",
+    "prebuilt_slides_dir": "templates/slides/prebuilt",
     "pronunciation_map": "storyboard/pronunciation-map.json",
     "output_root": "output/course",
     "slides_output": "output/course/slides",

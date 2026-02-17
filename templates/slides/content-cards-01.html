@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ slide.slide_title }}</title>
+<style>
+  @font-face {
+    font-family: 'Porsche Next TT';
+    src: local('Porsche Next TT');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Porsche Next TT';
+    src: local('Porsche Next TT Bold');
+    font-weight: 700;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+    background: #404044;
+    color: #fff;
+  }
+  .slide-cards {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+
+  /* --- Left content area --- */
+  .content-area {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 76px 64px 0;
+  }
+
+  .slide-title {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 46px;
+    text-align: center;
+    color: #fff;
+    width: 100%;
+  }
+
+  /* --- Cards row --- */
+  .cards-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 86px;
+    padding: 0;
+  }
+
+  .card {
+    flex: 1;
+    background: #fff;
+    padding: 24px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .card-icon {
+    width: 128px;
+    height: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-icon svg {
+    width: 128px;
+    height: 128px;
+  }
+
+  .card-heading {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #010205;
+    text-align: center;
+    width: 100%;
+  }
+
+  .card-list {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-list li::before {
+    content: '\2022';
+    color: #d5001c;
+    font-size: 19.2px;
+    line-height: 28.8px;
+    flex-shrink: 0;
+  }
+
+  .card-list li span {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    color: #010205;
+    padding-top: 4px;
+  }
+
+  /* --- Bottom bar --- */
+  .bottom-bar-accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 457px;
+    background: #d5001c;
+    padding: 24px 64px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .bottom-bar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 944px;
+  }
+
+  .bottom-heading {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #fff;
+  }
+
+  .bottom-text {
+    font-size: 20.5px;
+    font-weight: 400;
+    line-height: 30.75px;
+    color: #fff;
+  }
+
+  /* --- Right image --- */
+  .side-image {
+    width: 457px;
+    min-width: 457px;
+    height: 100%;
+    overflow: hidden;
+  }
+  .side-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <section class="slide slide-cards" data-slide-id="{{ slide.id }}" data-intro-animation="{{ slide.intro_animation }}">
+
+    <div class="content-area">
+      <h1 class="slide-title" data-anim-item>{{ slide.slide_title }}</h1>
+
+      <div class="cards-row" data-anim-item>
+        {% for i in range(1, 4) %}
+        {% set card_prefix = 'Card-' ~ i ~ '-' %}
+        {% set card_title = slide.raw.get(card_prefix ~ 'Title', '') %}
+        {% if card_title %}
+        <div class="card">
+          <div class="card-icon">
+            {% set icon_name = slide.raw.get(card_prefix ~ 'Icon', '') %}
+            {% if icon_name %}
+            <img src="../assets/icons/{{ icon_name }}" alt="" width="128" height="128">
+            {% endif %}
+          </div>
+          <h3 class="card-heading">{{ card_title }}</h3>
+          <ul class="card-list">
+            {% for j in range(1, 6) %}
+            {% set bullet = slide.raw.get(card_prefix ~ 'Bullet-' ~ j, '') %}
+            {% if bullet %}
+            <li><span>{{ bullet }}</span></li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if slide.raw.get('Bottom-Line-Title') or slide.raw.get('Bottom-Line-Text') %}
+    <div class="bottom-bar-accent" data-anim-item>
+      <div class="bottom-bar-inner">
+        {% if slide.raw.get('Bottom-Line-Title') %}
+        <h4 class="bottom-heading">{{ slide.raw['Bottom-Line-Title'] }}</h4>
+        {% endif %}
+        {% if slide.raw.get('Bottom-Line-Text') %}
+        <p class="bottom-text">{{ slide.raw['Bottom-Line-Text'] }}</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if slide.raw.get('Image') %}
+    <div class="side-image">
+      <img src="{{ slide.raw['Image'] }}" alt="Slide image">
+    </div>
+    {% else %}
+    <div class="side-image" style="background: rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center;">
+      <span style="font-size:14px; color:rgba(255,255,255,0.5);">Image Placeholder</span>
+    </div>
+    {% endif %}
+  </section>
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../assets/js/slide-runtime.js"></script>
+</body>
+</html>

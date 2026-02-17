@@ -1,9 +1,9 @@
-# Course: High-Voltage Safety
+# Course: Customer Communications - Module 1
 
 ## Slide01
 Slide-ID: slide-01
 Template-ID: title-intro-01
-Slide-Title: High-Voltage Safety
+Slide-Title: Customer Communications - Module 1
 Audio-VO: assets/audio/slide-01.mp3
 Voiceover: Welcome to high-voltage safety training.
 

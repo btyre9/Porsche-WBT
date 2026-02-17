@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+# Enforce media policy before commit:
+# - Raster images must be .webp
+# - Videos must be .webm
+
+if command -v python >/dev/null 2>&1; then
+  python builder/validate_media_policy.py --project-root . || exit 1
+elif command -v py >/dev/null 2>&1; then
+  py -3 builder/validate_media_policy.py --project-root . || exit 1
+else
+  echo "Python is required to run media policy checks." >&2
+  exit 1
+fi
