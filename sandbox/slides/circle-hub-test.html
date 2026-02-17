@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circle Hub Test</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+    }
+    body {
+      font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+      background: #404044;
+      color: #fff;
+    }
+
+    /* Container and Layout */
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Slide Title */
+    .slide-title {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      font-size: 48px;
+      font-weight: 700;
+      text-align: center;
+      color: #fff;
+    }
+
+    /* Center Circle */
+    .center-circle {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: #5d5d5d;
+      box-shadow: 0 0 24px rgba(0,0,0,0.24);
+      border: 4px solid #010205;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .center-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Connecting Lines SVG */
+    .connecting-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .connecting-lines line {
+      stroke: #000;
+      stroke-width: 2;
+      stroke-dasharray: 8 4;
+      opacity: 0.3;
+    }
+
+    /* Outer Circles */
+    .outer-circle {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .circle-button {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: #d5001c;
+      border: 2px solid #6b6d70;
+      box-shadow: 0 0 24px rgba(0,0,0,0.24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 300ms ease, box-shadow 300ms ease;
+      color: white;
+    }
+
+    .circle-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 32px rgba(0,0,0,0.35);
+    }
+
+    .circle-button:active {
+      transform: scale(1.05);
+    }
+
+    .circle-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(213, 0, 28, 0.5), 0 0 24px rgba(0,0,0,0.24);
+    }
+
+    .circle-button img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .circle-label {
+      background-color: #d5001c;
+      border: 1px solid #6b6d70;
+      border-radius: 4px;
+      padding: 8px 16px;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 0 24px rgba(0,0,0,0.24);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 200ms ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: #2a2a2e;
+      border-radius: 8px;
+      max-width: 672px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+      animation: modalZoomIn 200ms ease;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background-color: #2a2a2e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .modal-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+      margin: 0;
+    }
+
+    .close-button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      font-size: 24px;
+      color: #fff;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background-color 200ms;
+      flex-shrink: 0;
+    }
+
+    .close-button:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-body p {
+      color: rgba(255,255,255,0.9);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-size: 16px;
+    }
+
+    .modal-body h3 {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .modal-body ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .modal-body ul li {
+      margin-bottom: 8px;
+      padding-left: 16px;
+      position: relative;
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .modal-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      background: #d5001c;
+      border-radius: 50%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalZoomIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="slide-title">Porsche Service Excellence</h1>
+
+  <div class="container">
+    <svg class="connecting-lines" id="connectingLines"></svg>
+
+    <!-- Center Circle -->
+    <div class="center-circle">
+      <!-- Replace with your image -->
+      <div style="width:100%;height:100%;background:#3e4146;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:14px;color:rgba(255,255,255,0.5);">Center Image</span>
+      </div>
+    </div>
+
+    <!-- Circle 1: Customer Focus -->
+    <div class="outer-circle" data-position="0" data-modal="modal1">
+      <button class="circle-button">
+        <img src="../../assets/icons/user.svg" alt="">
+      </button>
+      <div class="circle-label">Customer Focus</div>
+    </div>
+
+    <!-- Circle 2: Technical Expertise -->
+    <div class="outer-circle" data-position="72" data-modal="modal2">
+      <button class="circle-button">
+        <img src="../../assets/icons/wrench.svg" alt="">
+      </button>
+      <div class="circle-label">Technical Expertise</div>
+    </div>
+
+    <!-- Circle 3: Quality -->
+    <div class="outer-circle" data-position="144" data-modal="modal3">
+      <button class="circle-button">
+        <img src="../../assets/icons/star.svg" alt="">
+      </button>
+      <div class="circle-label">Quality Standards</div>
+    </div>
+
+    <!-- Circle 4: Innovation -->
+    <div class="outer-circle" data-position="216" data-modal="modal4">
+      <button class="circle-button">
+        <img src="../../assets/icons/brain.svg" alt="">
+      </button>
+      <div class="circle-label">Innovation</div>
+    </div>
+
+    <!-- Circle 5: Brand -->
+    <div class="outer-circle" data-position="288" data-modal="modal5">
+      <button class="circle-button">
+        <img src="../../assets/icons/heart.svg" alt="">
+      </button>
+      <div class="circle-label">Brand Promise</div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Customer-Centric Approach</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Every interaction is an opportunity to exceed expectations. We put the customer at the center of everything we do.</p>
+          <h3>Key Behaviors</h3>
+          <ul>
+            <li>Active listening</li>
+            <li>Personalized service</li>
+            <li>Proactive communication</li>
+            <li>Follow-up excellence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal2" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>World-Class Technical Skills</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Porsche technicians are trained to the highest standards, combining precision engineering knowledge with hands-on expertise.</p>
+          <h3>Training Areas</h3>
+          <ul>
+            <li>High-voltage systems</li>
+            <li>Advanced diagnostics</li>
+            <li>Performance tuning</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal3" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Uncompromising Quality</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Quality is not negotiable. Every repair, every service, every interaction must meet Porsche standards.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal4" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Driving Innovation</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>We embrace new technologies and methods to continuously improve the service experience.</p>
+          <h3>Innovation Focus</h3>
+          <ul>
+            <li>Digital service records</li>
+            <li>Predictive maintenance</li>
+            <li>Remote diagnostics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal5" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Living the Brand</h2>
+          <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Every team member is an ambassador for the Porsche brand. We deliver the experience our customers expect from a legendary marque.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script>
+    const radius = 320;
+
+    function positionCircles() {
+      const container = document.querySelector('.container');
+      const centerX = container.offsetWidth / 2;
+      const centerY = container.offsetHeight / 2;
+      const linesContainer = document.getElementById('connectingLines');
+
+      linesContainer.innerHTML = '';
+
+      document.querySelectorAll('.outer-circle').forEach(circle => {
+        const angle = parseInt(circle.dataset.position);
+        const radians = ((angle - 90) * Math.PI) / 180;
+
+        const x = centerX + Math.cos(radians) * radius;
+        const y = centerY + Math.sin(radians) * radius;
+
+        circle.style.left = x + 'px';
+        circle.style.top = y + 'px';
+        circle.style.transform = 'translate(-50%, -50%)';
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', centerX);
+        line.setAttribute('y1', centerY);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        linesContainer.appendChild(line);
+      });
+    }
+
+    function setupModals() {
+      document.querySelectorAll('.circle-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const outerCircle = e.currentTarget.closest('.outer-circle');
+          const modalId = outerCircle.dataset.modal;
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.classList.add('active');
+            modal.querySelector('.close-button').focus();
+          }
+        });
+      });
+
+      document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const modal = e.target.closest('.modal');
+          closeModal(modal);
+        });
+      });
+
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal(modal);
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const activeModal = document.querySelector('.modal.active');
+          if (activeModal) closeModal(activeModal);
+        }
+      });
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      const modalId = modal.id;
+      const trigger = document.querySelector(`[data-modal="${modalId}"] .circle-button`);
+      if (trigger) trigger.focus();
+    }
+
+    positionCircles();
+    setupModals();
+    window.addEventListener('resize', positionCircles);
+  </script>
+</body>
+</html>

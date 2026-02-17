@@ -22,261 +22,264 @@
     color: #fff;
   }
 
-  /* --- Slide layout --- */
-  .slide-circle-hub {
+  /* Container and Layout */
+  .container {
     position: relative;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 48px 64px;
-  }
-
-  .slide-title {
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 1.1;
-    text-align: center;
-    color: #fff;
-    margin-bottom: 24px;
-  }
-
-  /* --- Circle Hub Container --- */
-  .circle-hub {
-    --center-size: {{ slide.raw.get('Center-Size', '240') }}px;
-    --outer-size: {{ slide.raw.get('Outer-Size', '100') }}px;
-    --radius: {{ slide.raw.get('Radius', '280') }}px;
-    --circle-color: {{ slide.raw.get('Circle-Color', '#d5001c') }};
-    --border-color: {{ slide.raw.get('Border-Color', '#6b6d70') }};
-
-    position: relative;
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .circle-hub-inner {
-    position: relative;
-    width: calc(var(--radius) * 2 + var(--outer-size));
-    height: calc(var(--radius) * 2 + var(--outer-size));
+  /* Slide Title */
+  .slide-title {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    color: #fff;
   }
 
-  /* --- Connecting lines (SVG) --- */
-  .circle-hub-lines {
+  /* Center Circle */
+  .center-circle {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: #5d5d5d;
+    box-shadow: 0 0 24px rgba(0,0,0,0.24);
+    border: 4px solid #010205;
+    overflow: hidden;
+    z-index: 1;
   }
-  .circle-hub-lines line {
+
+  .center-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  /* Connecting Lines SVG */
+  .connecting-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .connecting-lines line {
     stroke: #000;
     stroke-width: 2;
     stroke-dasharray: 8 4;
     opacity: 0.3;
   }
 
-  /* --- Center circle --- */
-  .center-circle {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--center-size);
-    height: var(--center-size);
-  }
-  .center-circle-inner {
-    width: 100%;
-    height: 100%;
-    background: #5d5d5d;
-    border-radius: 50%;
-    box-shadow: 0 0 24px rgba(0,0,0,0.24);
-    padding: 4px;
-    border: 4px solid #010205;
-  }
-  .center-circle-inner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-  }
-
-  /* --- Outer circles --- */
+  /* Outer Circles */
   .outer-circle {
     position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    transform: translate(-50%, -50%);
+    z-index: 2;
   }
 
-  .outer-circle-btn {
-    width: var(--outer-size);
-    height: var(--outer-size);
+  .circle-button {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    border: 2px solid var(--border-color);
-    background: var(--circle-color);
+    background-color: #d5001c;
+    border: 2px solid #6b6d70;
     box-shadow: 0 0 24px rgba(0,0,0,0.24);
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    transition: transform 300ms ease, box-shadow 300ms ease;
+    color: white;
   }
-  .outer-circle-btn:hover {
+
+  .circle-button:hover {
     transform: scale(1.1);
     box-shadow: 0 0 32px rgba(0,0,0,0.35);
   }
-  .outer-circle-btn:focus {
+
+  .circle-button:active {
+    transform: scale(1.05);
+  }
+
+  .circle-button:focus {
     outline: none;
     box-shadow: 0 0 0 4px rgba(213, 0, 28, 0.5), 0 0 24px rgba(0,0,0,0.24);
   }
-  .outer-circle-btn:active {
-    transform: scale(1.05);
-  }
-  .outer-circle-btn img,
-  .outer-circle-btn svg {
+
+  .circle-button img,
+  .circle-button svg {
     width: 48px;
     height: 48px;
-    fill: #fff;
   }
 
-  .outer-circle-label {
-    background: var(--circle-color);
-    border: 1px solid var(--border-color);
+  .circle-label {
+    background-color: #d5001c;
+    border: 1px solid #6b6d70;
     border-radius: 4px;
     padding: 8px 16px;
-    box-shadow: 0 0 24px rgba(0,0,0,0.24);
-  }
-  .outer-circle-label span {
+    color: white;
     font-size: 14px;
     font-weight: 500;
-    color: #fff;
     white-space: nowrap;
+    box-shadow: 0 0 24px rgba(0,0,0,0.24);
   }
 
-  /* --- Modal --- */
-  .circle-modal-backdrop {
+  /* Modal Styles */
+  .modal {
+    display: none;
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
+    z-index: 50;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
     backdrop-filter: blur(4px);
+    animation: fadeIn 200ms ease;
+  }
+
+  .modal.active {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-  }
-  .circle-modal-backdrop.open {
-    opacity: 1;
-    pointer-events: auto;
   }
 
-  .circle-modal {
-    background: #2a2a2e;
+  .modal-content {
+    background-color: #2a2a2e;
     border-radius: 8px;
-    width: 580px;
-    max-width: 90%;
-    max-height: 80%;
+    max-width: 672px;
+    width: 90%;
+    max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    transform: scale(0.95);
-    transition: transform 0.2s ease;
-  }
-  .circle-modal-backdrop.open .circle-modal {
-    transform: scale(1);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+    animation: modalZoomIn 200ms ease;
   }
 
-  .circle-modal-header {
+  .modal-header {
     position: sticky;
     top: 0;
-    background: #2a2a2e;
+    background-color: #2a2a2e;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     padding: 24px;
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 16px;
   }
-  .circle-modal-title {
-    font-size: 22px;
-    font-weight: 700;
+
+  .modal-header h2 {
+    font-size: 24px;
+    font-weight: 600;
     color: #fff;
-    line-height: 1.3;
+    margin: 0;
   }
-  .circle-modal-close {
+
+  .close-button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.1);
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    line-height: 1;
+    transition: background-color 200ms;
     flex-shrink: 0;
-    transition: background 0.15s ease;
-  }
-  .circle-modal-close:hover {
-    background: rgba(255,255,255,0.2);
-  }
-  .circle-modal-close svg {
-    width: 20px;
-    height: 20px;
-    fill: #fff;
   }
 
-  .circle-modal-body {
+  .close-button:hover {
+    background-color: rgba(255,255,255,0.2);
+  }
+
+  .modal-body {
     padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
   }
-  .circle-modal-image {
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .circle-modal-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  .circle-modal-paragraph {
-    font-size: 16px;
-    line-height: 1.6;
+
+  .modal-body p {
     color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-size: 16px;
   }
-  .circle-modal-list-title {
+
+  .modal-body h3 {
+    color: #fff;
     font-size: 18px;
     font-weight: 700;
-    color: #fff;
     margin-bottom: 12px;
   }
-  .circle-modal-list {
+
+  .modal-body ul {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .circle-modal-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 15px;
-    line-height: 1.5;
+    padding-left: 0;
     color: rgba(255,255,255,0.85);
   }
-  .circle-modal-list li::before {
+
+  .modal-body ul li {
+    margin-bottom: 8px;
+    padding-left: 16px;
+    position: relative;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .modal-body ul li::before {
     content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
     width: 6px;
     height: 6px;
     background: #d5001c;
     border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 8px;
+  }
+
+  .modal-image {
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .modal-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes modalZoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 </style>
 </head>
@@ -287,97 +290,81 @@
     <h1 class="slide-title" data-anim-item>{{ slide.slide_title }}</h1>
     {% endif %}
 
-    <div class="circle-hub" data-anim-item>
-      <div class="circle-hub-inner" id="circleHubInner">
+    <div class="container" data-anim-item>
+      <!-- Connecting Lines SVG -->
+      <svg class="connecting-lines" id="connectingLines"></svg>
 
-        <!-- SVG for connecting lines (generated by JS) -->
-        <svg class="circle-hub-lines" id="circleHubLines"></svg>
-
-        <!-- Center circle -->
-        <div class="center-circle">
-          <div class="center-circle-inner">
-            {% set center_img = slide.raw.get('Center-Image', '') %}
-            {% if center_img %}
-            <img src="{{ center_img }}" alt="Center image">
-            {% else %}
-            <div style="width:100%;height:100%;background:#3e4146;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-              <span style="font-size:12px;color:rgba(255,255,255,0.5);">Image</span>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-
-        <!-- Outer circles -->
-        {% for i in range(1, 9) %}
-        {% set prefix = 'Circle-' ~ i ~ '-' %}
-        {% set label = slide.raw.get(prefix ~ 'Label', '') %}
-        {% if label %}
-        <div class="outer-circle"
-             data-circle-index="{{ i }}"
-             data-position="{{ slide.raw.get(prefix ~ 'Position', (i - 1) * 60) }}">
-          <button class="outer-circle-btn"
-                  aria-label="Open {{ label }}"
-                  data-modal-trigger="{{ i }}">
-            {% set icon = slide.raw.get(prefix ~ 'Icon', '') %}
-            {% if icon %}
-            <img src="../assets/icons/{{ icon }}" alt="">
-            {% else %}
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-            {% endif %}
-          </button>
-          <div class="outer-circle-label">
-            <span>{{ label }}</span>
-          </div>
-        </div>
-
-        <!-- Modal for this circle -->
-        <div class="circle-modal-backdrop" data-modal-id="{{ i }}">
-          <div class="circle-modal" role="dialog" aria-modal="true">
-            <div class="circle-modal-header">
-              <h2 class="circle-modal-title">{{ slide.raw.get(prefix ~ 'Headline', label) }}</h2>
-              <button class="circle-modal-close" aria-label="Close" data-modal-close="{{ i }}">
-                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-              </button>
-            </div>
-            <div class="circle-modal-body">
-              {% set modal_img = slide.raw.get(prefix ~ 'Image', '') %}
-              {% if modal_img %}
-              <div class="circle-modal-image">
-                <img src="{{ modal_img }}" alt="">
-              </div>
-              {% endif %}
-
-              {% for p in range(1, 5) %}
-              {% set para = slide.raw.get(prefix ~ 'Paragraph-' ~ p, '') %}
-              {% if para %}
-              <p class="circle-modal-paragraph">{{ para }}</p>
-              {% endif %}
-              {% endfor %}
-
-              {% set list_title = slide.raw.get(prefix ~ 'List-Title', '') %}
-              {% set has_list_items = slide.raw.get(prefix ~ 'List-Item-1', '') %}
-              {% if has_list_items %}
-              <div class="circle-modal-list-section">
-                {% if list_title %}
-                <h3 class="circle-modal-list-title">{{ list_title }}</h3>
-                {% endif %}
-                <ul class="circle-modal-list">
-                  {% for li in range(1, 9) %}
-                  {% set item = slide.raw.get(prefix ~ 'List-Item-' ~ li, '') %}
-                  {% if item %}
-                  <li>{{ item }}</li>
-                  {% endif %}
-                  {% endfor %}
-                </ul>
-              </div>
-              {% endif %}
-            </div>
-          </div>
+      <!-- Center Circle -->
+      <div class="center-circle">
+        {% set center_img = slide.raw.get('Center-Image', '') %}
+        {% if center_img %}
+        <img src="{{ center_img }}" alt="Center image">
+        {% else %}
+        <div style="width:100%;height:100%;background:#3e4146;display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:14px;color:rgba(255,255,255,0.5);">Image</span>
         </div>
         {% endif %}
-        {% endfor %}
-
       </div>
+
+      <!-- Outer Circles -->
+      {% for i in range(1, 9) %}
+      {% set prefix = 'Circle-' ~ i ~ '-' %}
+      {% set label = slide.raw.get(prefix ~ 'Label', '') %}
+      {% if label %}
+      <div class="outer-circle" data-position="{{ slide.raw.get(prefix ~ 'Position', (i - 1) * 72) }}" data-modal="modal{{ i }}">
+        <button class="circle-button" aria-label="Open {{ label }}">
+          {% set icon = slide.raw.get(prefix ~ 'Icon', '') %}
+          {% if icon %}
+          <img src="../assets/icons/{{ icon }}" alt="">
+          {% else %}
+          <svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="4"/></svg>
+          {% endif %}
+        </button>
+        <div class="circle-label">{{ label }}</div>
+      </div>
+
+      <!-- Modal for Circle {{ i }} -->
+      <div id="modal{{ i }}" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>{{ slide.raw.get(prefix ~ 'Headline', label) }}</h2>
+            <button class="close-button" aria-label="Close">&times;</button>
+          </div>
+          <div class="modal-body">
+            {% set modal_img = slide.raw.get(prefix ~ 'Image', '') %}
+            {% if modal_img %}
+            <div class="modal-image">
+              <img src="{{ modal_img }}" alt="">
+            </div>
+            {% endif %}
+
+            {% for p in range(1, 5) %}
+            {% set para = slide.raw.get(prefix ~ 'Paragraph-' ~ p, '') %}
+            {% if para %}
+            <p>{{ para }}</p>
+            {% endif %}
+            {% endfor %}
+
+            {% set list_title = slide.raw.get(prefix ~ 'List-Title', '') %}
+            {% set has_list_items = slide.raw.get(prefix ~ 'List-Item-1', '') %}
+            {% if has_list_items %}
+            {% if list_title %}
+            <h3>{{ list_title }}</h3>
+            {% endif %}
+            <ul>
+              {% for li in range(1, 9) %}
+              {% set item = slide.raw.get(prefix ~ 'List-Item-' ~ li, '') %}
+              {% if item %}
+              <li>{{ item }}</li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
   </section>
 
@@ -385,103 +372,95 @@
   <script src="../assets/js/slide-runtime.js"></script>
   <script>
   (function() {
-    // Configuration from CSS variables
-    const hub = document.querySelector('.circle-hub');
-    const inner = document.getElementById('circleHubInner');
-    const linesContainer = document.getElementById('circleHubLines');
+    const radius = {{ slide.raw.get('Radius', 320) }};
 
-    if (!hub || !inner) return;
+    // Position circles and draw connecting lines
+    function positionCircles() {
+      const container = document.querySelector('.container');
+      const centerX = container.offsetWidth / 2;
+      const centerY = container.offsetHeight / 2;
+      const linesContainer = document.getElementById('connectingLines');
 
-    const styles = getComputedStyle(hub);
-    const centerSize = parseFloat(styles.getPropertyValue('--center-size'));
-    const outerSize = parseFloat(styles.getPropertyValue('--outer-size'));
-    const radius = parseFloat(styles.getPropertyValue('--radius'));
+      // Clear existing lines
+      linesContainer.innerHTML = '';
 
-    // Position outer circles and draw lines
-    const outerCircles = inner.querySelectorAll('.outer-circle');
-    const containerWidth = radius * 2 + outerSize;
-    const containerHeight = radius * 2 + outerSize;
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
+      document.querySelectorAll('.outer-circle').forEach(circle => {
+        const angle = parseInt(circle.dataset.position);
+        const radians = ((angle - 90) * Math.PI) / 180;
 
-    // Set SVG viewBox
-    linesContainer.setAttribute('viewBox', `0 0 ${containerWidth} ${containerHeight}`);
-    linesContainer.style.width = containerWidth + 'px';
-    linesContainer.style.height = containerHeight + 'px';
+        const x = centerX + Math.cos(radians) * radius;
+        const y = centerY + Math.sin(radians) * radius;
 
-    outerCircles.forEach(circle => {
-      const angle = parseFloat(circle.dataset.position) || 0;
-      const radians = ((angle - 90) * Math.PI) / 180;
-      const x = Math.cos(radians) * radius;
-      const y = Math.sin(radians) * radius;
+        circle.style.left = x + 'px';
+        circle.style.top = y + 'px';
+        circle.style.transform = 'translate(-50%, -50%)';
 
-      // Position the circle
-      circle.style.left = `calc(50% + ${x}px)`;
-      circle.style.top = `calc(50% + ${y}px)`;
-
-      // Draw connecting line
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', centerX);
-      line.setAttribute('y1', centerY);
-      line.setAttribute('x2', centerX + x);
-      line.setAttribute('y2', centerY + y);
-      linesContainer.appendChild(line);
-    });
+        // Draw connecting line
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', centerX);
+        line.setAttribute('y1', centerY);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        linesContainer.appendChild(line);
+      });
+    }
 
     // Modal functionality
-    const modalTriggers = document.querySelectorAll('[data-modal-trigger]');
-    const modalCloses = document.querySelectorAll('[data-modal-close]');
-    const modalBackdrops = document.querySelectorAll('.circle-modal-backdrop');
+    function setupModals() {
+      // Open modal on circle click
+      document.querySelectorAll('.circle-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const outerCircle = e.currentTarget.closest('.outer-circle');
+          const modalId = outerCircle.dataset.modal;
+          const modal = document.getElementById(modalId);
 
-    function openModal(id) {
-      const modal = document.querySelector(`[data-modal-id="${id}"]`);
-      if (modal) {
-        modal.classList.add('open');
-        modal.querySelector('.circle-modal-close').focus();
-      }
-    }
-
-    function closeModal(id) {
-      const modal = document.querySelector(`[data-modal-id="${id}"]`);
-      if (modal) {
-        modal.classList.remove('open');
-        // Return focus to trigger button
-        const trigger = document.querySelector(`[data-modal-trigger="${id}"]`);
-        if (trigger) trigger.focus();
-      }
-    }
-
-    function closeAllModals() {
-      modalBackdrops.forEach(backdrop => backdrop.classList.remove('open'));
-    }
-
-    modalTriggers.forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        openModal(trigger.dataset.modalTrigger);
+          if (modal) {
+            modal.classList.add('active');
+            modal.querySelector('.close-button').focus();
+          }
+        });
       });
-    });
 
-    modalCloses.forEach(btn => {
-      btn.addEventListener('click', () => {
-        closeModal(btn.dataset.modalClose);
+      // Close modal on X click
+      document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const modal = e.target.closest('.modal');
+          closeModal(modal);
+        });
       });
-    });
 
-    // Close on backdrop click
-    modalBackdrops.forEach(backdrop => {
-      backdrop.addEventListener('click', (e) => {
-        if (e.target === backdrop) {
-          backdrop.classList.remove('open');
+      // Close modal on backdrop click
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModal(modal);
+          }
+        });
+      });
+
+      // Close modal on ESC key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const activeModal = document.querySelector('.modal.active');
+          if (activeModal) {
+            closeModal(activeModal);
+          }
         }
       });
-    });
+    }
 
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeAllModals();
-      }
-    });
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      // Return focus to the button that opened it
+      const modalId = modal.id;
+      const trigger = document.querySelector(`[data-modal="${modalId}"] .circle-button`);
+      if (trigger) trigger.focus();
+    }
+
+    // Initialize
+    positionCircles();
+    setupModals();
+    window.addEventListener('resize', positionCircles);
   })();
   </script>
 </body>

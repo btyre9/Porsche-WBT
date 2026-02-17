@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Sandbox</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Porsche Next TT', Arial, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* Top toolbar */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #2a2a2e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 100;
+    }
+
+    .toolbar-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toolbar select,
+    .toolbar button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #3e4146;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .toolbar select:hover,
+    .toolbar button:hover {
+      background: #4a4e54;
+    }
+
+    .toolbar button.primary {
+      background: #d5001c;
+      border-color: #d5001c;
+    }
+
+    .toolbar button.primary:hover {
+      background: #b0001a;
+    }
+
+    /* Slide container */
+    .slide-container {
+      margin-top: 56px;
+      height: calc(100vh - 56px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .slide-frame-wrapper {
+      width: 100%;
+      max-width: 1920px;
+      aspect-ratio: 1920 / 920;
+      background: #000;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .slide-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #404044;
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 40px;
+    }
+
+    .empty-state h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 400px;
+    }
+
+    .empty-state code {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: Consolas, monospace;
+    }
+
+    /* Audio player */
+    .audio-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2a2a2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .audio-panel.hidden {
+      display: none;
+    }
+
+    .audio-panel label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .audio-panel audio {
+      height: 32px;
+    }
+
+    /* Slide list panel */
+    .slide-list {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 280px;
+      bottom: 0;
+      background: #2a2a2e;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      z-index: 50;
+    }
+
+    .slide-list.open {
+      transform: translateX(0);
+    }
+
+    .slide-list-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .slide-list-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .slide-list-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .slide-list-item.active {
+      background: rgba(213, 0, 28, 0.2);
+      border-left: 3px solid #d5001c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="toolbar-title">Slide Sandbox</div>
+    <div class="toolbar-controls">
+      <button id="toggleList">Slides</button>
+      <select id="slideSelect">
+        <option value="">-- Select a slide --</option>
+      </select>
+      <button id="refreshBtn">Refresh</button>
+      <select id="audioSelect">
+        <option value="">-- Audio (optional) --</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="slide-list" id="slideList">
+    <div class="slide-list-header">Available Slides</div>
+    <div id="slideListItems"></div>
+  </div>
+
+  <div class="slide-container">
+    <div class="slide-frame-wrapper">
+      <iframe class="slide-frame" id="slideFrame"></iframe>
+    </div>
+  </div>
+
+  <div class="audio-panel hidden" id="audioPanel">
+    <label>Audio:</label>
+    <audio id="audioPlayer" controls></audio>
+  </div>
+
+  <script>
+    // Configuration - add your slides here
+    const slides = [
+      { name: 'Circle Hub Test', file: 'slides/circle-hub-test.html' },
+      { name: 'Template (blank)', file: 'slides/_template.html' },
+      // Add more slides here:
+      // { name: 'Flip Card Test', file: 'slides/flip-card-test.html' },
+    ];
+
+    const audioFiles = [
+      // Example:
+      // { name: 'Slide 1 VO', file: 'audio/slide-01-vo.mp3' },
+    ];
+
+    // Auto-detect slides in slides/ folder (requires server)
+    async function detectSlides() {
+      // If slides array is empty, show instructions
+      if (slides.length === 0) {
+        showEmptyState();
+      }
+      populateDropdowns();
+    }
+
+    function showEmptyState() {
+      document.getElementById('slideFrame').srcdoc = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#404044;color:rgba(255,255,255,0.6);font-family:Arial,sans-serif;text-align:center;padding:40px;">
+          <h2 style="font-size:24px;margin-bottom:16px;color:#fff;">No slides yet</h2>
+          <p style="font-size:14px;line-height:1.8;max-width:500px;">
+            1. Create HTML slides in <code style="background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:3px;">sandbox/slides/</code><br><br>
+            2. Add them to the <code style="background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:3px;">slides</code> array in <code style="background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:3px;">index.html</code><br><br>
+            3. Refresh this page
+          </p>
+        </div>
+      `;
+    }
+
+    function populateDropdowns() {
+      const slideSelect = document.getElementById('slideSelect');
+      const slideListItems = document.getElementById('slideListItems');
+
+      slides.forEach((slide, index) => {
+        // Dropdown option
+        const option = document.createElement('option');
+        option.value = slide.file;
+        option.textContent = slide.name;
+        slideSelect.appendChild(option);
+
+        // List item
+        const item = document.createElement('div');
+        item.className = 'slide-list-item';
+        item.textContent = slide.name;
+        item.dataset.file = slide.file;
+        item.addEventListener('click', () => loadSlide(slide.file));
+        slideListItems.appendChild(item);
+      });
+
+      const audioSelect = document.getElementById('audioSelect');
+      audioFiles.forEach(audio => {
+        const option = document.createElement('option');
+        option.value = audio.file;
+        option.textContent = audio.name;
+        audioSelect.appendChild(option);
+      });
+    }
+
+    function loadSlide(file) {
+      if (!file) {
+        showEmptyState();
+        return;
+      }
+      document.getElementById('slideFrame').src = file;
+
+      // Update active state in list
+      document.querySelectorAll('.slide-list-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.file === file);
+      });
+
+      // Update dropdown
+      document.getElementById('slideSelect').value = file;
+    }
+
+    function loadAudio(file) {
+      const panel = document.getElementById('audioPanel');
+      const player = document.getElementById('audioPlayer');
+
+      if (!file) {
+        panel.classList.add('hidden');
+        player.src = '';
+        return;
+      }
+
+      player.src = file;
+      panel.classList.remove('hidden');
+    }
+
+    // Event listeners
+    document.getElementById('slideSelect').addEventListener('change', (e) => {
+      loadSlide(e.target.value);
+    });
+
+    document.getElementById('audioSelect').addEventListener('change', (e) => {
+      loadAudio(e.target.value);
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      const frame = document.getElementById('slideFrame');
+      if (frame.src && frame.src !== 'about:blank') {
+        frame.src = frame.src;
+      }
+    });
+
+    document.getElementById('toggleList').addEventListener('click', () => {
+      document.getElementById('slideList').classList.toggle('open');
+    });
+
+    // Initialize
+    detectSlides();
+  </script>
+</body>
+</html>

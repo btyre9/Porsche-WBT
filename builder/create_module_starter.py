@@ -10,10 +10,12 @@ from pathlib import Path
 EXCLUDED_NAMES = {
     ".git",
     ".claude",
+    ".tmp",
     "output",
     "node_modules",
     "__pycache__",
     ".pytest_cache",
+    "sandbox",  # Sandbox stays in the main project only
 }
 
 
@@ -104,6 +106,9 @@ def update_build_config(destination_root: Path, course_title: str, course_id: st
 def clean_slide_content(destination_root: Path) -> None:
     remove_children(destination_root / "assets" / "audio" / "vo")
     remove_children(destination_root / "assets" / "images")
+    remove_children(destination_root / "assets" / "animation-cues")
+    remove_children(destination_root / "assets" / "interaction-audio")
+    remove_children(destination_root / "templates" / "slides" / "prebuilt")
     remove_children(destination_root / "output" / "course")
 
 
@@ -117,14 +122,22 @@ def run(source_root: Path, destination: Path, course_title: str, course_id: str)
     clean_slide_content(destination)
 
     print("Module starter created:")
-    print(f"  - Path: {destination}")
-    print(f"  - Course title: {course_title}")
-    print(f"  - Course id: {course_id}")
-    print("  - Cleared: assets/audio/vo, assets/images, output/course")
+    print(f"  Path: {destination}")
+    print(f"  Course title: {course_title}")
+    print(f"  Course ID: {course_id}")
+    print()
+    print("Cleared folders (ready for new content):")
+    print("  - assets/audio/vo/")
+    print("  - assets/images/")
+    print("  - assets/animation-cues/")
+    print("  - templates/slides/prebuilt/")
+    print()
     print("Next steps:")
-    print("  1. Add slide media into assets/audio/vo and assets/images")
-    print("  2. Edit storyboard/course.md")
-    print("  3. Run: python builder/main.py")
+    print("  1. Design slides in the sandbox (main project)")
+    print("  2. Copy finished slides to templates/slides/prebuilt/")
+    print("  3. Add audio to assets/audio/vo/")
+    print("  4. Edit storyboard/course.md")
+    print("  5. Run: python builder/main.py")
 
 
 if __name__ == "__main__":

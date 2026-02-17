@@ -11,6 +11,10 @@ node_modules/
 # Temp files
 .tmp/
 
+# Sandbox audio (test files, not committed)
+sandbox/audio/*.mp3
+sandbox/audio/*.wav
+
 # Claude local settings (may contain API tokens)
 .claude/settings.local.json
 
