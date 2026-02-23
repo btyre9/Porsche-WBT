@@ -447,6 +447,20 @@
       flex-shrink: 0;
     }
 
+    .detail-part {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transform: translateY(10px);
+      transition: opacity 0.45s ease, transform 0.45s ease, max-height 0.45s ease;
+    }
+
+    .detail-part.is-visible {
+      opacity: 1;
+      max-height: 520px;
+      transform: translateY(0);
+    }
+
     .detail-section__label {
       font-size: 13px;
       font-weight: 700;
@@ -610,44 +624,48 @@
           <img id="image-panel-photo" src="../../assets/images/Ptechs-Customer-05.webp"
                alt="Porsche technician consulting with customer" />
           <div class="image-panel__overlay"></div>
-          <p class="image-panel__caption">
-            Click Service Quality to see exactly what you control.
-          </p>
+          
         </div>
 
         <!-- Detail panel (revealed on click) -->
         <div class="detail-panel" id="detail-panel">
 
-          <div class="detail-panel__header">
-            <span class="detail-panel__badge">Service Quality · 34%</span>
-            <h3 class="detail-panel__title">What Technicians Directly Influence</h3>
+          <div class="detail-part detail-part--1" id="detail-part-1">
+            <div class="detail-panel__header">
+              <span class="detail-panel__badge">Service Quality - 34%</span>
+              <h3 class="detail-panel__title">What Technicians Directly Influence</h3>
+            </div>
+
+            <div class="detail-section">
+              <p class="detail-section__label">You control all four of these</p>
+              <ul class="detail-list">
+                <li>Thoroughness of maintenance and repair work performed</li>
+                <li>Condition of vehicle on return to the customer</li>
+                <li>Quality of communication in updates and explanations</li>
+                <li>Total time required to complete service</li>
+              </ul>
+            </div>
           </div>
 
-          <div class="detail-section">
-            <p class="detail-section__label">You control all four of these</p>
-            <ul class="detail-list">
-              <li>Thoroughness of maintenance and repair work performed</li>
-              <li>Condition of vehicle on return to the customer</li>
-              <li>Quality of communication in updates and explanations</li>
-              <li>Total time required to complete service</li>
-            </ul>
+          <div class="detail-part detail-part--2" id="detail-part-2">
+            <div class="detail-section">
+              <p class="detail-section__label">Why this matters</p>
+              <ul class="detail-list detail-list--green">
+                <li>Service Quality is the <strong style="color:var(--text-strong)">largest single CSI factor</strong> - 34% of total score</li>
+                <li>CSI affects dealership incentives and allocations from Porsche</li>
+                <li>Strong CSI creates opportunities - better resources, training, and support for the entire team</li>
+              </ul>
+            </div>
           </div>
 
-          <div class="detail-section">
-            <p class="detail-section__label">Why this matters</p>
-            <ul class="detail-list detail-list--green">
-              <li>Service Quality is the <strong style="color:var(--text-strong)">largest single CSI factor</strong> — 34% of total score</li>
-              <li>CSI affects dealership incentives and allocations from Porsche</li>
-              <li>Strong CSI creates opportunities — better resources, training, and support for the entire team</li>
-            </ul>
+          <div class="detail-part detail-part--3" id="detail-part-3">
+            <div class="detail-callout">
+              <p>"Porsche consistently ranks at the top in customer satisfaction. Your technical excellence and
+                <strong>professional communication</strong> are the reasons why."</p>
+            </div>
           </div>
 
-          <div class="detail-callout">
-            <p>"Porsche consistently ranks at the top in customer satisfaction. Your technical excellence and
-              <strong>professional communication</strong> are the reasons why."</p>
-          </div>
-
-        </div><!-- /.detail-panel -->
+</div><!-- /.detail-panel -->
 
       </div><!-- /.right-column -->
 
@@ -723,6 +741,10 @@
       imagePanel.classList.add('is-hidden');
       detailPanel.classList.add('is-visible');
 
+      if (window.playSlide08Part2Vo) {
+        window.playSlide08Part2Vo();
+      }
+
     }
 
     startImageIdleZoom();
@@ -749,9 +771,74 @@
       }
       entranceAnimation();
     })();
-
-    // ── Animate dimension cards at 12-second VO mark ──────────
+    
+    // Slide-level timing (independent of VO clip switching)
+    var slideStartMs = Date.now();
     var cardsAnimated = false;
+    var currentVoClip = null;
+    var part2Started = false;
+    var part2CueIndex = 0;
+    var finalInteractionPlayed = false;
+
+    var voClips = {
+      part1: '../audio/vo/CC01_SLD_008_part1_00-37.mp3',
+      part2: '../audio/vo/CC01_SLD_008_part2_37-end.mp3'
+    };
+
+    function getSlideClockSec() {
+      return (Date.now() - slideStartMs) / 1000;
+    }
+
+    function playVoClip(clipKey) {
+      if (!SandboxRuntime || !SandboxRuntime.voAudio || !voClips[clipKey]) return;
+      currentVoClip = clipKey;
+      SandboxRuntime.voAudio.pause();
+      SandboxRuntime.voAudio.src = voClips[clipKey];
+      SandboxRuntime.voAudio.currentTime = 0;
+      var p = SandboxRuntime.voAudio.play();
+      if (p && typeof p.catch === 'function') p.catch(function () {});
+      SandboxRuntime.isPlaying = true;
+      if (typeof SandboxRuntime.updatePlayButton === 'function') {
+        SandboxRuntime.updatePlayButton();
+      }
+    }
+    // Reveal staged detail parts during part2 narration (seconds from part2 start).
+    var part2SectionCues = [
+      { at: 0.0, id: 'detail-part-1' },
+      { at: 36.0, id: 'detail-part-2' },
+      { at: 49.0, id: 'detail-part-3' }
+    ];
+
+    function resetDetailParts() {
+      ['detail-part-1', 'detail-part-2', 'detail-part-3'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('is-visible');
+      });
+    }
+
+    function revealDetailPart(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.add('is-visible');
+    }
+
+    function syncPart2SectionCues(currentTime) {
+      while (
+        part2CueIndex < part2SectionCues.length &&
+        currentTime >= part2SectionCues[part2CueIndex].at
+      ) {
+        revealDetailPart(part2SectionCues[part2CueIndex].id);
+        part2CueIndex += 1;
+      }
+    }
+
+    window.playSlide08Part2Vo = function () {
+      if (part2Started) return;
+      part2Started = true;
+      part2CueIndex = 0;
+      resetDetailParts();
+      revealDetailPart('detail-part-1');
+      playVoClip('part2');
+    };
 
     function animateDimCards() {
       if (cardsAnimated) return;
@@ -761,7 +848,6 @@
         setTimeout(function () {
           card.classList.add('is-visible');
           card.classList.add('is-shimmer');
-          // Shimmer runs for ~2.5 cycles then stops
           setTimeout(function () {
             card.classList.remove('is-shimmer');
           }, 3000);
@@ -769,13 +855,13 @@
       });
     }
 
-    // Scale-pulse cues — one per dimension, in VO order
+    // Scale-pulse cues in narration order (slide clock-based).
     var pulseCues = [
-      { time: 14, cardIndex: 0, fired: false }, // Service Initiation
-      { time: 18, cardIndex: 1, fired: false }, // Service Advisor
-      { time: 21, cardIndex: 2, fired: false }, // Service Facility
-      { time: 25, cardIndex: 3, fired: false }, // Vehicle Pick Up
-      { time: 29, cardIndex: 4, fired: false }, // Service Quality
+      { time: 13, cardIndex: 0, fired: false },
+      { time: 17, cardIndex: 1, fired: false },
+      { time: 20, cardIndex: 2, fired: false },
+      { time: 23, cardIndex: 3, fired: false },
+      { time: 27, cardIndex: 4, fired: false }
     ];
 
     function pulseCard(index) {
@@ -783,14 +869,13 @@
       var card  = cards[index];
       if (!card) return;
       card.classList.remove('is-pulse');
-      void card.offsetWidth; // force reflow so animation restarts cleanly
+      void card.offsetWidth;
       card.classList.add('is-pulse');
       setTimeout(function () { card.classList.remove('is-pulse'); }, 600);
     }
 
-    // Primary: VO time
-    SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
-      var t = SandboxRuntime.voAudio.currentTime;
+    function visualTimelineTick() {
+      var t = getSlideClockSec();
       if (!cardsAnimated && t >= 12) {
         animateDimCards();
       }
@@ -800,15 +885,31 @@
           pulseCard(cue.cardIndex);
         }
       });
-    });
+      window.requestAnimationFrame(visualTimelineTick);
+    }
 
-    // Fallback: wall clock (in case VO hasn't started)
-    setTimeout(animateDimCards, 13500);
+    SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
+      if (currentVoClip === 'part2') {
+        syncPart2SectionCues(SandboxRuntime.voAudio.currentTime);
+      }
+    });
 
     SandboxRuntime.voAudio.addEventListener('ended', function () {
-      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
-      SandboxRuntime.interactionAudio.play().catch(function () {});
+      if (currentVoClip === 'part2' && !finalInteractionPlayed) {
+        finalInteractionPlayed = true;
+        SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+        SandboxRuntime.interactionAudio.play().catch(function () {});
+      }
     });
+
+    // Part 1 on load with a 0.04s delay.
+    setTimeout(function () {
+      playVoClip('part1');
+    }, 40);
+
+    visualTimelineTick();
+
 </script>
 </body>
 </html>
+
