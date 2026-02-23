@@ -1,0 +1,12 @@
+[
+  { "time":  5.0, "target": "#col-tech",    "note": "VO: 'Technicians are responsible for three key areas of communication...'" },
+  { "time":  8.0, "target": "#tech-cat-1",  "note": "VO: 'First, technical explanations — what you found during diagnosis, why repairs are necessary, how systems work...'" },
+  { "time": 20.0, "target": "#tech-cat-2",  "note": "VO: 'Second, vehicle condition — showing worn or damaged parts, demonstrating problems, explaining severity levels...'" },
+  { "time": 33.0, "target": "#tech-cat-3",  "note": "VO: 'And third, repair necessity — why this specific repair is recommended, what Porsche engineering specifies...'" },
+  { "time": 46.0, "target": "#col-sa",      "note": "VO: 'Now, what remains with service advisors...' — SA column slides in" },
+  { "time": 50.0, "target": "#sa-cat-1",    "note": "VO: 'Pricing discussions and negotiations — final cost quotes, payment options, discounts...'" },
+  { "time": 58.0, "target": "#sa-cat-2",    "note": "VO: 'Timing promises — specific completion commitments, scheduling, loaner coordination...'" },
+  { "time": 66.0, "target": "#sa-cat-3",    "note": "VO: 'And warranty issues — coverage determinations, claim processing, policy interpretations...'" },
+  { "time": 74.0, "target": "#role-callout","note": "VO: 'Your role is clear: you provide the technical expertise and honest assessment. The service advisor handles the business transaction...'" },
+  { "time": 90.0, "target": "#continue-btn","note": "VO ends — Continue button becomes available" }
+]

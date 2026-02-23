@@ -1,0 +1,13 @@
+[
+  { "time":  13.0, "target": "#are-1",        "note": "VO: 'They want credibility from the actual expert. As one customer put it...'" },
+  { "time": 18.0, "target": "#are-2",        "note": "VO: 'They want transparency and unfiltered information. They want the truth about their car...'" },
+  { "time": 28.0, "target": "#are-3",        "note": "VO: 'They want technical depth. They have questions the service advisor may not be able to answer...'" },
+  { "time": 38.0, "target": "#are-4",        "note": "VO: 'They want to build trust through direct conversation. They need to feel confident in their decision...'" },
+  { "time": 47.0, "target": "#are-5",        "note": "VO: 'And many want shared enthusiasm. They want to talk to someone who understands and appreciates Porsche...'" },
+  { "time": 63.0, "target": "#not-1",        "note": "VO: 'They are not looking to negotiate price with you...'" },
+  { "time": 73.0, "target": "#not-2",        "note": "VO: 'They are not trying to catch you in a lie or challenge your diagnosis...'" },
+  { "time": 83.0, "target": "#not-3",        "note": "VO: 'They are not expecting you to resolve warranty disputes...'" },
+  { "time": 91.0, "target": "#not-4",        "note": "VO: 'And they are not trying to waste your time. Most customers genuinely respect your expertise...'" },
+  { "time": 99.0, "target": "#key-insight",  "note": "VO: 'Here is the key insight you need to remember: Porsche owners are often enthusiasts...'" },
+  { "time":113.0, "target": "#continue-btn", "note": "VO ends — Continue button becomes available" }
+]

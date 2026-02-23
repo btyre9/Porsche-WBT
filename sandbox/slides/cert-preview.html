@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Certificate Preview</title>
+  <style>
+    @font-face { font-family: "Porsche Next TT"; src: url("../../assets/fonts/porsche-next-tt.ttf") format("truetype"); font-weight: 400; }
+    @font-face { font-family: "Porsche Next TT"; src: url("../../assets/fonts/porsche-next-tt-bold.ttf") format("truetype"); font-weight: 700; }
+    @font-face { font-family: "Porsche Next TT"; src: url("../../assets/fonts/porsche-next-tt-bold-italic.ttf") format("truetype"); font-weight: 700; font-style: italic; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #888;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      font-family: "Porsche Next TT", Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .label {
+      color: #fff;
+      font-size: 13px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+      text-align: center;
+    }
+
+    /* ── Certificate ── */
+    .certificate {
+      position: relative;
+      width: 8.5in;
+      height: 11in;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+    }
+
+    .cert-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    .cert-overlay-name {
+      position: absolute;
+      top: 36%;              /* ← sits ON the rule line */
+      left: 50%;
+      transform: translate(-50%, -100%); /* baseline lands on the line */
+      font-size: 22pt;
+      font-weight: 400;
+      color: #1a1a1a;
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .cert-overlay-course {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 22pt;
+      font-weight: 700;
+      font-style: italic;
+      color: #1a1a1a;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Gold block covers the baked-in year; dynamic year sits on top */
+    .cert-overlay-year {
+      position: absolute;
+      top: 74.5%;            /* ← fine-tune if needed */
+      left: 77%;           /* ← fine-tune if needed */
+      transform: translate(-19%, -50%);
+      font-size: 20pt;
+      font-weight: 700;
+      color: #3d2000;
+      text-align: center;
+      letter-spacing: 0.04em;
+      background: #FBE3A2;   /* matches the inner gold of the seal */
+      padding: 5px 14px;
+      border-radius: 3px;
+    }
+
+    @media print {
+      body { background: none; padding: 0; }
+      .label { display: none; }
+      .certificate { box-shadow: none; }
+      @page { size: 8.5in 11in portrait; margin: 0; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="label">Certificate preview — <a href="javascript:window.print()" style="color:#fff;">Print / Save as PDF</a></p>
+
+  <div class="certificate">
+    <img class="cert-bg" src="../../assets/images/certificate-template.jpg" alt="">
+    <p class="cert-overlay-name">John Smith</p>
+    <!-- ⚠️  CONFIRM: update with official course title -->
+    <p class="cert-overlay-course">Customer Communications — Module 1</p>
+    <p class="cert-overlay-year">2026</p>
+  </div>
+
+</body>
+</html>

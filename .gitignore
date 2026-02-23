@@ -24,3 +24,6 @@ sandbox/audio/*.wav
 # Misplaced local SSH keys (never commit)
 brian.tyre@icloud.com
 brian.tyre@icloud.com.pub
+
+# Oversized local-only video asset
+assets/video/Porsche_Service_Maintenance_Vehicle-exterior_4617_enww_1920.mp4

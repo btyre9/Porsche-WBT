@@ -1,0 +1,9 @@
+[
+  { "time":   0.0, "target": "#eyebrow",  "note": "Slide loads — eyebrow and headline fade in on DOMContentLoaded" },
+  { "time":  10.0, "target": "#card-1",   "note": "VO: 'You don't just work for Porsche — you ARE Porsche...' — Card 1 fades in with dot indicator" },
+  { "time":  33.0, "target": "#card-2",   "note": "VO: 'Their experience with you IS their Porsche experience...' — Card 2 slides in from right" },
+  { "time":  44.0, "target": "#card-3",   "note": "VO: 'In every conversation you deliver on the Porsche promise — or you don't...' — Card 3 slides in" },
+  { "time":  66.0, "target": "#card-4",   "note": "VO: 'Very few people in the world reach your technical level...' — Card 4 (Pride grid) slides in" },
+  { "time":  92.0, "target": "#card-5",   "note": "VO: 'In the next eleven modules, you'll develop specific communication techniques...' — Card 5 (What's Next) slides in" },
+  { "time": 100.0, "target": "#cta",      "note": "VO ends — CTA fades in: 'You're ready. Let's build these skills together.'" }
+]

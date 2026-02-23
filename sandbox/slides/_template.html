@@ -2,12 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
   <title>Slide Template</title>
   <style>
     /* ============================================
        SANDBOX SLIDE TEMPLATE
        Copy this file to create new slides.
-       ============================================ */
+       ============================================
+
+       Slide ID Convention: SLD-CC01-XXX (e.g., SLD-CC01-005)
+
+       Associated files (place in sandbox folders):
+       - Audio VO:         sandbox/audio/vo/SLD-CC01-XXX.mp3
+       - Captions:         sandbox/captions/SLD-CC01-XXX.vtt
+       - Animation Cues:   sandbox/animation-cues/SLD-CC01-XXX.json
+       - Interaction Audio: sandbox/audio/interaction/SLD-CC01-XXX-clipname.mp3
+
+       When ready to move to Player:
+         python builder/promote_sandbox_slide.py --slide SLD-CC01-XXX
+    */
 
     @font-face {
       font-family: 'Porsche Next TT';
@@ -34,41 +47,97 @@
 
     /* Your slide styles here */
     .slide {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px;
+      position: relative;
+      width: 1920px;
+      height: 920px;
     }
 
     .slide-title {
-      font-size: 64px;
+      position: absolute;
+      top: 62px;
+      left: 120px;
+      font-size: 48px;
       font-weight: 700;
-      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    .slide-title::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0;
+      width: 120px;
+      height: 8px;
+      background: #d5001c;
     }
 
     .slide-content {
+      position: absolute;
+      top: 180px;
+      left: 120px;
+      right: 120px;
+      bottom: 120px;
       font-size: 24px;
-      text-align: center;
-      max-width: 1200px;
       line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <div class="slide">
+  <div class="slide" data-slide-id="SLD-CC01-XXX">
     <h1 class="slide-title">Slide Title Here</h1>
-    <p class="slide-content">
-      Your slide content goes here. Edit this template to create your slide.
-    </p>
+    <div class="slide-content">
+      <p>Your slide content goes here. Edit this template to create your slide.</p>
+    </div>
   </div>
 
-  <!-- Include GSAP if needed for animations -->
+  <!-- GSAP for animations -->
   <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+
+  <!-- Sandbox Runtime (provides audio, captions, animation cues) -->
+  <script src="../sandbox-runtime.js"></script>
+
   <script>
-    // Your slide JavaScript here
+    // ============================================
+    // SANDBOX RUNTIME INITIALIZATION
+    // ============================================
+    // Change 'SLD-CC01-XXX' to match your slide's ID
+
+    SandboxRuntime.init('SLD-CC01-XXX', {
+      autoplay: false,      // Set true to auto-play VO on load
+      basePath: '../'       // Path to sandbox folder from slides/
+    });
+
+    // ============================================
+    // INTERACTION AUDIO
+    // ============================================
+    // To play audio clips on user interactions:
+    //
+    // playInteractionClip('clipname');
+    //
+    // This plays: sandbox/audio/interaction/SLD-CC01-XXX-clipname.mp3
+    //
+    // Example:
+    // document.querySelector('.my-button').addEventListener('click', () => {
+    //   playInteractionClip('button-click');
+    // });
+
+    // ============================================
+    // ANIMATION CUES
+    // ============================================
+    // Create sandbox/animation-cues/SLD-CC01-XXX.json:
+    //
+    // [
+    //   { "time": 0.5, "target": ".slide-title", "animation": "fadeIn" },
+    //   { "time": 2.0, "target": ".slide-content", "animation": "slideUp" }
+    // ]
+    //
+    // Available animations: fadeIn, fadeOut, slideUp, slideDown, scaleIn, highlight
+
+    // ============================================
+    // YOUR SLIDE CODE
+    // ============================================
+    // Add your custom JavaScript here
+
   </script>
 </body>
 </html>

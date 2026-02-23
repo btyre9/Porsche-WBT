@@ -79,6 +79,106 @@
       background: #b0001a;
     }
 
+    /* Audio controls in toolbar */
+    .toolbar-audio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 12px;
+      padding-left: 12px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .toolbar-audio.hidden {
+      display: none;
+    }
+
+    #toolbarPlayBtn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #d5001c;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      padding: 0;
+    }
+
+    #toolbarPlayBtn:hover {
+      background: #b0001a;
+    }
+
+    #toolbarProgress {
+      width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #toolbarProgress:hover {
+      height: 8px;
+    }
+
+    #toolbarProgressBar {
+      height: 100%;
+      background: #d5001c;
+      border-radius: 3px;
+      width: 0%;
+      pointer-events: none;
+    }
+
+    #toolbarProgressHandle {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      cursor: grab;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    #toolbarProgress:hover #toolbarProgressHandle,
+    #toolbarProgress.dragging #toolbarProgressHandle {
+      opacity: 1;
+    }
+
+    #toolbarProgress.dragging #toolbarProgressHandle {
+      cursor: grabbing;
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    #toolbarTime {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      min-width: 70px;
+    }
+
+    #toolbarCCBtn {
+      padding: 4px 8px;
+      font-size: 11px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 3px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    #toolbarCCBtn.active {
+      background: #d5001c;
+      border-color: #d5001c;
+    }
+
     /* Slide container */
     .slide-container {
       margin-top: 56px;
@@ -219,9 +319,18 @@
         <option value="">-- Select a slide --</option>
       </select>
       <button id="refreshBtn">Refresh</button>
-      <select id="audioSelect">
-        <option value="">-- Audio (optional) --</option>
-      </select>
+      <button id="nextBtn" class="primary" style="opacity:0.35;pointer-events:none;" disabled>Next →</button>
+
+      <!-- Audio controls -->
+      <div class="toolbar-audio hidden" id="toolbarAudio">
+        <button id="toolbarPlayBtn" title="Play/Pause">▶</button>
+        <div id="toolbarProgress">
+          <div id="toolbarProgressBar"></div>
+          <div id="toolbarProgressHandle"></div>
+        </div>
+        <span id="toolbarTime">0:00 / 0:00</span>
+        <button id="toolbarCCBtn" title="Toggle Captions">CC</button>
+      </div>
     </div>
   </div>
 
@@ -236,24 +345,49 @@
     </div>
   </div>
 
-  <div class="audio-panel hidden" id="audioPanel">
-    <label>Audio:</label>
-    <audio id="audioPlayer" controls></audio>
-  </div>
 
   <script>
     // Configuration - add your slides here
     const slides = [
+      { name: 'SLD-CC01-001 - Title Intro', file: 'slides/SLD-CC01-001.html' },
+      { name: 'SLD-CC01-002 - Beyond the Wrench', file: 'slides/SLD-CC01-002.html' },
+      { name: 'SLD-CC01-003 - Learning Objectives', file: 'slides/SLD-CC01-003.html' },
+      { name: 'SLD-CC01-004 - Brand Ambassador', file: 'slides/SLD-CC01-004.html' },
+      { name: 'SLD-CC01-005 - Why An Ambassador?', file: 'slides/SLD-CC01-005.html' },
+      { name: 'SLD-CC01-006 - What Sets You Apart', file: 'slides/SLD-CC01-006.html' },
+      { name: 'SLD-CC01-007 - The Financial Reality', file: 'slides/SLD-CC01-007.html' },
+      { name: 'SLD-CC01-008 - Your Impact on CSI', file: 'slides/SLD-CC01-008.html' },
+      { name: 'KC-CC01-001 - Knowledge Check', file: 'slides/KC-CC01-001.html' },
+      { name: 'KC-CC01-002 - Knowledge Check', file: 'slides/KC-CC01-002.html' },
+      { name: 'SLD-CC01-009 - When You Interact with Customers', file: 'slides/SLD-CC01-009.html' },
+      { name: 'SLD-CC01-010 - Understanding Customer Expectations', file: 'slides/SLD-CC01-010.html' },
+      { name: 'SLD-CC01-011 - Technical Expert AND Communicator', file: 'slides/SLD-CC01-011.html' },
+      { name: 'KC-CC01-003 - Knowledge Check', file: 'slides/KC-CC01-003.html' },
+      { name: 'KC-CC01-004 - Knowledge Check', file: 'slides/KC-CC01-004.html' },
+      { name: 'SLD-CC01-012 - Clear Boundaries, Clear Responsibilities', file: 'slides/SLD-CC01-012.html' },
+      { name: 'SLD-CC01-013 - You ARE Porsche', file: 'slides/SLD-CC01-013.html' },
+      { name: 'FQ-CC01-001 - Final Quiz Q1',  file: 'slides/FQ-CC01-001.html' },
+      { name: 'FQ-CC01-002 - Final Quiz Q2',  file: 'slides/FQ-CC01-002.html' },
+      { name: 'FQ-CC01-003 - Final Quiz Q3',  file: 'slides/FQ-CC01-003.html' },
+      { name: 'FQ-CC01-004 - Final Quiz Q4',  file: 'slides/FQ-CC01-004.html' },
+      { name: 'FQ-CC01-005 - Final Quiz Q5',  file: 'slides/FQ-CC01-005.html' },
+      { name: 'FQ-CC01-006 - Final Quiz Q6',  file: 'slides/FQ-CC01-006.html' },
+      { name: 'FQ-CC01-007 - Final Quiz Q7',  file: 'slides/FQ-CC01-007.html' },
+      { name: 'FQ-CC01-008 - Final Quiz Q8',  file: 'slides/FQ-CC01-008.html' },
+      { name: 'FQ-CC01-009 - Final Quiz Q9',  file: 'slides/FQ-CC01-009.html' },
+      { name: 'FQ-CC01-010 - Final Quiz Q10', file: 'slides/FQ-CC01-010.html' },
+      { name: 'FQ-CC01-SCORE - Quiz Results',  file: 'slides/FQ-CC01-SCORE.html' },
       { name: 'Circle Hub Test', file: 'slides/circle-hub-test.html' },
       { name: 'Template (blank)', file: 'slides/_template.html' },
-      // Add more slides here:
-      // { name: 'Flip Card Test', file: 'slides/flip-card-test.html' },
     ];
 
-    const audioFiles = [
-      // Example:
-      // { name: 'Slide 1 VO', file: 'audio/slide-01-vo.mp3' },
-    ];
+    // Audio state
+    let currentSlideId = null;
+    let isPlaying = false;
+    let captionsEnabled = true;
+
+    // Final Quiz score tracking (sandbox only — SCORM player handles production scoring)
+    let fqCorrect = 0;
 
     // Auto-detect slides in slides/ folder (requires server)
     async function detectSlides() {
@@ -320,29 +454,45 @@
 
       // Update dropdown
       document.getElementById('slideSelect').value = file;
+
+      // Extract slide ID from filename (e.g., "slides/SLD-CC01-001.html" -> "SLD-CC01-001")
+      const match = file.match(/slides\/([^\/]+)\.html$/);
+      if (match && match[1].startsWith('SLD-')) {
+        currentSlideId = match[1];
+        document.getElementById('toolbarAudio').classList.remove('hidden');
+        resetAudioControls();
+      } else {
+        currentSlideId = null;
+        document.getElementById('toolbarAudio').classList.add('hidden');
+      }
     }
 
-    function loadAudio(file) {
-      const panel = document.getElementById('audioPanel');
-      const player = document.getElementById('audioPlayer');
+    function resetAudioControls() {
+      setNextEnabled(true); // default: Next is open; slides can lock it via postMessage
+      isPlaying = false;
+      document.getElementById('toolbarPlayBtn').textContent = '▶';
+      document.getElementById('toolbarProgressBar').style.width = '0%';
+      document.getElementById('toolbarProgressHandle').style.left = '0%';
+      document.getElementById('toolbarTime').textContent = '0:00 / 0:00';
+    }
 
-      if (!file) {
-        panel.classList.add('hidden');
-        player.src = '';
-        return;
+    function formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '0:00';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function sendToSlide(action, data = {}) {
+      const frame = document.getElementById('slideFrame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ type: 'sandbox-control', action, ...data }, '*');
       }
-
-      player.src = file;
-      panel.classList.remove('hidden');
     }
 
     // Event listeners
     document.getElementById('slideSelect').addEventListener('change', (e) => {
       loadSlide(e.target.value);
-    });
-
-    document.getElementById('audioSelect').addEventListener('change', (e) => {
-      loadAudio(e.target.value);
     });
 
     document.getElementById('refreshBtn').addEventListener('click', () => {
@@ -352,8 +502,118 @@
       }
     });
 
+    // ── Next button ──────────────────────────────────────────
+    function setNextEnabled(enabled) {
+      const btn = document.getElementById('nextBtn');
+      btn.disabled        = !enabled;
+      btn.style.opacity   = enabled ? '1'     : '0.35';
+      btn.style.pointerEvents = enabled ? 'auto' : 'none';
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      const frameEl    = document.getElementById('slideFrame');
+      const currentIdx = slides.findIndex(s => frameEl.src.includes(s.file));
+      if (currentIdx >= 0 && currentIdx < slides.length - 1) {
+        loadSlide(slides[currentIdx + 1].file);
+      }
+    });
+
     document.getElementById('toggleList').addEventListener('click', () => {
       document.getElementById('slideList').classList.toggle('open');
+    });
+
+    // Toolbar audio controls
+    document.getElementById('toolbarPlayBtn').addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      document.getElementById('toolbarPlayBtn').textContent = isPlaying ? '⏸' : '▶';
+      sendToSlide(isPlaying ? 'play' : 'pause');
+    });
+
+    // Progress bar scrubbing
+    const progressEl = document.getElementById('toolbarProgress');
+    const progressBarEl = document.getElementById('toolbarProgressBar');
+    const progressHandleEl = document.getElementById('toolbarProgressHandle');
+    let isDragging = false;
+
+    function seekToPosition(clientX) {
+      const rect = progressEl.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      progressBarEl.style.width = `${percent * 100}%`;
+      progressHandleEl.style.left = `${percent * 100}%`;
+      sendToSlide('seek', { percent });
+    }
+
+    progressEl.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      progressEl.classList.add('dragging');
+      seekToPosition(e.clientX);
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        seekToPosition(e.clientX);
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        progressEl.classList.remove('dragging');
+      }
+    });
+
+    document.getElementById('toolbarCCBtn').addEventListener('click', () => {
+      captionsEnabled = !captionsEnabled;
+      document.getElementById('toolbarCCBtn').classList.toggle('active', captionsEnabled);
+      sendToSlide('toggleCaptions', { enabled: captionsEnabled });
+    });
+
+    // Set initial CC button state
+    document.getElementById('toolbarCCBtn').classList.add('active');
+
+    // Listen for messages from slide iframe
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'sandbox-lock-next')   { setNextEnabled(false); return; }
+      if (e.data && e.data.type === 'sandbox-unlock-next') { setNextEnabled(true);  return; }
+
+      if (e.data && e.data.type === 'sandbox-next') {
+        // Tally FQ results when a result is included
+        if (e.data.result === 'correct')   fqCorrect++;
+        if (e.data.result === 'incorrect') { /* count only, no increment */ }
+
+        const frameEl = document.getElementById('slideFrame');
+        const currentIdx = slides.findIndex(s => frameEl.src.includes(s.file));
+        if (currentIdx >= 0 && currentIdx < slides.length - 1) {
+          const nextFile = slides[currentIdx + 1].file;
+          // Inject score params when navigating to the results slide
+          if (nextFile.includes('FQ-CC01-SCORE')) {
+            loadSlide(nextFile + '?score=' + fqCorrect + '&total=10');
+          } else {
+            loadSlide(nextFile);
+          }
+        }
+      }
+
+      // Retake: reset score counter and return to slide 1
+      if (e.data && e.data.type === 'sandbox-goto' && e.data.target === 'start') {
+        fqCorrect = 0;
+        loadSlide(slides[0].file);
+      }
+      if (e.data && e.data.type === 'sandbox-audio-update') {
+        const { currentTime, duration, playing } = e.data;
+
+        if (duration && !isDragging) {
+          const percent = (currentTime / duration) * 100;
+          document.getElementById('toolbarProgressBar').style.width = `${percent}%`;
+          document.getElementById('toolbarProgressHandle').style.left = `${percent}%`;
+          document.getElementById('toolbarTime').textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        }
+
+        if (typeof playing === 'boolean') {
+          isPlaying = playing;
+          document.getElementById('toolbarPlayBtn').textContent = isPlaying ? '⏸' : '▶';
+        }
+      }
     });
 
     // Initialize

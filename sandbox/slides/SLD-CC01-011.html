@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Technical Expert AND Communicator</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      overflow: hidden;
+      background: #111317;
+      font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    :root {
+      --accent:        #d5001c;
+      --dark-0:        #111317;
+      --dark-1:        #1e2128;
+      --dark-2:        #2a2f39;
+      --text:          #ffffff;
+      --text-sub:      rgba(255, 255, 255, 0.60);
+      --text-body:     rgba(255, 255, 255, 0.88);
+      /* Technical — steel blue tint */
+      --tech-bg:       rgba(29, 78, 216, 0.09);
+      --tech-border:   rgba(59, 130, 246, 0.28);
+      --tech-dot:      rgba(99, 160, 255, 0.80);
+      --tech-icon-bg:  rgba(59, 130, 246, 0.16);
+      /* Communication — emerald tint */
+      --comm-bg:       rgba(22, 163, 74, 0.09);
+      --comm-border:   rgba(34, 197, 94, 0.28);
+      --comm-dot:      rgba(74, 222, 128, 0.80);
+      --comm-icon-bg:  rgba(34, 197, 94, 0.16);
+      /* Result — red */
+      --result-bg:     rgba(213, 0, 28, 0.09);
+      --result-border: rgba(213, 0, 28, 0.35);
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--dark-0) 0%, var(--dark-1) 48%, var(--dark-2) 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 62px 120px 44px;
+      gap: 20px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 6; /* above intro image */
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 120px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__title {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    /* ── Equation row ────────────────────────────────────────── */
+    .equation-row {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* ── Equation cards ──────────────────────────────────────── */
+    .eq-card {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;              /* clips portrait image to card corners */
+      display: flex;
+      flex-direction: row;           /* content left, image right */
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    /* Text side of the card */
+    .card-content {
+      flex: 1;
+      min-width: 0;
+      padding: 24px 18px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .eq-card--tech {
+      background: var(--tech-bg);
+      border: 1.5px solid var(--tech-border);
+    }
+
+    .eq-card--comm {
+      background: var(--comm-bg);
+      border: 1.5px solid var(--comm-border);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon--tech { background: var(--tech-icon-bg); }
+    .card-icon--comm { background: var(--comm-icon-bg); }
+
+    .card-icon img {
+      width: 26px;
+      height: 26px;
+      filter: brightness(0) invert(1);
+      opacity: 0.88;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .card-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      flex-shrink: 0;
+    }
+
+    /* ── Card image — portrait strip on the right ────────────── */
+    .card-image {
+      flex: 0 0 200px;              /* fixed portrait width */
+      position: relative;
+      overflow: hidden;
+      /* no separate border-radius — parent card clips it */
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;  /* favour face/subject at top */
+      display: block;
+    }
+
+    /* Left-edge gradient: blends photo into card background */
+    .card-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right,
+        rgba(17, 19, 23, 0.72) 0%,
+        rgba(17, 19, 23, 0.30) 22%,
+        transparent 48%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Top and bottom micro-vignette for depth */
+    .card-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(17,19,23,0.30) 0%, transparent 18%),
+        linear-gradient(to top,    rgba(17,19,23,0.30) 0%, transparent 18%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .card-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text-body);
+    }
+
+    .card-list li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    .eq-card--tech .card-list li::before { background: var(--tech-dot); }
+    .eq-card--comm .card-list li::before { background: var(--comm-dot); }
+
+    /* ── Operators ───────────────────────────────────────────── */
+    .operator {
+      flex-shrink: 0;
+      width: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .operator-symbol {
+      font-size: 44px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.38);
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ── Result panel ────────────────────────────────────────── */
+    .eq-result {
+      flex: 0 0 300px;
+      border-radius: 12px;
+      padding: 16px 16px 22px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1.5px solid var(--result-border);
+      box-shadow: 0 0 48px rgba(213, 0, 28, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-align: center;
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    /* Illustration fills the available height above the badge */
+    .result-illustration-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .result-illustration-wrap img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 7px 18px;
+      background: rgba(213, 0, 28, 0.10);
+      border: 1px solid rgba(213, 0, 28, 0.35);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(213, 0, 28, 0.90);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* ── Bottom row ──────────────────────────────────────────── */
+    .bottom-row {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 24px;
+      flex: 0 0 200px;
+    }
+
+    /* Reality */
+    .reality-box {
+      flex: 1;
+      border-radius: 10px;
+      padding: 22px 26px;
+      background: rgba(255, 255, 255, 0.04);
+      border-left: 4px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    .box-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .reality-text {
+      font-size: 17px;
+      line-height: 1.62;
+      color: var(--text-body);
+    }
+
+    .reality-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* Leadership */
+    .leadership-box {
+      flex: 1;
+      border-radius: 10px;
+      padding: 22px 26px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    .leadership-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .leadership-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--text-body);
+    }
+
+    .leader-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(213, 0, 28, 0.18);
+      border: 1px solid rgba(213, 0, 28, 0.38);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.80);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Intro image — inset floating panel ─────────────────────
+       Inset from all edges so the dark slide shows around it,
+       which reduces the crop and lets top + bottom be visible. */
+    .intro-image-wrap {
+      position: absolute;
+      top: 48px;
+      bottom: 48px;
+      left: 56px;
+      right: 56px;
+      z-index: 5;
+      border-radius: 16px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .intro-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+
+    /* Soft edge vignette so the panel dissolves into the dark bg */
+    .intro-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(17,19,23,0.55) 0%, transparent 18%),
+        linear-gradient(to top,    rgba(17,19,23,0.55) 0%, transparent 18%),
+        linear-gradient(to right,  rgba(17,19,23,0.40) 0%, transparent 12%),
+        linear-gradient(to left,   rgba(17,19,23,0.40) 0%, transparent 12%);
+      pointer-events: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="slide" data-slide-id="SLD-CC01-011">
+
+    <!-- Header — visible on load -->
+    <div class="header">
+      <div class="header__accent" id="hdr-accent"></div>
+      <h1 class="header__title" id="hdr-title">You're More Than Just a Technical Expert</h1>
+    </div>
+
+    <!-- Equation row — elements revealed by VO cues -->
+    <div class="equation-row">
+
+      <div class="eq-card eq-card--tech" id="card-tech">
+        <div class="card-content">
+          <div class="card-header">
+            <div class="card-icon card-icon--tech">
+              <img src="../../assets/icons/wrench.svg" alt="">
+            </div>
+            <div class="card-title">Technical Expertise</div>
+          </div>
+          <ul class="card-list">
+            <li>Diagnose accurately</li>
+            <li>Repair correctly</li>
+            <li>Use proper procedures</li>
+            <li>Maintain quality standards</li>
+            <li>Stay current with technology</li>
+          </ul>
+        </div>
+        <div class="card-image">
+          <img src="../../assets/images/technical-expertise.webp" alt="Technician performing diagnostic work">
+        </div>
+      </div>
+
+      <div class="operator" id="op-plus">
+        <span class="operator-symbol">+</span>
+      </div>
+
+      <div class="eq-card eq-card--comm" id="card-comm">
+        <div class="card-content">
+          <div class="card-header">
+            <div class="card-icon card-icon--comm">
+              <img src="../../assets/icons/chat.svg" alt="">
+            </div>
+            <div class="card-title">Communication Excellence</div>
+          </div>
+          <ul class="card-list">
+            <li>Ensure customer understands</li>
+            <li>Build confidence and trust</li>
+            <li>Manage expectations</li>
+            <li>Explain complex concepts clearly</li>
+            <li>Maintain professionalism</li>
+          </ul>
+        </div>
+        <div class="card-image">
+          <img src="../../assets/images/communication-excellence.webp" alt="Technician communicating with customer">
+        </div>
+      </div>
+
+      <div class="operator" id="op-equals">
+        <span class="operator-symbol">=</span>
+      </div>
+
+      <div class="eq-result" id="eq-result">
+        <div class="result-illustration-wrap">
+          <img src="../../assets/images/Technician+Brand-Ambassador_FLAT_black-text.webp"
+               alt="Porsche Brand Ambassador — technician and communicator combined">
+        </div>
+        <div class="result-badge">Required · Not Optional</div>
+      </div>
+
+    </div><!-- /.equation-row -->
+
+    <!-- Bottom row -->
+    <div class="bottom-row">
+
+      <div class="reality-box" id="reality-box">
+        <div class="box-kicker">The Reality</div>
+        <p class="reality-text">
+          Many technicians excel at the first half. <strong>Fewer excel at both.</strong>
+          Advanced Porsche technicians must master both to truly represent the brand.
+        </p>
+      </div>
+
+      <div class="leadership-box" id="leadership-box">
+        <div class="box-kicker">Your Leadership Role</div>
+        <ul class="leadership-list">
+          <li>
+            <span class="leader-num">1</span>
+            Junior technicians watch and learn from you
+          </li>
+          <li>
+            <span class="leader-num">2</span>
+            You set the standard for communication in your shop
+          </li>
+          <li>
+            <span class="leader-num">3</span>
+            Your behavior shapes shop culture
+          </li>
+          <li>
+            <span class="leader-num">4</span>
+            Leadership through example
+          </li>
+        </ul>
+      </div>
+
+    </div><!-- /.bottom-row -->
+
+
+    <!-- Full-slide intro image — fades out when cards arrive at T_TECH -->
+    <div class="intro-image-wrap" id="intro-image">
+      <img src="../../assets/images/Ptechs-Customers-collage-09.webp"
+           alt="Porsche technicians and customers">
+    </div>
+
+  </div><!-- /.slide -->
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('[data-slide-id]');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+
+  <script>
+    // ── Set initial hidden states before the page paints ─────────────────────
+    // GSAP set() is synchronous — runs before first frame is rendered.
+    gsap.set('#intro-image',     { opacity: 0 });
+    gsap.set('#card-tech',       { opacity: 0, x: -40 });
+    gsap.set('#op-plus',         { opacity: 0, scale: 0.65 });
+    gsap.set('#card-comm',       { opacity: 0, x:  40 });
+    gsap.set('#op-equals',       { opacity: 0, scale: 0.65 });
+    gsap.set('#eq-result',       { opacity: 0, scale: 0.86 });
+    gsap.set('#reality-box',     { opacity: 0, y: 20 });
+    gsap.set('#leadership-box',  { opacity: 0, y: 20 });
+  </script>
+
+  <script src="../sandbox-runtime.js"></script>
+
+  <script>
+    SandboxRuntime.init('SLD-CC01-011', {
+      autoplay: false,
+      basePath: '../'
+    });
+
+    // ── VO timestamps (seconds) mapped from VTT ───────────────────────────────
+    //   8.08  "On one side, technical expertise."
+    //  27.36  "The other side is communication excellence."
+    //  48.24  "Both sides are equally important."
+    //  64.80  "Here's the reality."
+    //  77.68  "And there's another dimension to this, your leadership role."
+    // 103.00  (VO complete — show continue)
+    var T_TECH    =  8.08;
+    var T_COMM    = 27.36;
+    var T_RESULT  = 48.24;
+    var T_REALITY = 64.80;
+    var T_LEADER  = 77.68;
+
+    // ── Reveal system (one-shot per element) ─────────────────────────────────
+    var revealed = {};
+
+    function reveal(id, toProps) {
+      if (revealed[id]) return;
+      revealed[id] = true;
+      gsap.to('#' + id, Object.assign({
+        opacity: 1, x: 0, y: 0, scale: 1,
+        duration: 0.55, ease: 'power2.out'
+      }, toProps || {}));
+    }
+
+    // ── Emphasis pulse system ─────────────────────────────────────────────────
+    // Creates a looping scale-in/out tween while the VO discusses that section.
+    // Killed and snapped back to scale:1 when the section ends.
+    var emphasisTweens = {};
+
+    function emphasize(id) {
+      if (emphasisTweens[id]) return; // already running
+      emphasisTweens[id] = gsap.to('#' + id, {
+        scale: 1.022,
+        duration: 0.88,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1
+      });
+    }
+
+    function deemphasize(id) {
+      if (!emphasisTweens[id]) return;
+      emphasisTweens[id].kill();
+      emphasisTweens[id] = null;
+      gsap.to('#' + id, { scale: 1, duration: 0.35, ease: 'power2.out' });
+    }
+
+    // ── VO-driven cue handler ─────────────────────────────────────────────────
+    SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
+      var t = SandboxRuntime.voAudio.currentTime;
+
+      // — Reveal gates —
+      if (t >= T_TECH) {
+        // Fade intro image out as cards slide in (one-shot)
+        if (!revealed['intro-image-out']) {
+          revealed['intro-image-out'] = true;
+          gsap.to('#intro-image', { opacity: 0, duration: 1.0, ease: 'power2.inOut' });
+        }
+        reveal('card-tech', { duration: 0.55 });
+        reveal('op-plus',   { duration: 0.30, ease: 'back.out(2)' });
+      }
+      if (t >= T_COMM)    reveal('card-comm',  { duration: 0.55 });
+      if (t >= T_RESULT) {
+        reveal('op-equals', { duration: 0.30, ease: 'back.out(2)' });
+        reveal('eq-result', { duration: 0.55, ease: 'back.out(1.5)' });
+      }
+      if (t >= T_REALITY)  reveal('reality-box',   { duration: 0.50 });
+      if (t >= T_LEADER)   reveal('leadership-box', { duration: 0.50 });
+
+      // — Emphasis windows —
+      // Tech card: while VO covers technical expertise
+      if (t >= T_TECH && t < T_COMM)    emphasize('card-tech');
+      else                               deemphasize('card-tech');
+
+      // Comm card: while VO covers communication excellence
+      if (t >= T_COMM && t < T_RESULT)  emphasize('card-comm');
+      else                               deemphasize('card-comm');
+
+      // Result panel: while VO covers "both sides equally important"
+      if (t >= T_RESULT && t < T_REALITY)  emphasize('eq-result');
+      else                                  deemphasize('eq-result');
+
+      // Reality box: while VO covers "here's the reality"
+      if (t >= T_REALITY && t < T_LEADER)  emphasize('reality-box');
+      else                                  deemphasize('reality-box');
+
+      // Leadership box: from cue through end of VO (ended event handles cleanup)
+      if (t >= T_LEADER)  emphasize('leadership-box');
+      else                deemphasize('leadership-box');
+    });
+
+    // ── On load: header in, then intro image fades up ────────────────────────
+    window.addEventListener('DOMContentLoaded', function () {
+      gsap.from('#hdr-accent', {
+        opacity: 0, scaleX: 0, transformOrigin: 'left center',
+        duration: 0.40, ease: 'power2.out'
+      });
+      gsap.from('#hdr-title', {
+        opacity: 0, y: 16,
+        duration: 0.50, ease: 'power2.out', delay: 0.12
+      });
+      // Intro image fades in shortly after header settles
+      gsap.to('#intro-image', {
+        opacity: 1, duration: 1.2, delay: 0.5, ease: 'power2.out'
+      });
+    });
+
+    // ── VO ended: snap emphasis, play next-button interaction sound ──────────
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      deemphasize('leadership-box');
+      SandboxRuntime.playInteractionClip('SLD-CC01-002-next-button');
+    });
+  </script>
+</body>
+</html>

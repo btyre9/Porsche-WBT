@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Objectives</title>
+
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Porsche Next TT', Arial, Helvetica, sans-serif;
+    }
+
+    /* Animation initial states */
+    .anim-fade {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .anim-fade.is-visible { opacity: 1; }
+
+    .anim-slide-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+    .anim-slide-right {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    .Lo1::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div data-layer="LO1" class="Lo1" data-slide-id="SLD-CC01-003"
+    style="width: 1920px; height: 920px; position: relative; background: radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%), linear-gradient(140deg, #111317 0%, #1e2128 48%, #2a2f39 100%); box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.24); overflow: hidden">
+
+    <!-- Right Side Image -->
+    <div data-layer="right-side-portrait-image" class="RightSidePortraitImage anim-fade" id="slide-image"
+      style="width: 576px; height: 872px; right: 24px; top: 24px; position: absolute; overflow: hidden; border-radius: 12px;">
+      <img src="../../assets/images/Ptechs-Customer-06.webp" alt="Porsche technician with customer"
+        style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+    </div>
+
+    <div data-layer="all-text-container" class="AllTextContainer"
+      style="width: 1320px; height: 920px; left: 0px; top: 0px; position: absolute">
+      <div data-layer="red-accent" class="RedAccent anim-fade" id="red-accent"
+        style="width: 120px; height: 8px; left: 120px; top: 62px; position: absolute; background: #D5001C"></div>
+      <div data-layer="heading1" class="Heading1 anim-fade" id="intro-text"
+        style="width: 1140px; height: 28px; left: 120px; top: 192px; position: absolute">
+        <div data-layer="Upon completion of this course, the learner will b"
+          class="UponCompletionOfThisCourseTheLearnerWillB"
+          style="left: 0px; top: 0px; position: absolute; color: white; font-size: 18px; font-family: Porsche Next TT; font-weight: 400; line-height: 28px; word-wrap: break-word">
+          In this module, you'll learn 4 key concepts that establish the foundation for everything that follows.</div>
+      </div>
+      <div data-layer="slide-title" class="SlideTitle anim-slide-up" id="slide-title"
+        style="width: 1140px; height: 56px; left: 120px; top: 92px; position: absolute">
+        <div data-layer="Slide Title" class="SlideTitle"
+          style="left: 0px; top: 0px; position: absolute; color: white; font-size: 56px; font-family: Porsche Next TT; font-weight: 700; line-height: 66px; word-wrap: break-word">
+          Learning Objectives</div>
+      </div>
+      <div data-layer="list-container" class="ListContainer"
+        style="width: 1140px; left: 120px; top: 260px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 40px; display: inline-flex">
+        <div data-layer="Container" class="Container anim-slide-right" id="objective-1"
+          style="width: 1140px; min-height: 44px; position: relative; display: flex; align-items: flex-start;">
+          <div data-layer="Container" class="Container"
+            style="width: 32px; height: 32px; left: 0px; top: 2px; position: absolute; background: #D5001C; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-family: Porsche Next TT; font-weight: 700; line-height: 16px">1</div>
+          <div data-layer="Paragraph" class="Paragraph"
+            style="width: 1088px; left: 52px; top: 0px; position: absolute">
+            <div data-layer="Learners will be able to identify which safety sys"
+              class="LearnersWillBeAbleToIdentifyWhichSafetySys"
+              style="left: 0px; top: 0px; position: absolute; color: white; font-size: 24px; font-family: Porsche Next TT; font-weight: 400; line-height: 34px; word-wrap: break-word">
+              Defining the Porsche Brand Ambassador: Understand the specific responsibilities and expectations tied to
+              this role.</div>
+          </div>
+        </div>
+        <div data-layer="Container" class="Container anim-slide-right" id="objective-2"
+          style="width: 1140px; min-height: 44px; position: relative; display: flex; align-items: flex-start;">
+          <div data-layer="Container" class="Container"
+            style="width: 32px; height: 32px; left: 0px; top: 2px; position: absolute; background: #D5001C; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-family: Porsche Next TT; font-weight: 700; line-height: 16px">2</div>
+          <div data-layer="Paragraph" class="Paragraph"
+            style="width: 1088px; left: 52px; top: 0px; position: absolute">
+            <div data-layer="Next, learners will be able to identify which safe"
+              class="NextLearnersWillBeAbleToIdentifyWhichSafe"
+              style="left: 0px; top: 0px; position: absolute; color: white; font-size: 24px; font-family: Porsche Next TT; font-weight: 400; line-height: 34px; word-wrap: break-word">
+              Connecting Communication to Value: Learn how effective customer interactions directly impact financial
+              results and personal income.</div>
+          </div>
+        </div>
+        <div data-layer="Container" class="Container anim-slide-right" id="objective-3"
+          style="width: 1140px; min-height: 44px; position: relative; display: flex; align-items: flex-start;">
+          <div data-layer="Container" class="Container"
+            style="width: 32px; height: 32px; left: 0px; top: 2px; position: absolute; background: #D5001C; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-family: Porsche Next TT; font-weight: 700; line-height: 16px">3</div>
+          <div data-layer="Paragraph" class="Paragraph"
+            style="width: 1088px; left: 52px; top: 0px; position: absolute">
+            <div data-layer="Learners will be able to describe the various fund"
+              class="LearnersWillBeAbleToDescribeTheVariousFund"
+              style="width: 1088px; left: 0px; top: 0px; position: absolute; color: white; font-size: 24px; font-family: Porsche Next TT; font-weight: 400; line-height: 34px; word-wrap: break-word">
+              Identifying Interaction Scenarios: Recognize the frequent, everyday opportunities to engage directly with
+              customers.</div>
+          </div>
+        </div>
+        <div data-layer="Container" class="Container anim-slide-right" id="objective-4"
+          style="width: 1140px; min-height: 44px; position: relative; display: flex; align-items: flex-start;">
+          <div data-layer="Container" class="Container"
+            style="width: 32px; height: 32px; left: 0px; top: 2px; position: absolute; background: #D5001C; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-family: Porsche Next TT; font-weight: 700; line-height: 16px">4</div>
+          <div data-layer="Paragraph" class="Paragraph"
+            style="width: 1088px; left: 52px; top: 0px; position: absolute">
+            <div data-layer="And finally, learners will be able to describe gal"
+              class="AndFinallyLearnersWillBeAbleToDescribeGal"
+              style="left: 0px; top: 0px; position: absolute; color: white; font-size: 24px; font-family: Porsche Next TT; font-weight: 400; line-height: 34px; word-wrap: break-word">
+              Understanding Customer Intent: Identify what customers truly need when they request your expertise to
+              better build trust.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('[data-slide-id]');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init('SLD-CC01-003', {
+      autoplay: false,
+      basePath: '../'
+    });
+
+    (function () {
+      var headerAccent = document.getElementById('red-accent');
+      var headerTitle  = document.getElementById('slide-title');
+      function entranceAnimation() {
+        if (headerAccent) setTimeout(function () { headerAccent.classList.add('is-visible'); }, 0);
+        if (headerTitle)  setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      }
+      entranceAnimation();
+    })();
+  </script>
+</body>
+
+</html>

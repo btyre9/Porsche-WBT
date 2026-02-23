@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Beyond the Wrench</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400; font-style: normal;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700; font-style: normal;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      margin: 0; padding: 0; overflow: hidden;
+      width: 1920px; height: 920px;
+      background: linear-gradient(140deg, #111317 0%, #1e2128 48%, #2a2f39 100%);
+      font-family: 'Porsche Next TT', Arial, Helvetica, sans-serif;
+    }
+
+    .slide {
+      width: 1920px; height: 920px;
+      position: relative; overflow: hidden;
+    }
+
+    /* Subtle grid */
+    .slide::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Full-bleed background image ── */
+    .slide__bg-image {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0;
+    }
+    .slide__bg-image img {
+      display: block;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Multi-layer vignette: darkens edges, heavier on left for heading legibility */
+    .slide__vignette {
+      position: absolute; inset: 0; z-index: 2;
+      background:
+        linear-gradient(to right,
+          rgba(17,19,23,0.90) 0%,
+          rgba(17,19,23,0.55) 28%,
+          rgba(17,19,23,0.10) 50%,
+          rgba(17,19,23,0.40) 72%,
+          rgba(17,19,23,0.80) 100%),
+        linear-gradient(to bottom,
+          rgba(17,19,23,0.50) 0%,
+          transparent 20%,
+          transparent 70%,
+          rgba(17,19,23,0.70) 100%);
+      pointer-events: none;
+    }
+
+    /* ── Left content block ── */
+    .slide__content {
+      position: absolute; z-index: 4;
+      left: 120px; top: 48px;
+    }
+
+    .slide__eyebrow {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 32px; opacity: 0;
+    }
+    .slide__eyebrow-line {
+      width: 48px; height: 3px; background: #D5001C;
+    }
+    .slide__eyebrow-text {
+      color: #D5001C; font-size: 14px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+    }
+
+    .slide__heading { margin-bottom: 36px; }
+    .slide__heading-line1,
+    .slide__heading-line2 {
+      color: #fff; font-size: 56px; font-weight: 700;
+      line-height: 1.05;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .slide__heading-line1.is-visible,
+    .slide__heading-line2.is-visible { opacity: 1; transform: translateY(0); }
+    .slide__heading-accent { color: #D5001C; }
+
+    .slide__description {
+      border-left: 3px solid rgba(255,255,255,0.2);
+      padding-left: 20px; max-width: 460px; opacity: 0;
+    }
+    .slide__description p {
+      color: rgba(255,255,255,0.72); font-size: 20px; line-height: 1.6;
+    }
+
+    /* ── Carousel wrapper ── */
+    .carousel-wrapper {
+      position: absolute;
+      z-index: 5;
+      left: 80%; bottom: 520px;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 18px;
+      opacity: 0;
+    }
+
+    /* Clip window — exactly one card wide */
+    .carousel-stage {
+      width: 510px; height: 306px;
+      border-radius: 16px;
+      overflow: hidden;
+      /* Glow/shadow around the stage */
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.10),
+        0 20px 60px rgba(0,0,0,0.55),
+        0 0 80px rgba(213,0,28,0.08);
+    }
+
+    /* Sliding rail — 3 cards wide */
+    .carousel-track {
+      display: flex;
+      width: 1530px; /* 510 × 3 */
+      height: 306px;
+      will-change: transform;
+    }
+
+    /* ── Frosted glass card ── */
+    .feature-card {
+      flex-shrink: 0;
+      width: 510px; height: 306px;
+      background: rgba(22, 24, 30, 0.55);
+      backdrop-filter: blur(24px) saturate(1.6);
+      -webkit-backdrop-filter: blur(24px) saturate(1.6);
+      border-right: 1px solid rgba(255,255,255,0.10); /* subtle card separator */
+      padding: 32px 36px 32px 36px;
+      position: relative;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      gap: -80px;
+    }
+
+    /* Top edge accent line */
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, #D5001C 0%, rgba(213,0,28,0.3) 60%, transparent 100%);
+    }
+
+    /* Subtle inner glass sheen */
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.04), transparent);
+      pointer-events: none;
+    }
+
+    /* Card top row: counter + icon */
+    .feature-card__top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .feature-card__counter {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(213,0,28,0.85);
+    }
+
+    .feature-card__icon-box {
+      width: 80px; height: 80px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(213,0,28,0.12);
+      border: 1px solid rgba(213,0,28,0.28);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .feature-card__icon-box img {
+      width: 60px; height: 60px;
+      filter: brightness(0) invert(1);
+      opacity: 0.88;
+    }
+
+    /* Card bottom: title + body */
+    .feature-card__bottom { display: flex; flex-direction: column; gap: 10px; }
+
+    .feature-card__title {
+      font-size: 40px; font-weight: 700;
+      color: #ffffff; line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card__body {
+      font-size: 22px; line-height: 1.6;
+      color: rgba(255,255,255,0.65);
+      max-width: 400px;
+    }
+
+    /* ── Dot indicators ── */
+    .carousel-dots {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .carousel-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      transition: background 0.35s ease, transform 0.35s ease, width 0.35s ease;
+      cursor: default;
+    }
+    .carousel-dot.is-active {
+      background: #D5001C;
+      transform: scale(1.25);
+      width: 22px; /* pill shape on active */
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide" data-slide-id="SLD-CC01-002">
+
+    <!-- Centered background image -->
+    <div class="slide__bg-image">
+      <img src="../../assets/images/PTech-w-customer2.webp"
+           alt="Porsche technician consulting with customer">
+    </div>
+
+    <!-- Vignette overlay -->
+    <div class="slide__vignette"></div>
+
+    <!-- Heading block (top-left) -->
+    <div class="slide__content">
+      <div class="slide__eyebrow">
+        <div class="slide__eyebrow-line"></div>
+        <span class="slide__eyebrow-text">The Evolution of Mastery</span>
+      </div>
+      <div class="slide__heading">
+        <h1 class="slide__heading-line1">Beyond</h1>
+        <h1 class="slide__heading-line2">the <span class="slide__heading-accent">Wrench</span></h1>
+      </div>
+      <div class="slide__description">
+        <p>The transition from technical expert<br>to brand ambassador.</p>
+      </div>
+    </div>
+
+    <!-- Carousel (center-bottom) -->
+    <div class="carousel-wrapper" id="carousel-wrapper">
+      <div class="carousel-stage">
+        <div class="carousel-track" id="carousel-track">
+
+          <!-- Card 1 -->
+          <div class="feature-card">
+            <div class="feature-card__top">
+              <span class="feature-card__counter">01 / 03</span>
+              <div class="feature-card__icon-box">
+                <img src="../../assets/icons/star.svg" alt="">
+              </div>
+            </div>
+            <div class="feature-card__bottom">
+              <h3 class="feature-card__title">Elite Tier</h3>
+              <p class="feature-card__body">You are among the global top 1% — factory-trained Porsche specialists recognized for technical excellence worldwide.</p>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="feature-card">
+            <div class="feature-card__top">
+              <span class="feature-card__counter">02 / 03</span>
+              <div class="feature-card__icon-box">
+                <img src="../../assets/icons/steering-wheel.svg" alt="">
+              </div>
+            </div>
+            <div class="feature-card__bottom">
+              <h3 class="feature-card__title">Command Performance</h3>
+              <p class="feature-card__body">Every customer interaction is a direct reflection of the Porsche brand — your presence IS their experience.</p>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="feature-card">
+            <div class="feature-card__top">
+              <span class="feature-card__counter">03 / 03</span>
+              <div class="feature-card__icon-box">
+                <img src="../../assets/icons/stack.svg" alt="">
+              </div>
+            </div>
+            <div class="feature-card__bottom">
+              <h3 class="feature-card__title">12 Modules</h3>
+              <p class="feature-card__body">Communication mastery built course by course — from technical clarity to lasting customer trust.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Dot indicators -->
+      <div class="carousel-dots" id="carousel-dots">
+        <div class="carousel-dot is-active"></div>
+        <div class="carousel-dot"></div>
+        <div class="carousel-dot"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('.slide');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init('SLD-CC01-002', {
+      autoplay: false,
+      basePath: '../'
+    });
+
+    // Notify when VO ends
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      playInteractionClip('next-button');
+    });
+
+    // ── Background image: fade in immediately on load ──
+    gsap.to('.slide__bg-image', { opacity: 1, duration: 1.2, ease: 'power2.out' });
+
+    // ── Heading entrance (immediate / non-VO mode) ──
+    (function () {
+      var eyebrow = document.querySelector('.slide__eyebrow');
+      var line1   = document.querySelector('.slide__heading-line1');
+      var line2   = document.querySelector('.slide__heading-line2');
+      if (eyebrow) setTimeout(function () { eyebrow.style.opacity = '1'; }, 0);
+      if (line1)   setTimeout(function () { line1.classList.add('is-visible'); }, 100);
+      if (line2)   setTimeout(function () { line2.classList.add('is-visible'); }, 200);
+    })();
+
+    // ── Carousel ──
+    (function () {
+      var track   = document.getElementById('carousel-track');
+      var dots    = document.querySelectorAll('.carousel-dot');
+      var CARD_W  = 510;
+      var current = 0;
+      var fired   = { card2: false, card3: false };
+
+      function goTo(idx) {
+        if (idx === current) return;
+        current = idx;
+        gsap.to(track, {
+          x: -(CARD_W * idx),
+          duration: 0.7,
+          ease: 'power2.inOut'
+        });
+        dots.forEach(function (d, i) {
+          d.classList.toggle('is-active', i === idx);
+        });
+      }
+
+      // VO-driven advances
+      SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
+        var t = SandboxRuntime.voAudio.currentTime;
+        if (!fired.card2 && t >= 23.0) { fired.card2 = true; goTo(1); }
+        if (!fired.card3 && t >= 44.0) { fired.card3 = true; goTo(2); }
+      });
+
+      // Fallback: reveal carousel 1 s after load if VO hasn't fired
+      setTimeout(function () {
+        var wrapper = document.getElementById('carousel-wrapper');
+        if (wrapper && parseFloat(getComputedStyle(wrapper).opacity) < 0.1) {
+          gsap.to(wrapper, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+        }
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>Expert Technician as Brand Ambassador</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background: #404044;
+      font-family: 'Porsche Next TT', Arial, Helvetica, sans-serif;
+    }
+
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      background: #404044;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .slide__background {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 920px;
+      z-index: 1;
+    }
+
+    .slide__background img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    
+    .slide__header {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 348px;
+      z-index: 3;
+    }
+
+    .slide__accent {
+      position: absolute;
+      left: 120px;
+      top: 62px;
+      width: 120px;
+      height: 8px;
+      background: #d5001c;
+    }
+
+    .slide__title {
+      position: absolute;
+      left: 120px;
+      top: 92px;
+      width: 1200px;
+      color: #ffffff;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 66px;
+      letter-spacing: 0;
+    }
+
+    /* ── Header entrance animation ───────────────────────────── */
+    .anim-fade     { opacity: 0; transition: opacity 0.4s ease; }
+    .anim-fade.is-visible { opacity: 1; }
+    .anim-slide-up { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+    .slide__subtitle {
+      position: absolute;
+      left: 120px;
+      top: 300px;
+      width: 900px;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 32px;
+    }
+  </style>
+</head>
+<body>
+  <section class="slide slide-title-intro" data-slide-id="SLD-CC01-001">
+    <div class="slide__background">
+      <img src="../../assets/images/CC01_title_background.webp" alt="">
+    </div>
+    <div class="slide__overlay"></div>
+    <div class="slide__header">
+      <div class="slide__accent anim-fade" id="header-accent"></div>
+      <h1 class="slide__title anim-slide-up" id="header-title">Expert Technician<br> as Brand Ambassador</h1>
+      <p class="slide__subtitle">Customer Communications - Module 1</p>
+    </div>
+  </section>
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('.slide');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init('SLD-CC01-001', {
+      autoplay: false,
+      basePath: '../'
+    });
+
+    (function () {
+      var headerAccent = document.getElementById('header-accent');
+      var headerTitle  = document.getElementById('header-title');
+      function entranceAnimation() {
+        if (headerAccent) setTimeout(function () { headerAccent.classList.add('is-visible'); }, 0);
+        if (headerTitle)  setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      }
+      entranceAnimation();
+    })();
+  </script>
+</body>
+</html>
