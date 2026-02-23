@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>The Financial Reality — CC01 Module 1</title>
+  <style>
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt-bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --bg-0: #111317;
+      --bg-1: #1e2128;
+      --bg-2: #2a2f39;
+      --text-strong: #ffffff;
+      --text-body: rgba(255, 255, 255, 0.9);
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --line: rgba(255, 255, 255, 0.2);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.14);
+      --accent: #d5001c;
+      --accent-dark: #8f0013;
+      --shadow-soft: 0 20px 42px rgba(0, 0, 0, 0.28);
+      /* Option A */
+      --opt-a-border: rgba(213, 0, 28, 0.5);
+      --opt-a-bg: linear-gradient(145deg, rgba(213, 0, 28, 0.10) 0%, rgba(255,255,255,0.04) 100%);
+      --opt-a-number: #ef4444;
+      /* Option B */
+      --opt-b-border: rgba(1, 138, 22, 0.5);
+      --opt-b-bg: linear-gradient(145deg, rgba(1, 138, 22, 0.10) 0%, rgba(255,255,255,0.04) 100%);
+      --opt-b-number: #22c55e;
+      /* Math section */
+      --callout-bg: rgba(0, 97, 189, 0.14);
+      --callout-border: rgba(0, 97, 189, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--bg-0) 0%, var(--bg-1) 48%, var(--bg-2) 100%);
+      color: var(--text-body);
+      font-family: "Porsche Next TT", Arial, Helvetica, sans-serif;
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      padding: 62px 120px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 124px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__kicker {
+      margin: 0 0 6px;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .header__title {
+      margin: 0;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--text-strong);
+    }
+
+    /* ── Content area ────────────────────────────────────────── */
+    .content-area {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    /* -- Intro image overlay -------------------------------------- */
+    .intro-image-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      opacity: 0;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: var(--shadow-soft);
+      pointer-events: none;
+    }
+
+    .intro-image-wrap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: scale-down;
+      object-position: center;
+      transform: scale(1);
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    /* ── Scenario bar ────────────────────────────────────────── */
+    .scenario {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 14px 26px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .scenario.is-preintro {
+      opacity: 0;
+      transform: translateY(26px);
+      pointer-events: none;
+    }
+
+    .scenario__label {
+      flex-shrink: 0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 5px 11px;
+      border: 1px solid rgba(213, 0, 28, 0.45);
+      border-radius: 4px;
+      background: rgba(213, 0, 28, 0.10);
+    }
+
+    .scenario__text {
+      margin: 0;
+      font-size: 20px;
+      color: var(--text-body);
+      line-height: 1.4;
+    }
+
+    .scenario__text strong { color: var(--text-strong); font-weight: 700; }
+    .scenario__text em     { color: var(--text-muted);  font-style: italic; }
+
+    /* ── Options row ─────────────────────────────────────────── */
+    .options-row {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      align-items: stretch;
+    }
+
+    /* ── Option cards ────────────────────────────────────────── */
+    .option {
+      display: flex;
+      flex-direction: column;
+      padding: 26px 30px 22px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      transition:
+        opacity   0.50s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.50s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        border-color 0.3s ease,
+        background   0.3s ease;
+    }
+
+    .option--a {
+      opacity: 0;
+      transform: translateX(-48px);
+    }
+
+    .option--b {
+      opacity: 0;
+      transform: translateX(48px);
+    }
+
+    .option--a.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+      border-color: var(--opt-a-border);
+      background: var(--opt-a-bg);
+    }
+
+    .option--b.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+      border-color: var(--opt-b-border);
+      background: var(--opt-b-bg);
+    }
+
+    .option__badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 13px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      width: fit-content;
+    }
+
+    .option--a .option__badge {
+      background: rgba(213, 0, 28, 0.18);
+      color: var(--opt-a-number);
+      border: 1px solid rgba(213, 0, 28, 0.38);
+    }
+
+    .option--b .option__badge {
+      background: rgba(1, 138, 22, 0.18);
+      color: var(--opt-b-number);
+      border: 1px solid rgba(1, 138, 22, 0.38);
+    }
+
+    .option__title {
+      margin: 0 0 14px;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text-strong);
+    }
+
+    .option__points {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      flex: 1;
+    }
+
+    .option__points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 19px;
+      color: var(--text-body);
+      line-height: 1.38;
+    }
+
+    .option__points li::before {
+      content: "•";
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 17px;
+    }
+
+    .option--a .option__points li::before { color: var(--opt-a-number); }
+    .option--b .option__points li::before { color: var(--opt-b-number); }
+
+    /* ── Result block ────────────────────────────────────────── */
+    .option__result {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .result__number {
+      font-size: 84px;
+      font-weight: 700;
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+
+    .option--a .result__number { color: var(--opt-a-number); }
+    .option--b .result__number { color: var(--opt-b-number); }
+
+    .result__label {
+      font-size: 20px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      padding-bottom: 8px;
+    }
+
+    /* ── VS divider ──────────────────────────────────────────── */
+    .vs-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .vs-divider.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .vs-divider span {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Math section ─────────────────────────────────────────── */
+    .math-section {
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: auto 1fr 1.4fr;
+      gap: 14px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        max-height 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity    0.40s ease 0.12s;
+    }
+
+    .math-section.is-visible {
+      max-height: 160px;
+      opacity: 1;
+    }
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal-item.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .math-box {
+      padding: 16px 26px;
+      background: rgba(213, 0, 28, 0.07);
+      border: 1px solid rgba(213, 0, 28, 0.35);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .math-box__label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .math-equation {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .math-val {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .math-val--a { color: var(--opt-a-number); }
+    .math-val--b { color: var(--opt-b-number); }
+
+    .math-op {
+      font-size: 26px;
+      color: var(--text-muted);
+    }
+
+    .math-tagline {
+      margin: 0;
+      font-size: 16px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .beyond-box {
+      padding: 16px 22px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 12px;
+    }
+
+    .beyond-box h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+    }
+
+    .beyond-box ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .beyond-box li {
+      font-size: 17px;
+      color: var(--text-body);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.35;
+    }
+
+    .beyond-box li::before {
+      content: "→";
+      color: var(--opt-b-number);
+      flex-shrink: 0;
+      font-size: 15px;
+      margin-top: 1px;
+    }
+
+    .callout {
+      padding: 16px 22px;
+      background: var(--callout-bg);
+      border-left: 4px solid var(--callout-border);
+      border-radius: 0 10px 10px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .callout p {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--text-body);
+    }
+
+    .callout strong { color: var(--text-strong); }
+
+    /* ── Header entrance animation ───────────────────────────── */
+    .anim-fade     { opacity: 0; transition: opacity 0.4s ease; }
+    .anim-fade.is-visible { opacity: 1; }
+    .anim-slide-up { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+  </style>
+</head>
+<body>
+  <section class="slide">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__accent anim-fade" id="header-accent" aria-hidden="true"></div>
+      <p class="header__kicker anim-fade" id="header-kicker">CC01 · Module 1 · The Financial Reality</p>
+      <h1 class="header__title anim-slide-up" id="header-title">Communication Has Direct Financial Impact</h1>
+    </header>
+
+    <!-- Content area -->
+    <div class="content-area">
+
+      <!-- Intro image: fades in on load + slow zoom -->
+      <div class="intro-image-wrap" id="intro-image">
+        <img src="../../assets/images/PTech-w-customers2-COld.webp"
+             alt="Technician speaking with customers in a service bay">
+      </div>
+
+      <!-- Scenario — revealed at 11s -->
+      <div class="scenario is-preintro" id="scenario">
+        <span class="scenario__label">The Scenario</span>
+        <p class="scenario__text">
+          A customer's vehicle needs <strong>$3,500 in brake and suspension work</strong>.
+          They're hesitant — and considering getting a second opinion at an independent shop.
+          <em>What happens next depends entirely on communication.</em>
+        </p>
+      </div>
+
+      <!-- Options comparison — revealed step by step -->
+      <div class="options-row">
+
+        <!-- Option A -->
+        <div class="option option--a" id="option-a">
+          <div class="option__badge">Option A</div>
+          <h2 class="option__title">No Conversation</h2>
+          <ul class="option__points">
+            <li>Technician doesn't explain the findings</li>
+            <li>Customer doesn't understand why the work is necessary</li>
+            <li>Customer declines and leaves for a second opinion</li>
+          </ul>
+          <div class="option__result">
+            <span class="result__number">0</span>
+            <span class="result__label">Billable Hours</span>
+          </div>
+        </div>
+
+        <!-- VS divider -->
+        <div class="vs-divider" id="vs-divider"><span>VS</span></div>
+
+        <!-- Option B -->
+        <div class="option option--b" id="option-b">
+          <div class="option__badge">Option B</div>
+          <h2 class="option__title">5-Minute Explanation</h2>
+          <ul class="option__points">
+            <li>Technician shows the worn parts directly to the customer</li>
+            <li>Explains the safety and performance consequences clearly</li>
+            <li>Addresses cost concerns professionally alongside the service advisor</li>
+            <li>Customer understands the necessity — and approves the work</li>
+          </ul>
+          <div class="option__result">
+            <span class="result__number" id="hours-counter">0</span>
+            <span class="result__label">Billable Hours</span>
+          </div>
+        </div>
+
+      </div><!-- /.options-row -->
+
+      <!-- Math + Beyond + Callout — auto-reveals after Option B -->
+      <div class="math-section" id="math-section">
+
+        <div class="math-box reveal-item" id="math-box">
+          <p class="math-box__label">The Math</p>
+          <div class="math-equation">
+            <span class="math-val math-val--a">5 min</span>
+            <span class="math-op">→</span>
+            <span class="math-val math-val--b">8 hrs</span>
+          </div>
+          <p class="math-tagline">Your communication = Your income</p>
+        </div>
+
+        <div class="beyond-box reveal-item" id="beyond-box">
+          <h3>Beyond This One Job</h3>
+          <ul>
+            <li>Customer returns for future service (lifetime value)</li>
+            <li>Customer refers other Porsche owners</li>
+            <li>Dealership success = your job security &amp; advancement</li>
+          </ul>
+        </div>
+
+        <div class="callout reveal-item" id="callout-box">
+          <p>"Better communication isn't time away from profitable work —
+            <strong>it's an investment in MORE profitable work.</strong>"</p>
+        </div>
+
+      </div><!-- /.math-section -->
+
+    </div><!-- /.content-area -->
+</section>
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('.slide');
+      function scale() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform      = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft     = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop      = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scale);
+      scale();
+    })();
+  </script>
+
+  <!-- Audio-timed reveal state machine -->
+  <script>
+    (function () {
+      var optA      = document.getElementById('option-a');
+      var optB      = document.getElementById('option-b');
+      var vsDivider = document.getElementById('vs-divider');
+      var mathSec   = document.getElementById('math-section');
+      var mathBox   = document.getElementById('math-box');
+      var beyondBox = document.getElementById('beyond-box');
+      var callout   = document.getElementById('callout-box');
+      var counter   = document.getElementById('hours-counter');
+
+      var times = {
+        optionA: 29.0,
+        optionB: 47.0,
+        math: 66.0,
+        beyond: 76.0,
+        callout: 98.0
+      };
+
+      var localStartMs = Date.now();
+      var shown = {
+        optionA: false,
+        optionB: false,
+        math: false,
+        beyond: false,
+        callout: false
+      };
+
+      function getClockSec() {
+        try {
+          if (window.SandboxRuntime && window.SandboxRuntime.voAudio) {
+            var t = Number(window.SandboxRuntime.voAudio.currentTime);
+            if (Number.isFinite(t) && t >= 0) return t;
+          }
+          if (window.parent && window.parent.CourseRuntime &&
+              typeof window.parent.CourseRuntime.getAudioCurrentTime === 'function') {
+            var ct = Number(window.parent.CourseRuntime.getAudioCurrentTime());
+            if (Number.isFinite(ct) && ct >= 0) return ct;
+          }
+        } catch (_) {}
+        return (Date.now() - localStartMs) / 1000;
+      }
+
+      function animateCounter(from, to, durationMs, el) {
+        if (!el || to <= from) return;
+        var steps = to - from;
+        var interval = durationMs / steps;
+        var current = from;
+        var timer = setInterval(function () {
+          current++;
+          el.textContent = current;
+          if (current >= to) clearInterval(timer);
+        }, interval);
+      }
+
+      function revealOptionA() {
+        if (shown.optionA || !optA) return;
+        shown.optionA = true;
+        optA.classList.add('is-visible');
+      }
+
+      function revealOptionB() {
+        if (shown.optionB || !optB) return;
+        shown.optionB = true;
+        if (vsDivider) vsDivider.classList.add('is-visible');
+        optB.classList.add('is-visible');
+        setTimeout(function () { animateCounter(0, 8, 1200, counter); }, 350);
+      }
+
+      function revealMath() {
+        if (shown.math || !mathSec) return;
+        shown.math = true;
+        mathSec.classList.add('is-visible');
+        if (mathBox) {
+          setTimeout(function () { mathBox.classList.add('is-visible'); }, 80);
+        }
+      }
+
+      function revealBeyond() {
+        if (shown.beyond || !beyondBox) return;
+        shown.beyond = true;
+        beyondBox.classList.add('is-visible');
+      }
+
+      function revealCallout() {
+        if (shown.callout || !callout) return;
+        shown.callout = true;
+        callout.classList.add('is-visible');
+      }
+
+      function tick() {
+        var now = getClockSec();
+        if (now >= times.optionA) revealOptionA();
+        if (now >= times.optionB) revealOptionB();
+        if (now >= times.math) revealMath();
+        if (now >= times.beyond) revealBeyond();
+        if (now >= times.callout) revealCallout();
+        window.requestAnimationFrame(tick);
+      }
+
+      tick();
+    })();
+  </script>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init("SLD-CC01-007", {
+      autoplay: false,
+      basePath: "../"
+    });
+
+    (function () {
+      var headerAccent = document.getElementById('header-accent');
+      var headerKicker = document.getElementById('header-kicker');
+      var headerTitle  = document.getElementById('header-title');
+      var scenario     = document.getElementById('scenario');
+      var introImage   = document.getElementById('intro-image');
+      var introPhoto   = introImage ? introImage.querySelector('img') : null;
+      var INTRO_OUT_AT = 11.0;
+      var introHandoffDone = false;
+      var localStartMs = Date.now();
+
+      function getClockSec() {
+        try {
+          if (window.SandboxRuntime && window.SandboxRuntime.voAudio) {
+            var t = Number(window.SandboxRuntime.voAudio.currentTime);
+            if (Number.isFinite(t) && t >= 0) return t;
+          }
+          if (window.parent && window.parent.CourseRuntime &&
+              typeof window.parent.CourseRuntime.getAudioCurrentTime === 'function') {
+            var ct = Number(window.parent.CourseRuntime.getAudioCurrentTime());
+            if (Number.isFinite(ct) && ct >= 0) return ct;
+          }
+        } catch (_) {}
+        return (Date.now() - localStartMs) / 1000;
+      }
+
+      function introTick() {
+        var now = getClockSec();
+        if (introPhoto && !introHandoffDone) {
+          var progress = Math.min(Math.max(now / INTRO_OUT_AT, 0), 1);
+          var scale = 1 + (0.08 * progress);
+          introPhoto.style.transform = 'scale(' + scale.toFixed(4) + ')';
+        }
+
+        if (!introHandoffDone && now >= INTRO_OUT_AT) {
+          introHandoffDone = true;
+          if (introImage) {
+            gsap.to(introImage, {
+              opacity: 0,
+              duration: 0.9,
+              ease: 'power2.inOut',
+              onComplete: function () { introImage.style.display = 'none'; }
+            });
+          }
+          if (scenario) {
+            scenario.classList.remove('is-preintro');
+            gsap.fromTo(scenario, { opacity: 0, y: 28 }, {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: 'power2.out',
+              delay: 0.1
+            });
+          }
+        }
+
+        window.requestAnimationFrame(introTick);
+      }
+
+      function entranceAnimation() {
+        [headerAccent, headerKicker].forEach(function (el, i) {
+          if (!el) return;
+          setTimeout(function () { el.classList.add('is-visible'); }, i * 100);
+        });
+        if (headerTitle) setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      }
+      entranceAnimation();
+
+      if (introImage) {
+        gsap.to(introImage, {
+          opacity: 1,
+          duration: 1.15,
+          ease: 'power2.out',
+          delay: 0.2
+        });
+      }
+      introTick();
+    })();
+
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
+    });
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>Your Impact on Customer Satisfaction — CC01 Module 1</title>
+  <style>
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt-bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --bg-0: #111317;
+      --bg-1: #1e2128;
+      --bg-2: #2a2f39;
+      --text-strong: #ffffff;
+      --text-body: rgba(255, 255, 255, 0.9);
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --accent: #d5001c;
+      --accent-dark: #8f0013;
+      --green: #22c55e;
+      --callout-bg: rgba(0, 97, 189, 0.14);
+      --callout-border: rgba(0, 97, 189, 0.55);
+      --shadow-soft: 0 20px 42px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--bg-0) 0%, var(--bg-1) 48%, var(--bg-2) 100%);
+      color: var(--text-body);
+      font-family: "Porsche Next TT", Arial, Helvetica, sans-serif;
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      padding: 62px 120px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 124px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__kicker {
+      margin: 0 0 6px;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .header__title {
+      margin: 0;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--text-strong);
+    }
+
+    /* ── Header entrance animation ───────────────────────────── */
+    .anim-fade     { opacity: 0; transition: opacity 0.4s ease; }
+    .anim-fade.is-visible { opacity: 1; }
+    .anim-slide-up { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Main area: two columns ──────────────────────────────── */
+    .main-area {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 620px;
+      gap: 28px;
+    }
+
+    /* ── Left column: CSI dimensions ─────────────────────────── */
+    .csi-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .csi-section-label {
+      flex-shrink: 0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-bottom: 2px;
+    }
+
+    .csi-list {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ── Dimension cards ─────────────────────────────────────── */
+    .dim-card {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      /* Hidden until 12s VO mark */
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s ease, transform 0.45s ease,
+                  border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .dim-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Shimmer — plays as each card fades in */
+    .dim-card.is-shimmer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0)    30%,
+        rgba(255, 255, 255, 0.09) 50%,
+        rgba(255, 255, 255, 0)    70%
+      );
+      background-size: 400%;
+      animation: card-shimmer 2.0s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes card-shimmer {
+      0%   { background-position: 100% 0; }
+      100% { background-position:   0% 0; }
+    }
+
+    /* Scale-pulse — fires at VO timestamp for each dimension */
+    .dim-card.is-pulse {
+      animation: card-pulse 0.55s ease-in-out forwards;
+    }
+
+    @keyframes card-pulse {
+      0%   { transform: translateY(0) scale(1);     }
+      38%  { transform: translateY(0) scale(1.027); }
+      100% { transform: translateY(0) scale(1);     }
+    }
+
+    /* Keep card content above the shimmer pseudo-element */
+    .dim-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Service Quality — interactive card */
+    .dim-card--sq {
+      cursor: pointer;
+      border-color: rgba(213, 0, 28, 0.38);
+      background: rgba(213, 0, 28, 0.06);
+    }
+
+    .dim-card--sq:hover {
+      border-color: rgba(213, 0, 28, 0.6);
+      background: rgba(213, 0, 28, 0.10);
+    }
+
+    .dim-card--sq.is-active {
+      border-color: rgba(34, 197, 94, 0.5);
+      background: rgba(34, 197, 94, 0.06);
+      cursor: default;
+    }
+
+    /* Number badge */
+    .dim-num {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .dim-card--sq .dim-num {
+      border-color: rgba(213, 0, 28, 0.45);
+      background: rgba(213, 0, 28, 0.14);
+      color: var(--accent);
+    }
+
+    .dim-card--sq.is-active .dim-num {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.14);
+      color: var(--green);
+    }
+
+    /* Dimension info: name + bar */
+    .dim-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dim-name {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-strong);
+      white-space: nowrap;
+    }
+
+    .dim-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dim-bar-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .dim-bar-fill {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 4px;
+    }
+
+    .dim-card--sq .dim-bar-fill     { background: var(--accent); }
+    .dim-card--sq.is-active .dim-bar-fill { background: var(--green); }
+
+    .dim-pct {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 44px;
+      text-align: right;
+    }
+
+    .dim-card--sq .dim-pct            { color: var(--accent);  font-size: 21px; }
+    .dim-card--sq.is-active .dim-pct  { color: var(--green); }
+
+    /* Explore chip (Service Quality only) */
+    .dim-explore-chip {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: rgba(213, 0, 28, 0.14);
+      border: 1px solid rgba(213, 0, 28, 0.45);
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      animation: pulse-chip 2.2s ease-in-out infinite;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    .dim-card--sq.is-active .dim-explore-chip {
+      animation: none;
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: var(--green);
+    }
+
+    @keyframes pulse-chip {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(213, 0, 28, 0.5); }
+      50%       { box-shadow: 0 0 0 7px rgba(213, 0, 28, 0);   }
+    }
+
+    /* ── Right column ────────────────────────────────────────── */
+    .right-column {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ── Image panel ─────────────────────────────────────────── */
+    .image-panel {
+      position: absolute;
+      inset: 0;
+      transition: opacity 0.45s ease;
+    }
+
+    .image-panel img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transform: scale(1.26);
+      transform-origin: center center;
+      will-change: transform;
+      transition: transform 0.2s linear;
+    }
+
+    .image-panel__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(14, 14, 18, 0.75) 0%,
+        rgba(14, 14, 18, 0.10) 45%,
+        transparent 65%
+      );
+    }
+
+    .image-panel__caption {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    .image-panel.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── Detail panel ────────────────────────────────────────── */
+    .detail-panel {
+      position: absolute;
+      inset: 0;
+      padding: 28px 26px 24px;
+      background: var(--bg-1);
+      border: 1px solid rgba(213, 0, 28, 0.3);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease 0.15s;
+      overflow: hidden;
+    }
+
+    .detail-panel.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .detail-panel__header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(213, 0, 28, 0.25);
+    }
+
+    .detail-panel__badge {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 4px 10px;
+      border: 1px solid rgba(213, 0, 28, 0.4);
+      border-radius: 4px;
+      background: rgba(213, 0, 28, 0.10);
+    }
+
+    .detail-panel__title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-strong);
+    }
+
+    /* Section: "What Technicians Directly Influence" */
+    .detail-section {
+      flex-shrink: 0;
+    }
+
+    .detail-section__label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .detail-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .detail-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 17px;
+      color: var(--text-body);
+      line-height: 1.4;
+    }
+
+    .detail-list li::before {
+      content: "→";
+      flex-shrink: 0;
+      color: var(--accent);
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
+    .detail-list--green li::before { color: var(--green); }
+
+    /* Bottom line callout */
+    .detail-callout {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      background: var(--callout-bg);
+      border-left: 4px solid var(--callout-border);
+      border-radius: 0 10px 10px 0;
+    }
+
+    .detail-callout p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--text-body);
+    }
+
+    .detail-callout strong { color: var(--text-strong); }
+
+  </style>
+</head>
+<body>
+  <section class="slide">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__accent anim-fade" id="header-accent" aria-hidden="true"></div>
+      <p class="header__kicker anim-fade" id="header-kicker">CC01 · Module 1 · Customer Satisfaction</p>
+      <h1 class="header__title anim-slide-up" id="header-title">You Directly Influence Customer Satisfaction Scores</h1>
+    </header>
+
+    <!-- Main area -->
+    <div class="main-area">
+
+      <!-- Left column: CSI dimension cards -->
+      <div class="csi-column">
+        <p class="csi-section-label">The Five CSI Measurement Dimensions</p>
+
+        <div class="csi-list">
+
+          <div class="dim-card">
+            <div class="dim-num">01</div>
+            <div class="dim-info">
+              <span class="dim-name">Service Initiation</span>
+              <div class="dim-bar-row">
+                <div class="dim-bar-track">
+                  <div class="dim-bar-fill" style="width: 14%"></div>
+                </div>
+                <span class="dim-pct">14%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dim-card">
+            <div class="dim-num">02</div>
+            <div class="dim-info">
+              <span class="dim-name">Service Advisor</span>
+              <div class="dim-bar-row">
+                <div class="dim-bar-track">
+                  <div class="dim-bar-fill" style="width: 17%"></div>
+                </div>
+                <span class="dim-pct">17%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dim-card">
+            <div class="dim-num">03</div>
+            <div class="dim-info">
+              <span class="dim-name">Service Facility</span>
+              <div class="dim-bar-row">
+                <div class="dim-bar-track">
+                  <div class="dim-bar-fill" style="width: 15%"></div>
+                </div>
+                <span class="dim-pct">15%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dim-card">
+            <div class="dim-num">04</div>
+            <div class="dim-info">
+              <span class="dim-name">Vehicle Pick Up</span>
+              <div class="dim-bar-row">
+                <div class="dim-bar-track">
+                  <div class="dim-bar-fill" style="width: 20%"></div>
+                </div>
+                <span class="dim-pct">20%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service Quality — interactive -->
+          <div class="dim-card dim-card--sq" id="sq-card"
+               role="button" tabindex="0"
+               aria-label="Service Quality — click to explore"
+               onclick="revealDetail()"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();revealDetail();}">
+            <div class="dim-num">05</div>
+            <div class="dim-info">
+              <span class="dim-name">Service Quality</span>
+              <div class="dim-bar-row">
+                <div class="dim-bar-track">
+                  <div class="dim-bar-fill" style="width: 34%"></div>
+                </div>
+                <span class="dim-pct">34%</span>
+              </div>
+            </div>
+            <div class="dim-explore-chip" id="explore-chip">
+              <span id="chip-text">Click to explore</span>
+              <span>→</span>
+            </div>
+          </div>
+
+        </div><!-- /.csi-list -->
+      </div><!-- /.csi-column -->
+
+      <!-- Right column: image panel / detail panel -->
+      <div class="right-column">
+
+        <!-- Image (initial state) -->
+        <div class="image-panel" id="image-panel">
+          <img id="image-panel-photo" src="../../assets/images/Ptechs-Customer-05.webp"
+               alt="Porsche technician consulting with customer" />
+          <div class="image-panel__overlay"></div>
+          <p class="image-panel__caption">
+            Click Service Quality to see exactly what you control.
+          </p>
+        </div>
+
+        <!-- Detail panel (revealed on click) -->
+        <div class="detail-panel" id="detail-panel">
+
+          <div class="detail-panel__header">
+            <span class="detail-panel__badge">Service Quality · 34%</span>
+            <h3 class="detail-panel__title">What Technicians Directly Influence</h3>
+          </div>
+
+          <div class="detail-section">
+            <p class="detail-section__label">You control all four of these</p>
+            <ul class="detail-list">
+              <li>Thoroughness of maintenance and repair work performed</li>
+              <li>Condition of vehicle on return to the customer</li>
+              <li>Quality of communication in updates and explanations</li>
+              <li>Total time required to complete service</li>
+            </ul>
+          </div>
+
+          <div class="detail-section">
+            <p class="detail-section__label">Why this matters</p>
+            <ul class="detail-list detail-list--green">
+              <li>Service Quality is the <strong style="color:var(--text-strong)">largest single CSI factor</strong> — 34% of total score</li>
+              <li>CSI affects dealership incentives and allocations from Porsche</li>
+              <li>Strong CSI creates opportunities — better resources, training, and support for the entire team</li>
+            </ul>
+          </div>
+
+          <div class="detail-callout">
+            <p>"Porsche consistently ranks at the top in customer satisfaction. Your technical excellence and
+              <strong>professional communication</strong> are the reasons why."</p>
+          </div>
+
+        </div><!-- /.detail-panel -->
+
+      </div><!-- /.right-column -->
+
+    </div><!-- /.main-area -->
+
+
+  </section>
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('.slide');
+      function scale() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scale);
+      scale();
+    })();
+  </script>
+
+  <!-- Interaction -->
+  <script>
+    var revealed = false;
+    var imageZoomRaf = null;
+    var imageZoomLastTs = 0;
+    var imageZoomScale = 1.26;
+
+    function startImageIdleZoom() {
+      var imageEl = document.getElementById('image-panel-photo');
+      if (!imageEl) return;
+      imageEl.style.transform = 'scale(' + imageZoomScale.toFixed(4) + ')';
+
+      function tick(ts) {
+        if (revealed) return;
+        if (!imageZoomLastTs) imageZoomLastTs = ts;
+        var dt = (ts - imageZoomLastTs) / 1000;
+        imageZoomLastTs = ts;
+
+        // Visible zoom-out while waiting for user interaction.
+        imageZoomScale = Math.max(1.0, imageZoomScale - (dt * 0.012));
+        imageEl.style.transform = 'scale(' + imageZoomScale.toFixed(4) + ')';
+
+        if (!revealed) {
+          imageZoomRaf = window.requestAnimationFrame(tick);
+        }
+      }
+
+      imageZoomRaf = window.requestAnimationFrame(tick);
+    }
+
+    function revealDetail() {
+      if (revealed) return;
+      revealed = true;
+      if (imageZoomRaf) {
+        window.cancelAnimationFrame(imageZoomRaf);
+        imageZoomRaf = null;
+      }
+
+      var sqCard      = document.getElementById('sq-card');
+      var chipText    = document.getElementById('chip-text');
+      var imagePanel  = document.getElementById('image-panel');
+      var detailPanel = document.getElementById('detail-panel');
+
+      // Update card state
+      sqCard.classList.add('is-active');
+      chipText.textContent = 'Exploring ✓';
+
+      // Crossfade panels
+      imagePanel.classList.add('is-hidden');
+      detailPanel.classList.add('is-visible');
+
+    }
+
+    startImageIdleZoom();
+  </script>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init("SLD-CC01-008", {
+      autoplay: false,
+      basePath: "../"
+    });
+
+    (function () {
+      var headerAccent = document.getElementById('header-accent');
+      var headerKicker = document.getElementById('header-kicker');
+      var headerTitle  = document.getElementById('header-title');
+      function entranceAnimation() {
+        [headerAccent, headerKicker].forEach(function (el, i) {
+          if (!el) return;
+          setTimeout(function () { el.classList.add('is-visible'); }, i * 100);
+        });
+        if (headerTitle) setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      }
+      entranceAnimation();
+    })();
+
+    // ── Animate dimension cards at 12-second VO mark ──────────
+    var cardsAnimated = false;
+
+    function animateDimCards() {
+      if (cardsAnimated) return;
+      cardsAnimated = true;
+      var cards = document.querySelectorAll('.dim-card');
+      cards.forEach(function (card, i) {
+        setTimeout(function () {
+          card.classList.add('is-visible');
+          card.classList.add('is-shimmer');
+          // Shimmer runs for ~2.5 cycles then stops
+          setTimeout(function () {
+            card.classList.remove('is-shimmer');
+          }, 3000);
+        }, i * 110);
+      });
+    }
+
+    // Scale-pulse cues — one per dimension, in VO order
+    var pulseCues = [
+      { time: 14, cardIndex: 0, fired: false }, // Service Initiation
+      { time: 18, cardIndex: 1, fired: false }, // Service Advisor
+      { time: 21, cardIndex: 2, fired: false }, // Service Facility
+      { time: 25, cardIndex: 3, fired: false }, // Vehicle Pick Up
+      { time: 29, cardIndex: 4, fired: false }, // Service Quality
+    ];
+
+    function pulseCard(index) {
+      var cards = document.querySelectorAll('.dim-card');
+      var card  = cards[index];
+      if (!card) return;
+      card.classList.remove('is-pulse');
+      void card.offsetWidth; // force reflow so animation restarts cleanly
+      card.classList.add('is-pulse');
+      setTimeout(function () { card.classList.remove('is-pulse'); }, 600);
+    }
+
+    // Primary: VO time
+    SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
+      var t = SandboxRuntime.voAudio.currentTime;
+      if (!cardsAnimated && t >= 12) {
+        animateDimCards();
+      }
+      pulseCues.forEach(function (cue) {
+        if (!cue.fired && t >= cue.time) {
+          cue.fired = true;
+          pulseCard(cue.cardIndex);
+        }
+      });
+    });
+
+    // Fallback: wall clock (in case VO hasn't started)
+    setTimeout(animateDimCards, 13500);
+
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
+    });
+</script>
+</body>
+</html>

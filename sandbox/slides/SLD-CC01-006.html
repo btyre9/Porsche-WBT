@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>What Sets You Apart — CC01 Module 1</title>
+  <style>
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../../assets/fonts/porsche-next-tt-bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --bg-0: #111317;
+      --bg-1: #1e2128;
+      --bg-2: #2a2f39;
+      --text-strong: #ffffff;
+      --text-body: rgba(255, 255, 255, 0.9);
+      --text-muted: rgba(255, 255, 255, 0.7);
+      --line: rgba(255, 255, 255, 0.2);
+      --line-active: rgba(213, 0, 28, 0.7);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.14);
+      --accent: #d5001c;
+      --accent-dark: #8f0013;
+      --shadow-soft: 0 20px 42px rgba(0, 0, 0, 0.28);
+      --callout-bg: rgba(0, 97, 189, 0.14);
+      --callout-border: rgba(0, 97, 189, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--bg-0) 0%, var(--bg-1) 48%, var(--bg-2) 100%);
+      color: var(--text-body);
+      font-family: "Porsche Next TT", Arial, Helvetica, sans-serif;
+    }
+
+    /* ── Slide shell ────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      padding: 62px 120px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 124px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__kicker {
+      margin: 0 0 6px;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .header__title {
+      margin: 0;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.04;
+      color: var(--text-strong);
+    }
+
+    /* ── Content area ────────────────────────────────────────── */
+    .content-area {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ── Factor grid (2×2) ───────────────────────────────────── */
+    .factors-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .factor-card {
+      padding: 22px 24px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      /* Hidden state — revealed by JS */
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.3s ease, transform 0.3s ease,
+                  border-color 0.3s ease, background 0.3s ease,
+                  box-shadow 0.3s ease;
+    }
+
+    .factor-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .factor-card.is-active {
+      border-color: rgba(213, 0, 28, 0.72);
+      box-shadow: 0 24px 46px rgba(0, 0, 0, 0.32),
+                  0 0 0 2px rgba(213, 0, 28, 0.22) inset;
+      background: linear-gradient(145deg, rgba(213, 0, 28, 0.14) 0%, rgba(255, 255, 255, 0.05) 100%);
+    }
+
+    /* Shimmer overlay — active only while VO is discussing that card */
+    .factor-card.is-shimmer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0)    30%,
+        rgba(255, 255, 255, 0.09) 50%,
+        rgba(255, 255, 255, 0)    70%
+      );
+      background-size: 400%;
+      animation: shimmer 2.8s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 100% 0; }
+      100% { background-position:   0% 0; }
+    }
+
+    /* Keep card content above the shimmer pseudo-element */
+    .factor-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .factor-card__top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .factor-card__icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .factor-card__icon {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
+    }
+
+    .factor-card__label {
+      margin: 0 0 3px;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.50);
+    }
+
+    .factor-card__title {
+      margin: 0;
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1.14;
+      color: var(--text-strong);
+    }
+
+    .factor-card__bullets {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .factor-card__bullets li {
+      font-size: 18px;
+      line-height: 1.38;
+      color: var(--text-body);
+    }
+
+    /* ── (continue button removed — Next is on the Player) ──── */
+    .bottom-row {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Callout box */
+    .callout {
+      flex-shrink: 0;
+      align-self: center;
+      max-width: 1100px;
+      width: 100%;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px solid var(--callout-border);
+      background: var(--callout-bg);
+      padding: 20px 32px;
+      font-size: 20px;
+      line-height: 1.48;
+      color: var(--text-body);
+      /* Hidden state */
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .callout.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .callout strong {
+      color: #c8d8f8;
+      font-weight: 700;
+    }
+
+
+    /* ── Header entrance helpers ─────────────────────────────── */
+    .anim-fade    { opacity: 0; transition: opacity 0.4s ease; }
+    .anim-fade.is-visible { opacity: 1; }
+    .anim-slide-up { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+
+    /* ── Intro video overlay ─────────────────────────────────── */
+    .video-intro {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 900ms ease;
+    }
+
+    .video-intro video {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      object-position: center;
+      display: block;
+    }
+
+    .video-intro.is-faded {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <section class="slide" data-slide-id="SLD-CC01-006">
+
+    <!-- Intro video — fades out at 12s when first factor card appears -->
+    <div class="video-intro" id="video-intro">
+      <video autoplay muted playsinline>
+        <source src="../../assets/video/Customer-communications-video1_1.webm" type="video/webm">
+      </video>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__accent anim-fade" id="header-accent" aria-hidden="true"></div>
+      <p class="header__kicker anim-fade" id="header-kicker">What Makes You Different</p>
+      <h1 class="header__title anim-slide-up" id="header-title">What Sets You Apart</h1>
+    </header>
+
+    <!-- Factor cards -->
+    <div class="content-area">
+      <div class="factors-grid" id="factors-grid" aria-live="polite">
+
+        <article class="factor-card" id="factor-1">
+          <div class="factor-card__top">
+            <div class="factor-card__icon-wrap">
+              <img class="factor-card__icon"
+                src="../../assets/images/CC01_icon-certification.png"
+                data-fallback="../../assets/icons/online-certificate.png"
+                alt="Certification badge icon">
+            </div>
+            <div>
+              <p class="factor-card__label">Distinction 1</p>
+              <h2 class="factor-card__title">Gold Certification Path</h2>
+            </div>
+          </div>
+          <ul class="factor-card__bullets">
+            <li>Advanced credentials requiring years of dedication</li>
+            <li>Demonstrates mastery of complex Porsche systems</li>
+            <li>Continuous learning and skill development</li>
+          </ul>
+        </article>
+
+        <article class="factor-card" id="factor-2">
+          <div class="factor-card__top">
+            <div class="factor-card__icon-wrap">
+              <img class="factor-card__icon"
+                src="../../assets/images/CC01_icon_training.png"
+                data-fallback="../../assets/icons/wrenches.svg"
+                alt="Factory training icon">
+            </div>
+            <div>
+              <p class="factor-card__label">Distinction 2</p>
+              <h2 class="factor-card__title">Factory Training</h2>
+            </div>
+          </div>
+          <ul class="factor-card__bullets">
+            <li>Over 100 hours of annual Porsche-specific training</li>
+            <li>Direct access to engineering knowledge and updates</li>
+            <li>Latest diagnostic techniques and procedures</li>
+          </ul>
+        </article>
+
+        <article class="factor-card" id="factor-3">
+          <div class="factor-card__top">
+            <div class="factor-card__icon-wrap">
+              <img class="factor-card__icon"
+                src="../../assets/images/CC01_icon_experience.png"
+                data-fallback="../../assets/icons/car.svg"
+                alt="Vehicle experience icon">
+            </div>
+            <div>
+              <p class="factor-card__label">Distinction 3</p>
+              <h2 class="factor-card__title">Years of Porsche&#8209;Specific Experience</h2>
+            </div>
+          </div>
+          <ul class="factor-card__bullets">
+            <li>Deep understanding of how Porsche vehicles differ</li>
+            <li>Pattern recognition from working on hundreds of vehicles</li>
+            <li>Expertise that only comes from dedicated focus</li>
+          </ul>
+        </article>
+
+        <article class="factor-card" id="factor-4">
+          <div class="factor-card__top">
+            <div class="factor-card__icon-wrap">
+              <img class="factor-card__icon"
+                src="../../assets/images/CC01_icon_global.png"
+                data-fallback="../../assets/icons/map.svg"
+                alt="Global network icon">
+            </div>
+            <div>
+              <p class="factor-card__label">Distinction 4</p>
+              <h2 class="factor-card__title">Global Rarity</h2>
+            </div>
+          </div>
+          <ul class="factor-card__bullets">
+            <li>Few technicians worldwide reach this level</li>
+            <li>You're among the best in the Porsche network</li>
+            <li>Your knowledge and skills are genuinely exceptional</li>
+          </ul>
+        </article>
+
+      </div><!-- /factors-grid -->
+
+      <aside class="callout" id="callout-box" aria-live="polite">
+        Customers know they're getting the best when they work with you. Your job is
+        to ensure the <strong>communication experience matches the technical expertise.</strong>
+      </aside>
+
+    </div><!-- /content-area -->
+
+
+  </section><!-- /slide -->
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('.slide');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script>
+    (function () {
+
+      /* ── Default reveal timing (seconds from VO start) ──────
+         Adjust values once the actual audio file is available.
+         Matches estimated VO script timestamps:
+           ~3s  "First, you're on the Gold Certification path"
+           ~20s "Second, factory training"
+           ~38s "Third, years of Porsche-specific experience"
+           ~55s "Finally, you need to understand just how rare"
+           ~75s Callout / closing thought
+           ~90s Continue button
+      ─────────────────────────────────────────────────────── */
+      var defaultRevealSteps = [
+        { at:  3.0, target: "#factor-1"   },
+        { at: 20.0, target: "#factor-2"   },
+        { at: 38.0, target: "#factor-3"   },
+        { at: 55.0, target: "#factor-4"   },
+        { at: 75.0, target: "#callout-box" }
+      ];
+
+      var revealSteps = [];
+      var state = { nextStep: 0, localStartMs: null };
+
+      /* ── DOM refs ───────────────────────────────────────── */
+      var factorCards = [1,2,3,4].map(function(n) {
+        return document.getElementById("factor-" + n);
+      });
+      var calloutBox  = document.getElementById("callout-box");
+      var headerAccent = document.getElementById("header-accent");
+      var headerKicker = document.getElementById("header-kicker");
+      var headerTitle  = document.getElementById("header-title");
+      var videoIntro   = document.getElementById("video-intro");
+      var introVideoEl = videoIntro ? videoIntro.querySelector("video") : null;
+      var videoFadeAtSec = 12.0;
+      var videoIntroFaded = false;
+
+      /* ── Active-card tracking ───────────────────────────── */
+      var lastActiveCard = null;
+      function setActiveCard(el) {
+        if (lastActiveCard) {
+          lastActiveCard.classList.remove("is-active");
+          lastActiveCard.classList.remove("is-shimmer");
+        }
+        lastActiveCard = el;
+        if (el) {
+          el.classList.add("is-active");
+          el.classList.add("is-shimmer");
+        }
+      }
+
+      /* ── Apply a single reveal step ─────────────────────── */
+      function applyReveal(target) {
+        var el = document.querySelector(target);
+        if (!el) return;
+
+        el.classList.add("is-visible");
+
+        if (target.startsWith("#factor-")) {
+          setActiveCard(el);
+        } else if (target === "#callout-box") {
+          if (lastActiveCard) {
+            lastActiveCard.classList.remove("is-active");
+            lastActiveCard.classList.remove("is-shimmer");
+          }
+        }
+      }
+
+      function fadeIntroVideo() {
+        if (!videoIntro || videoIntroFaded) return;
+        videoIntroFaded = true;
+        videoIntro.classList.add("is-faded");
+        window.setTimeout(function () {
+          if (introVideoEl && typeof introVideoEl.pause === "function") {
+            introVideoEl.pause();
+          }
+          videoIntro.style.display = "none";
+        }, 950);
+      }
+
+      /* ── Clock source ───────────────────────────────────── */
+      function getClockSec() {
+        try {
+          if (window.SandboxRuntime && window.SandboxRuntime.voAudio) {
+            var t = Number(window.SandboxRuntime.voAudio.currentTime);
+            if (Number.isFinite(t) && t >= 0) return t;
+          }
+          if (window.parent && window.parent.CourseRuntime &&
+              typeof window.parent.CourseRuntime.getAudioCurrentTime === "function") {
+            var ct = Number(window.parent.CourseRuntime.getAudioCurrentTime());
+            if (Number.isFinite(ct) && ct >= 0) return ct;
+          }
+        } catch (_) {}
+        return (Date.now() - state.localStartMs) / 1000;
+      }
+
+      /* ── RAF tick ───────────────────────────────────────── */
+      function tick() {
+        var now = getClockSec();
+        if (now >= videoFadeAtSec) {
+          fadeIntroVideo();
+        }
+        while (
+          state.nextStep < revealSteps.length &&
+          now >= revealSteps[state.nextStep].at
+        ) {
+          applyReveal(revealSteps[state.nextStep].target);
+          state.nextStep++;
+        }
+        window.requestAnimationFrame(tick);
+      }
+
+      /* ── Normalise and sort step array ──────────────────── */
+      function normSteps(arr) {
+        return arr
+          .filter(function(s) { return s && Number.isFinite(s.at) && s.target; })
+          .sort(function(a, b) { return a.at - b.at; });
+      }
+
+      /* ── Parse fetched animation-cues JSON ──────────────── */
+      function stepsFromJSON(json) {
+        if (!Array.isArray(json)) return [];
+        return json
+          .filter(function(c) { return c && c.target && Number.isFinite(Number(c.time)); })
+          .map(function(c) { return { at: Number(c.time), target: String(c.target) }; });
+      }
+
+      /* ── Icon fallbacks ─────────────────────────────────── */
+      function setIconFallbacks() {
+        document.querySelectorAll("img[data-fallback]").forEach(function(img) {
+          img.addEventListener("error", function onErr() {
+            var fb = this.getAttribute("data-fallback");
+            if (fb) this.src = fb;
+            this.removeEventListener("error", onErr);
+          });
+        });
+      }
+
+      /* ── Header entrance ────────────────────────────────── */
+      function entranceAnimation() {
+        [headerAccent, headerKicker].forEach(function(el, i) {
+          if (!el) return;
+          setTimeout(function() { el.classList.add("is-visible"); }, i * 100);
+        });
+        if (headerTitle) {
+          setTimeout(function() { headerTitle.classList.add("is-visible"); }, 180);
+        }
+      }
+
+      /* ── Initialise ─────────────────────────────────────── */
+      setIconFallbacks();
+
+      function startWithSteps(steps) {
+        revealSteps = normSteps(steps.length ? steps : defaultRevealSteps);
+        state.nextStep = 0;
+        state.localStartMs = Date.now();
+        entranceAnimation();
+        tick();
+      }
+
+      /* ── Load animation-cues JSON (falls back to defaults) ─ */
+      if (typeof fetch === "function") {
+        fetch("../animation-cues/SLD-CC01-006.json", { cache: "no-store" })
+          .then(function(res) {
+            return res.ok ? res.json().catch(function() { return null; }) : null;
+          })
+          .then(function(json) {
+            var parsed = stepsFromJSON(json || []);
+            startWithSteps(parsed.length ? parsed : defaultRevealSteps);
+          })
+          .catch(function() { startWithSteps(defaultRevealSteps); });
+      } else {
+        startWithSteps(defaultRevealSteps);
+      }
+
+    })();
+  </script>
+
+  <script src="../../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../sandbox-runtime.js"></script>
+  <script>
+    SandboxRuntime.init("SLD-CC01-006", {
+      autoplay: false,
+      basePath: "../"
+    });
+
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
+    });
+</script>
+</body>
+</html>

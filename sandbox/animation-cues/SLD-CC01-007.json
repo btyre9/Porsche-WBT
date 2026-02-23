@@ -1,0 +1,8 @@
+[
+  { "time": 29.0, "target": "#option-a",    "note": "VO: Option A enters" },
+  { "time": 47.0, "target": "#option-b",    "note": "VO: Option B enters" },
+  { "time": 66.0, "target": "#math-box",    "note": "VO: The Math enters" },
+  { "time": 76.0, "target": "#beyond-box",  "note": "VO: Beyond This One Job enters" },
+  { "time": 98.0, "target": "#callout-box", "note": "VO: Closing callout enters" },
+  { "time":120.0, "target": "#continue-btn", "note": "VO ends - Continue button becomes available" }
+]
