@@ -103,13 +103,32 @@ def _load_prebuilt_slides(
     storyboard_slides: list[dict],
 ) -> tuple[list[dict], dict[str, Path]]:
     storyboard_by_id = {s["id"]: s for s in storyboard_slides}
-    prebuilt_files = []
-    for html_file in prebuilt_dir.glob("slide-*.html"):
-        # Ignore scratch variants; only include canonical slide files in navigation.
-        if html_file.stem.lower().endswith("_make-converted"):
-            continue
-        prebuilt_files.append(html_file)
-    prebuilt_files.sort(key=lambda p: _natural_sort_key(p.name))
+
+    # Discover all .html files; skip underscore-prefixed utility files and scratch variants.
+    all_files: dict[str, Path] = {
+        f.stem: f
+        for f in prebuilt_dir.glob("*.html")
+        if not f.name.startswith("_") and not f.stem.lower().endswith("_make-converted")
+    }
+
+    # Order by _order.json manifest if present, else fall back to natural sort.
+    order_file = prebuilt_dir / "_order.json"
+    if order_file.exists():
+        ordered_ids: list[str] = json.loads(order_file.read_text(encoding="utf-8"))
+        prebuilt_files = []
+        for slide_id in ordered_ids:
+            if slide_id in all_files:
+                prebuilt_files.append(all_files[slide_id])
+            else:
+                print(f"Warning: '{slide_id}' listed in _order.json but not found in prebuilt dir — skipping.")
+        # Append any files not listed in the manifest (at the end, sorted).
+        ordered_set = set(ordered_ids)
+        for stem, path in sorted(all_files.items(), key=lambda x: _natural_sort_key(x[0])):
+            if stem not in ordered_set:
+                print(f"Warning: prebuilt file '{stem}.html' is not in _order.json — appending at end.")
+                prebuilt_files.append(path)
+    else:
+        prebuilt_files = sorted(all_files.values(), key=lambda p: _natural_sort_key(p.name))
 
     slides: list[dict] = []
     source_by_id: dict[str, Path] = {}
@@ -288,19 +307,6 @@ def run(project_root: Path, skip_captions: bool = False) -> None:
         tts_rows.append({"slide_id": s["id"], "voiceover_clean": clean_vo})
         caption_text = apply_pronunciation_map(s.get("caption_text") or s["voiceover"], pron_map)
 
-        if not skip_captions:
-            caption_file = captions_output / f"{s['id']}.vtt"
-            if caption_file.exists() and not overwrite_captions:
-                preserved_caption_files += 1
-                continue
-            audio_rel = s.get("audio_vo", "")
-            if audio_rel:
-                ok = transcribe_to_vtt(project_root / audio_rel, caption_file, model_size="small", language="en")
-                if not ok:
-                    write_text_vtt(s["id"], caption_text, caption_file)
-            else:
-                write_text_vtt(s["id"], caption_text, caption_file)
-
         output_slide_path = slides_output / f"{s['id']}.html"
         output_slide_path.parent.mkdir(parents=True, exist_ok=True)
         if slide_source == "prebuilt":
@@ -314,6 +320,19 @@ def run(project_root: Path, skip_captions: bool = False) -> None:
                 raise ValueError(f"No template for template_id '{s['template_id']}'")
             from render_slides import render_slide_html
             render_slide_html(s, template_rel, project_root, output_slide_path, course_data)
+
+        if not skip_captions:
+            caption_file = captions_output / f"{s['id']}.vtt"
+            if caption_file.exists() and not overwrite_captions:
+                preserved_caption_files += 1
+                continue
+            audio_rel = s.get("audio_vo", "")
+            if audio_rel:
+                ok = transcribe_to_vtt(project_root / audio_rel, caption_file, model_size="small", language="en")
+                if not ok:
+                    write_text_vtt(s["id"], caption_text, caption_file)
+            else:
+                write_text_vtt(s["id"], caption_text, caption_file)
 
     export_tts_csv(tts_rows, data_output / "tts_script.csv")
     if preserved_caption_files:

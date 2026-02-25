@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=1920">
-  <title>The Financial Reality — CC01 Module 1</title>
+  <title>Financial Reality</title>
   <style>
     @font-face {
       font-family: "Porsche Next TT";
@@ -338,14 +338,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      transform: scale(0.92);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-
-    .vs-divider.is-visible {
-      opacity: 1;
-      transform: scale(1);
     }
 
     .vs-divider span {
@@ -373,15 +365,18 @@
       max-height: 160px;
       opacity: 1;
     }
-    .reveal-item {
+
+    .timed-reveal {
       opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
     }
 
-    .reveal-item.is-visible {
+    .timed-reveal.is-visible {
       opacity: 1;
       transform: translateY(0);
+      pointer-events: auto;
     }
 
     .math-box {
@@ -504,7 +499,7 @@
     <!-- Header -->
     <header class="header">
       <div class="header__accent anim-fade" id="header-accent" aria-hidden="true"></div>
-      <p class="header__kicker anim-fade" id="header-kicker">CC01 · Module 1 · The Financial Reality</p>
+      
       <h1 class="header__title anim-slide-up" id="header-title">Communication Has Direct Financial Impact</h1>
     </header>
 
@@ -546,7 +541,7 @@
         </div>
 
         <!-- VS divider -->
-        <div class="vs-divider" id="vs-divider"><span>VS</span></div>
+        <div class="vs-divider"><span>VS</span></div>
 
         <!-- Option B -->
         <div class="option option--b" id="option-b">
@@ -569,7 +564,7 @@
       <!-- Math + Beyond + Callout — auto-reveals after Option B -->
       <div class="math-section" id="math-section">
 
-        <div class="math-box reveal-item" id="math-box">
+        <div class="math-box timed-reveal" id="math-box">
           <p class="math-box__label">The Math</p>
           <div class="math-equation">
             <span class="math-val math-val--a">5 min</span>
@@ -579,7 +574,7 @@
           <p class="math-tagline">Your communication = Your income</p>
         </div>
 
-        <div class="beyond-box reveal-item" id="beyond-box">
+        <div class="beyond-box timed-reveal" id="beyond-box">
           <h3>Beyond This One Job</h3>
           <ul>
             <li>Customer returns for future service (lifetime value)</li>
@@ -588,7 +583,7 @@
           </ul>
         </div>
 
-        <div class="callout reveal-item" id="callout-box">
+        <div class="callout timed-reveal" id="callout-box">
           <p>"Better communication isn't time away from profitable work —
             <strong>it's an investment in MORE profitable work.</strong>"</p>
         </div>
@@ -617,31 +612,54 @@
   <!-- Audio-timed reveal state machine -->
   <script>
     (function () {
-      var optA      = document.getElementById('option-a');
-      var optB      = document.getElementById('option-b');
-      var vsDivider = document.getElementById('vs-divider');
-      var mathSec   = document.getElementById('math-section');
-      var mathBox   = document.getElementById('math-box');
-      var beyondBox = document.getElementById('beyond-box');
-      var callout   = document.getElementById('callout-box');
-      var counter   = document.getElementById('hours-counter');
-
-      var times = {
-        optionA: 29.0,
-        optionB: 47.0,
-        math: 66.0,
-        beyond: 76.0,
-        callout: 98.0
-      };
-
+      var step        = 0;
+      var optA        = document.getElementById('option-a');
+      var optB        = document.getElementById('option-b');
+      var mathSec     = document.getElementById('math-section');
+      var mathBox     = document.getElementById('math-box');
+      var beyondBox   = document.getElementById('beyond-box');
+      var calloutBox  = document.getElementById('callout-box');
+      var counter     = document.getElementById('hours-counter');
+      // Timing controls (seconds from VO start unless noted)
+      var T_OPTION_A = 28.0; // Reveal option-a
+      var T_OPTION_B = 47.0; // Reveal option-b
+      var T_MATH = 66.0; // Reveal "The Math"
+      var T_BEYOND = 76.0; // Reveal "Beyond This One Job"
+      var T_CALLOUT = 98.0; // Reveal callout
+      var COUNTER_DELAY_MS = 400; // Delay before 0 -> 8 counter animation
       var localStartMs = Date.now();
-      var shown = {
-        optionA: false,
-        optionB: false,
-        math: false,
-        beyond: false,
-        callout: false
-      };
+      var mathRevealed = false;
+      var beyondRevealed = false;
+      var calloutRevealed = false;
+
+      function advance() {
+        step++;
+
+        if (step === 1) {
+          optA.classList.add('is-visible');
+        }
+
+        if (step === 2) {
+          optB.classList.add('is-visible');
+
+          // Animate counter 0 → 8
+          setTimeout(function () {
+            animateCounter(0, 8, 1200, counter);
+          }, COUNTER_DELAY_MS);
+
+        }
+      }
+
+      function animateCounter(from, to, durationMs, el) {
+        var steps    = to - from;
+        var interval = durationMs / steps;
+        var current  = from;
+        var timer = setInterval(function () {
+          current++;
+          el.textContent = current;
+          if (current >= to) clearInterval(timer);
+        }, interval);
+      }
 
       function getClockSec() {
         try {
@@ -658,64 +676,32 @@
         return (Date.now() - localStartMs) / 1000;
       }
 
-      function animateCounter(from, to, durationMs, el) {
-        if (!el || to <= from) return;
-        var steps = to - from;
-        var interval = durationMs / steps;
-        var current = from;
-        var timer = setInterval(function () {
-          current++;
-          el.textContent = current;
-          if (current >= to) clearInterval(timer);
-        }, interval);
-      }
-
-      function revealOptionA() {
-        if (shown.optionA || !optA) return;
-        shown.optionA = true;
-        optA.classList.add('is-visible');
-      }
-
-      function revealOptionB() {
-        if (shown.optionB || !optB) return;
-        shown.optionB = true;
-        if (vsDivider) vsDivider.classList.add('is-visible');
-        optB.classList.add('is-visible');
-        setTimeout(function () { animateCounter(0, 8, 1200, counter); }, 350);
-      }
-
-      function revealMath() {
-        if (shown.math || !mathSec) return;
-        shown.math = true;
-        mathSec.classList.add('is-visible');
-        if (mathBox) {
-          setTimeout(function () { mathBox.classList.add('is-visible'); }, 80);
-        }
-      }
-
-      function revealBeyond() {
-        if (shown.beyond || !beyondBox) return;
-        shown.beyond = true;
-        beyondBox.classList.add('is-visible');
-      }
-
-      function revealCallout() {
-        if (shown.callout || !callout) return;
-        shown.callout = true;
-        callout.classList.add('is-visible');
-      }
-
-      function tick() {
+      function autoRevealTick() {
         var now = getClockSec();
-        if (now >= times.optionA) revealOptionA();
-        if (now >= times.optionB) revealOptionB();
-        if (now >= times.math) revealMath();
-        if (now >= times.beyond) revealBeyond();
-        if (now >= times.callout) revealCallout();
-        window.requestAnimationFrame(tick);
+        if (step < 1 && now >= T_OPTION_A) {
+          advance();
+        }
+        if (step < 2 && now >= T_OPTION_B) {
+          advance();
+        }
+        if (!mathRevealed && now >= T_MATH) {
+          mathRevealed = true;
+          mathSec.classList.add('is-visible');
+          if (mathBox) mathBox.classList.add('is-visible');
+        }
+        if (!beyondRevealed && now >= T_BEYOND) {
+          beyondRevealed = true;
+          mathSec.classList.add('is-visible');
+          if (beyondBox) beyondBox.classList.add('is-visible');
+        }
+        if (!calloutRevealed && now >= T_CALLOUT) {
+          calloutRevealed = true;
+          mathSec.classList.add('is-visible');
+          if (calloutBox) calloutBox.classList.add('is-visible');
+        }
+        window.requestAnimationFrame(autoRevealTick);
       }
-
-      tick();
+autoRevealTick();
     })();
   </script>
 
@@ -734,7 +720,7 @@
       var scenario     = document.getElementById('scenario');
       var introImage   = document.getElementById('intro-image');
       var introPhoto   = introImage ? introImage.querySelector('img') : null;
-      var INTRO_OUT_AT = 11.0;
+      var T_INTRO_OUT = 11.0; // Intro image out / scenario in
       var introHandoffDone = false;
       var localStartMs = Date.now();
 
@@ -756,12 +742,12 @@
       function introTick() {
         var now = getClockSec();
         if (introPhoto && !introHandoffDone) {
-          var progress = Math.min(Math.max(now / INTRO_OUT_AT, 0), 1);
+          var progress = Math.min(Math.max(now / T_INTRO_OUT, 0), 1);
           var scale = 1 + (0.08 * progress);
           introPhoto.style.transform = 'scale(' + scale.toFixed(4) + ')';
         }
 
-        if (!introHandoffDone && now >= INTRO_OUT_AT) {
+        if (!introHandoffDone && now >= T_INTRO_OUT) {
           introHandoffDone = true;
           if (introImage) {
             gsap.to(introImage, {
@@ -813,6 +799,3 @@
   </script>
 </body>
 </html>
-
-
-

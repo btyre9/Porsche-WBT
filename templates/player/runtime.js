@@ -147,6 +147,8 @@
     ccEnabled: false,
     audio: null,
     audioStartTimer: null,
+    nextLockedByAudio: false,       // unlocked when VO ends
+    nextLockedByInteraction: false, // controlled by sandbox-lock/unlock-next messages
     pendingAudioStart: false,
     audioUnlockArmed: false,
     audioUnlockFrameDoc: null,
@@ -202,12 +204,15 @@
   function isModuleFirstSlide(slide) {
     if (!slide) return false;
     var id = String(slide.id || "");
-    // Match slides ending in _SLD_001 (first slide of each module)
-    return /_SLD_001$/.test(id);
+    // New naming: SLD-CC01-001 | Legacy naming: slide-CC01_SLD_001
+    return /^SLD-[A-Z]{2}\d{2}-001$/.test(id) || /_SLD_001$/.test(id);
   }
 
   function updateNavButtons() {
-    $("btn-next").disabled = state.slideIndex >= state.totalSlides - 1;
+    var atEnd = state.slideIndex >= state.totalSlides - 1;
+    var locked = state.nextLockedByAudio || state.nextLockedByInteraction;
+    $("btn-next").disabled = atEnd || locked;
+    $("btn-next").style.opacity = locked ? "0.35" : "";
   }
 
   function resolveSlideAudioSrc(slide) {
@@ -215,6 +220,9 @@
     if (slide.audio_vo) return slide.audio_vo;
 
     var id = String(slide.id || "");
+    // New naming: SLD-CC01-001
+    if (/^SLD-[A-Z]{2}\d{2}-\d{3}$/.test(id)) return "assets/audio/vo/" + id + ".mp3";
+    // Legacy naming: slide-CC01_SLD_001
     var m = id.match(/^slide-([A-Z]{2}\d{2}_SLD_\d{3})$/);
     if (m) return "assets/audio/vo/" + m[1] + ".mp3";
     return "";
@@ -455,10 +463,19 @@
     syncAudioProgress();
     updateAudioUi();
     if (state.cueEditor.open) updateCueCurrentTimeLabel();
+    state.nextLockedByAudio = false;
+    updateNavButtons();
   }
 
   function onAudioMeta() {
     syncAudioProgress();
+  }
+
+  function postMessageToSlide(msg) {
+    var frame = $("slide-frame");
+    if (frame && frame.contentWindow) {
+      try { frame.contentWindow.postMessage(msg, "*"); } catch (_e) {}
+    }
   }
 
   function togglePlayPause() {
@@ -473,6 +490,7 @@
       state.pendingAudioStart = false;
       disarmAudioUnlockListeners();
       attemptStartAudioPlayback();
+      postMessageToSlide({ type: "player-play-state", playing: true });
       return;
     }
 
@@ -480,6 +498,7 @@
     disarmAudioUnlockListeners();
     state.audio.pause();
     updateAudioUi();
+    postMessageToSlide({ type: "player-play-state", playing: false });
   }
 
   function showSlide(i, forceReplay) {
@@ -491,6 +510,10 @@
     state.interactionAudioMap = {};
 
     state.slideIndex = i;
+    // Reset both lock flags on every slide change
+    state.nextLockedByInteraction = false;
+    var slideAudio = resolveSlideAudioSrc(slides[i]);
+    state.nextLockedByAudio = !!slideAudio;
     var slideSrc = "../slides/" + slides[i].id + ".html";
     if (forceReplay) slideSrc += "?replay=" + Date.now();
     $("slide-frame").src = slideSrc;
@@ -570,20 +593,35 @@
     else openMenu();
   }
 
+  function isFQSlide(id) {
+    return /^FQ-/.test(String(id || ""));
+  }
+
   function renderToc() {
     var list = $("toc-list");
     if (!list) return;
 
     var slides = state.data && state.data.slides || [];
     list.innerHTML = "";
+    var fqEntryAdded = false;
 
     slides.forEach(function (slide, index) {
+      // Collapse all FQ slides into a single "Final Quiz" entry at the first FQ slide
+      if (isFQSlide(slide.id)) {
+        if (fqEntryAdded) return; // skip subsequent FQ slides
+        fqEntryAdded = true;
+      }
+
       var item = document.createElement("li");
       var button = document.createElement("button");
       button.type = "button";
       button.className = "toc-item";
       button.setAttribute("data-slide-index", String(index));
-      button.textContent = slide.slide_title || slide.title || ("Slide " + (index + 1));
+      button.setAttribute("data-is-fq", isFQSlide(slide.id) ? "true" : "false");
+      var label = isFQSlide(slide.id)
+        ? "Final Quiz"
+        : (slide.slide_title || slide.title || ("Slide " + (index + 1)));
+      button.textContent = label;
       button.addEventListener("click", function () {
         showSlide(index);
         closeMenu();
@@ -596,11 +634,15 @@
   }
 
   function updateMenuActiveSlide() {
+    var slides = state.data && state.data.slides || [];
+    var currentIsFQ = isFQSlide((slides[state.slideIndex] || {}).id);
     var items = document.querySelectorAll(".toc-item");
     for (var i = 0; i < items.length; i += 1) {
       var el = items[i];
       var idx = Number(el.getAttribute("data-slide-index"));
-      if (idx === state.slideIndex) el.classList.add("active");
+      var entryIsFQ = el.getAttribute("data-is-fq") === "true";
+      var isActive = (idx === state.slideIndex) || (entryIsFQ && currentIsFQ);
+      if (isActive) el.classList.add("active");
       else el.classList.remove("active");
     }
   }
@@ -1551,6 +1593,32 @@
     window.addEventListener("resize", scaleSlide);
     renderToc();
 
+    // Messages from slide iframes
+    window.addEventListener("message", function (e) {
+      if (!e.data || typeof e.data.type !== "string") return;
+      switch (e.data.type) {
+        case "sandbox-lock-next":
+          state.nextLockedByInteraction = true;
+          updateNavButtons();
+          break;
+        case "sandbox-unlock-next":
+          state.nextLockedByInteraction = false;
+          updateNavButtons();
+          break;
+        case "sandbox-next":
+          if (state.slideIndex < state.totalSlides - 1) showSlide(state.slideIndex + 1);
+          break;
+        case "sandbox-goto":
+          if (e.data.slideId) {
+            var slides = state.data && state.data.slides || [];
+            for (var gi = 0; gi < slides.length; gi++) {
+              if (slides[gi].id === e.data.slideId) { showSlide(gi); break; }
+            }
+          }
+          break;
+      }
+    });
+
     // Navigation
     $("btn-playpause").addEventListener("click", togglePlayPause);
     $("btn-next").addEventListener("click", function () { showSlide(state.slideIndex + 1); });
@@ -1684,6 +1752,12 @@
       // Navigation control for slides
       nextSlide: function () { showSlide(state.slideIndex + 1); },
       prevSlide: function () { showSlide(state.slideIndex - 1); },
+      goToSlideId: function (slideId) {
+        var slides = state.data && state.data.slides || [];
+        for (var i = 0; i < slides.length; i++) {
+          if (slides[i].id === slideId) { showSlide(i); return; }
+        }
+      },
 
       // Slide can query state
       getSlideIndex: function () { return state.slideIndex; },

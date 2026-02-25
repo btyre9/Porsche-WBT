@@ -1,0 +1,8 @@
+[
+  { "time": 12.0, "target": "#factor-1",    "note": "VO: 'First, you're on the Gold Certification path...'" },
+  { "time": 26.0, "target": "#factor-2",    "note": "VO: 'Second, factory training...'" },
+  { "time": 43.0, "target": "#factor-3",    "note": "VO: 'Third, years of Porsche-specific experience...'" },
+  { "time": 60.0, "target": "#factor-4",    "note": "VO: 'Finally, you need to understand just how rare...'" },
+  { "time": 75.0, "target": "#callout-box", "note": "VO: 'Customers know they're getting the best...'" },
+  { "time": 90.0, "target": "#continue-btn","note": "VO ends — Continue button becomes available" }
+]

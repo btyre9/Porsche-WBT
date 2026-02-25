@@ -162,14 +162,20 @@
       /* centered in 1560px content: (1560-1180)/2 = 190px */
       left: 190px;
       top: 0;
-      background: var(--card-bg);
-      border: 1.5px solid var(--card-border);
+      background: rgba(22, 26, 34, 0.1);
+      -webkit-backdrop-filter: blur(17px) saturate(1.4);
+      backdrop-filter: blur(18px) saturate(1.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-top-color: rgba(255, 255, 255, 0.28);
       border-radius: 14px;
       padding: 28px 48px;
       display: flex;
       flex-direction: column;
       gap: 14px;
       transform-origin: center center;
+      box-shadow:
+        0 4px 32px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
     }
 
     .card-kicker {

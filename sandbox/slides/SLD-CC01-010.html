@@ -120,7 +120,7 @@
       flex-direction: row;
       gap: 48px;
       /* Pull left edge to 24px from slide boundary (120px padding − 96px = 24px gap) */
-      margin-left: -96px;
+      margin-left: -0;
     }
 
     /* ── Left image panel ─────────────────────────────────────── */
@@ -132,12 +132,27 @@
       border-radius: 12px;
     }
 
-    .image-panel img {
+    .image-panel video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center top;
       display: block;
+      filter: brightness(0.55) saturate(0.3);
+    }
+
+    /* Dark overlay to further blend video into the slide bg */
+    .image-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(17, 19, 23, 0.35) 0%,
+        rgba(17, 19, 23, 0.10) 60%,
+        rgba(17, 19, 23, 0.45) 100%
+      );
+      pointer-events: none;
     }
 
     /* ── Content side (holds grid + key insight) ──────────────── */
@@ -154,7 +169,7 @@
       flex: 1;
       min-height: 0;
       display: grid;
-      grid-template-columns: 1fr 1px 1fr;
+      grid-template-columns: 0.35fr 1px 0.35fr;
       gap: 0 52px;
     }
 
@@ -404,10 +419,11 @@
     <!-- Body row: image left, comparison columns right -->
     <div class="body-row anim-fade" id="body-row">
 
-      <!-- Left: technician + customer photo -->
+      <!-- Left: intro video (starts at 25s, loops, no audio) -->
       <div class="image-panel">
-        <img src="../../assets/images/Ptechs-Customer-08.webp"
-             alt="Porsche technician speaking with a customer">
+        <video id="panel-video" muted playsinline loop>
+          <source src="../../assets/video/Customer-communications-video1_1.webm" type="video/webm">
+        </video>
       </div>
 
       <!-- Right: comparison columns + key insight stacked -->
@@ -558,6 +574,24 @@
       basePath: '../'
     });
 
+    // Panel video — seek to 25s then loop
+    (function () {
+      var vid = document.getElementById('panel-video');
+      vid.addEventListener('loadedmetadata', function () {
+        vid.currentTime = 25;
+      });
+      vid.addEventListener('seeked', function onSeeked() {
+        vid.playbackRate = 0.5;
+        vid.play().catch(function () {});
+        vid.removeEventListener('seeked', onSeeked);
+      });
+    })();
+
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
+    });
+
     // ── Entrance animations ────────────────────────────────────
     (function () {
       var accent   = document.getElementById('hdr-accent');
@@ -576,16 +610,16 @@
       // Times mapped to the VO script (105-120s total)
       // ARE items: first wave; NOT items: second wave; insight + continue: final
       var CUES = [
-        { time:  5.0, id: 'are-1'        },  // "They want credibility from the actual expert"
-        { time: 18.0, id: 'are-2'        },  // "They want transparency..."
-        { time: 28.0, id: 'are-3'        },  // "They want technical depth..."
-        { time: 38.0, id: 'are-4'        },  // "They want to build trust..."
-        { time: 47.0, id: 'are-5'        },  // "And many want shared enthusiasm..."
-        { time: 63.0, id: 'not-1'        },  // "They're not looking to negotiate price..."
-        { time: 73.0, id: 'not-2'        },  // "They're not trying to catch you..."
-        { time: 83.0, id: 'not-3'        },  // "They're not expecting warranty resolution..."
-        { time: 91.0, id: 'not-4'        },  // "And they're not trying to waste your time..."
-        { time: 99.0, id: 'key-insight'  },  // "Here's the key insight..."
+        { time:  13.0, id: 'are-1'        },  // "They want credibility from the actual expert"
+        { time: 22.0, id: 'are-2'        },  // "They want transparency..."
+        { time: 30.0, id: 'are-3'        },  // "They want technical depth..."
+        { time: 37.0, id: 'are-4'        },  // "They want to build trust..."
+        { time: 45.0, id: 'are-5'        },  // "And many want shared enthusiasm..."
+        { time: 55.0, id: 'not-1'        },  // "They're not looking to negotiate price..."
+        { time: 61.0, id: 'not-2'        },  // "They're not trying to catch you..."
+        { time: 71.0, id: 'not-3'        },  // "They're not expecting warranty resolution..."
+        { time: 75.0, id: 'not-4'        },  // "And they're not trying to waste your time..."
+        { time: 82.0, id: 'key-insight'  },  // "Here's the key insight..."
         { time:113.0, id: 'continue-btn' }   // VO ends — Continue available
       ];
 

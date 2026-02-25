@@ -411,10 +411,10 @@
        which reduces the crop and lets top + bottom be visible. */
     .intro-image-wrap {
       position: absolute;
-      top: 48px;
-      bottom: 48px;
-      left: 56px;
-      right: 56px;
+      top: 100px;
+      bottom: 100px;
+      left: 160px;
+      right: 160px;
       z-index: 5;
       border-radius: 16px;
       overflow: hidden;
@@ -582,7 +582,7 @@
   <script>
     // ── Set initial hidden states before the page paints ─────────────────────
     // GSAP set() is synchronous — runs before first frame is rendered.
-    gsap.set('#intro-image',     { opacity: 0 });
+    gsap.set('#intro-image',     { opacity: 0, scale: 1.15 });
     gsap.set('#card-tech',       { opacity: 0, x: -40 });
     gsap.set('#op-plus',         { opacity: 0, scale: 0.65 });
     gsap.set('#card-comm',       { opacity: 0, x:  40 });
@@ -608,10 +608,10 @@
     //  77.68  "And there's another dimension to this, your leadership role."
     // 103.00  (VO complete — show continue)
     var T_TECH    =  8.08;
-    var T_COMM    = 27.36;
+    var T_COMM    = 29.00;
     var T_RESULT  = 48.24;
-    var T_REALITY = 64.80;
-    var T_LEADER  = 77.68;
+    var T_REALITY = 67.00;
+    var T_LEADER  = 81.00;
 
     // ── Reveal system (one-shot per element) ─────────────────────────────────
     var revealed = {};
@@ -657,7 +657,7 @@
         // Fade intro image out as cards slide in (one-shot)
         if (!revealed['intro-image-out']) {
           revealed['intro-image-out'] = true;
-          gsap.to('#intro-image', { opacity: 0, duration: 1.0, ease: 'power2.inOut' });
+          gsap.to('#intro-image', { opacity: 0, scale: 0.90, duration: 1.2, ease: 'power2.inOut' });
         }
         reveal('card-tech', { duration: 0.55 });
         reveal('op-plus',   { duration: 0.30, ease: 'back.out(2)' });
@@ -702,9 +702,9 @@
         opacity: 0, y: 16,
         duration: 0.50, ease: 'power2.out', delay: 0.12
       });
-      // Intro image fades in shortly after header settles
+      // Intro image fades in and slowly zooms out (1.15 → 1.0) until T_TECH
       gsap.to('#intro-image', {
-        opacity: 1, duration: 1.2, delay: 0.5, ease: 'power2.out'
+        opacity: 1, scale: 1.0, duration: 8.5, delay: 0.5, ease: 'power1.out'
       });
     });
 

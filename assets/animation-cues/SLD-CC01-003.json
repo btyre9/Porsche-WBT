@@ -1,0 +1,10 @@
+[
+  { "time": 0.2, "target": "#slide-image", "animation": "fadeIn" },
+  { "time": 0.3, "target": "#red-accent", "animation": "fadeIn" },
+  { "time": 0.5, "target": "#slide-title", "animation": "slideUp" },
+  { "time": 1.0, "target": "#intro-text", "animation": "fadeIn" },
+  { "time": 7.2, "target": "#objective-1", "animation": "slideRight" },
+  { "time": 17.4, "target": "#objective-2", "animation": "slideRight" },
+  { "time": 29.9, "target": "#objective-3", "animation": "slideRight" },
+  { "time": 40.2, "target": "#objective-4", "animation": "slideRight" }
+]

@@ -349,34 +349,24 @@
   <script>
     // Configuration - add your slides here
     const slides = [
-      { name: 'SLD-CC01-001 - Title Intro', file: 'slides/SLD-CC01-001.html' },
-      { name: 'SLD-CC01-002 - Beyond the Wrench', file: 'slides/SLD-CC01-002.html' },
-      { name: 'SLD-CC01-003 - Learning Objectives', file: 'slides/SLD-CC01-003.html' },
-      { name: 'SLD-CC01-004 - Brand Ambassador', file: 'slides/SLD-CC01-004.html' },
-      { name: 'SLD-CC01-005 - Why An Ambassador?', file: 'slides/SLD-CC01-005.html' },
-      { name: 'SLD-CC01-006 - What Sets You Apart', file: 'slides/SLD-CC01-006.html' },
-      { name: 'SLD-CC01-007 - The Financial Reality', file: 'slides/SLD-CC01-007.html' },
-      { name: 'SLD-CC01-008 - Your Impact on CSI', file: 'slides/SLD-CC01-008.html' },
-      { name: 'KC-CC01-001 - Knowledge Check', file: 'slides/KC-CC01-001.html' },
-      { name: 'KC-CC01-002 - Knowledge Check', file: 'slides/KC-CC01-002.html' },
-      { name: 'SLD-CC01-009 - When You Interact with Customers', file: 'slides/SLD-CC01-009.html' },
-      { name: 'SLD-CC01-010 - Understanding Customer Expectations', file: 'slides/SLD-CC01-010.html' },
-      { name: 'SLD-CC01-011 - Technical Expert AND Communicator', file: 'slides/SLD-CC01-011.html' },
-      { name: 'KC-CC01-003 - Knowledge Check', file: 'slides/KC-CC01-003.html' },
-      { name: 'KC-CC01-004 - Knowledge Check', file: 'slides/KC-CC01-004.html' },
-      { name: 'SLD-CC01-012 - Clear Boundaries, Clear Responsibilities', file: 'slides/SLD-CC01-012.html' },
-      { name: 'SLD-CC01-013 - You ARE Porsche', file: 'slides/SLD-CC01-013.html' },
-      { name: 'FQ-CC01-001 - Final Quiz Q1',  file: 'slides/FQ-CC01-001.html' },
-      { name: 'FQ-CC01-002 - Final Quiz Q2',  file: 'slides/FQ-CC01-002.html' },
-      { name: 'FQ-CC01-003 - Final Quiz Q3',  file: 'slides/FQ-CC01-003.html' },
-      { name: 'FQ-CC01-004 - Final Quiz Q4',  file: 'slides/FQ-CC01-004.html' },
-      { name: 'FQ-CC01-005 - Final Quiz Q5',  file: 'slides/FQ-CC01-005.html' },
-      { name: 'FQ-CC01-006 - Final Quiz Q6',  file: 'slides/FQ-CC01-006.html' },
-      { name: 'FQ-CC01-007 - Final Quiz Q7',  file: 'slides/FQ-CC01-007.html' },
-      { name: 'FQ-CC01-008 - Final Quiz Q8',  file: 'slides/FQ-CC01-008.html' },
-      { name: 'FQ-CC01-009 - Final Quiz Q9',  file: 'slides/FQ-CC01-009.html' },
-      { name: 'FQ-CC01-010 - Final Quiz Q10', file: 'slides/FQ-CC01-010.html' },
-      { name: 'FQ-CC01-SCORE - Quiz Results',  file: 'slides/FQ-CC01-SCORE.html' },
+      { name: '01 — Expert Technician as Brand Ambassador', file: 'slides/SLD-CC01-001.html' },
+      { name: '02 — Beyond the Wrench',                    file: 'slides/SLD-CC01-002.html' },
+      { name: '03 — Learning Objectives',                  file: 'slides/SLD-CC01-003.html' },
+      { name: '04 — You Are a Brand Ambassador',           file: 'slides/SLD-CC01-004.html' },
+      { name: '05 — Why Brand Ambassadors Matter',         file: 'slides/SLD-CC01-005.html' },
+      { name: '06 — What Sets You Apart',                  file: 'slides/SLD-CC01-006.html' },
+      { name: '07 — Financial Reality',                    file: 'slides/SLD-CC01-007.html' },
+      { name: '08 — Your Impact on Customer Satisfaction', file: 'slides/SLD-CC01-008.html' },
+      { name: 'KC 1 — Knowledge Check',                    file: 'slides/KC-CC01-001.html' },
+      { name: 'KC 2 — Knowledge Check',                    file: 'slides/KC-CC01-002.html' },
+      { name: '09 — When You Interact with Customers',     file: 'slides/SLD-CC01-009.html' },
+      { name: '10 — Understanding Customer Expectations',  file: 'slides/SLD-CC01-010.html' },
+      { name: '11 — Technical Expert AND Communicator',    file: 'slides/SLD-CC01-011.html' },
+      { name: 'KC 3 — Knowledge Check',                    file: 'slides/KC-CC01-003.html' },
+      { name: 'KC 4 — Knowledge Check',                    file: 'slides/KC-CC01-004.html' },
+      { name: '12 — Clear Boundaries, Clear Responsibilities', file: 'slides/SLD-CC01-012.html' },
+      { name: '13 — You ARE Porsche',                      file: 'slides/SLD-CC01-013.html' },
+      { name: 'Final Quiz',                                 file: 'slides/FQ-CC01-001.html' },
       { name: 'Circle Hub Test', file: 'slides/circle-hub-test.html' },
       { name: 'Template (blank)', file: 'slides/_template.html' },
     ];
@@ -445,18 +435,22 @@
         showEmptyState();
         return;
       }
-      document.getElementById('slideFrame').src = file;
+      const fileBase = file.split('?')[0];
+      const cacheBust = file.includes('?')
+        ? `${file}&cb=${Date.now()}`
+        : `${file}?cb=${Date.now()}`;
+      document.getElementById('slideFrame').src = cacheBust;
 
       // Update active state in list
       document.querySelectorAll('.slide-list-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.file === file);
+        item.classList.toggle('active', item.dataset.file === fileBase);
       });
 
       // Update dropdown
-      document.getElementById('slideSelect').value = file;
+      document.getElementById('slideSelect').value = fileBase;
 
       // Extract slide ID from filename (e.g., "slides/SLD-CC01-001.html" -> "SLD-CC01-001")
-      const match = file.match(/slides\/([^\/]+)\.html$/);
+      const match = fileBase.match(/slides\/([^\/]+)\.html$/);
       if (match && match[1].startsWith('SLD-')) {
         currentSlideId = match[1];
         document.getElementById('toolbarAudio').classList.remove('hidden');
@@ -527,6 +521,11 @@
       isPlaying = !isPlaying;
       document.getElementById('toolbarPlayBtn').textContent = isPlaying ? '⏸' : '▶';
       sendToSlide(isPlaying ? 'play' : 'pause');
+      // Also broadcast player-play-state so slides listening directly (e.g. video slides) respond
+      const frame = document.getElementById('slideFrame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ type: 'player-play-state', playing: isPlaying }, '*');
+      }
     });
 
     // Progress bar scrubbing

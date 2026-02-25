@@ -635,6 +635,20 @@
       SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
       SandboxRuntime.interactionAudio.play().catch(function () {});
     });
+
+    // Sync intro video with Player play/pause state
+    (function () {
+      var videoEl = document.querySelector('.video-intro video');
+      if (!videoEl) return;
+      window.addEventListener('message', function (e) {
+        if (!e.data || e.data.type !== 'player-play-state') return;
+        if (e.data.playing) {
+          videoEl.play().catch(function () {});
+        } else {
+          videoEl.pause();
+        }
+      });
+    })();
 </script>
 </body>
 </html>

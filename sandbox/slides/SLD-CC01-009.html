@@ -31,8 +31,12 @@
       --text-body:   rgba(255, 255, 255, 0.85);
       --border:      rgba(255, 255, 255, 0.12);
       --border-hover:rgba(255, 255, 255, 0.30);
-      --card-front:  rgba(255, 255, 255, 0.04);
-      --card-back:   rgba(255, 255, 255, 0.07);
+      --card-front:  #F2F0EF;
+      --card-back:   #F2F0EF;
+      --card-face-text: #14171d;
+      --card-face-subtext: rgba(20, 23, 29, 0.72);
+      --card-face-border: rgba(17, 19, 23, 0.22);
+      --card-face-border-hover: rgba(17, 19, 23, 0.42);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -158,6 +162,11 @@
       perspective: 1200px;
       cursor: pointer;
       border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.025);
     }
 
     .card-inner {
@@ -179,9 +188,18 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 12px;
-      border: 1.5px solid var(--border);
+      border: 1.5px solid var(--card-face-border);
       overflow: hidden;
-      transition: border-color 0.22s ease, background 0.22s ease;
+      transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    }
+
+    .card-front {
+      background: var(--card-front) !important;
+    }
+
+    .card-back {
+      background: var(--card-back) !important;
     }
 
     /* ── Card front face ─────────────────────────────────────── */
@@ -196,14 +214,15 @@
     }
 
     .card:hover .card-front {
-      border-color: var(--border-hover);
-      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--card-face-border-hover);
+      background: #ffffff !important;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
     }
 
     /* Visited state — green tint border */
     .card.is-visited .card-front {
       border-color: rgba(34, 197, 94, 0.40);
-      background: rgba(34, 197, 94, 0.04);
+      background: var(--card-front);
     }
 
     /* Visited checkmark badge */
@@ -227,7 +246,7 @@
     .card-icon {
       width: 72px;
       height: 72px;
-      filter: brightness(0) invert(1);
+      filter: brightness(0) saturate(100%);
       opacity: 0.90;
       flex-shrink: 0;
       transition: opacity 0.22s;
@@ -239,7 +258,7 @@
     .card-title {
       font-size: 21px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--card-face-text);
       text-align: center;
       line-height: 1.25;
     }
@@ -249,12 +268,12 @@
       align-items: center;
       gap: 5px;
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.60);
+      color: var(--card-face-subtext);
       letter-spacing: 0.02em;
       transition: color 0.22s;
     }
 
-    .card:hover .card-cue { color: rgba(255, 255, 255, 0.85); }
+    .card:hover .card-cue { color: rgba(20, 23, 29, 0.9); }
 
     .card.is-visited .card-cue {
       color: rgba(34, 197, 94, 0.75);
@@ -263,8 +282,8 @@
     .cue-icon {
       width: 13px;
       height: 13px;
-      filter: brightness(0) invert(1);
-      opacity: 0.60;
+      filter: brightness(0) saturate(100%);
+      opacity: 0.56;
       transition: opacity 0.22s;
     }
 
@@ -273,7 +292,7 @@
     /* ── Card back face ──────────────────────────────────────── */
     .card-back {
       background: var(--card-back);
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: var(--card-face-border);
       transform: rotateY(180deg);
       display: flex;
       flex-direction: column;
@@ -281,18 +300,23 @@
       gap: 10px;
     }
 
+    .card:hover .card-back {
+      background: #ffffff !important;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
     .card-back-label {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.10em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.60);
+      color: var(--card-face-subtext);
     }
 
     .card-back-title {
       font-size: 17px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--card-face-text);
       line-height: 1.2;
     }
 
@@ -307,7 +331,7 @@
     .card-back-text {
       font-size: 15.5px;
       font-weight: 400;
-      color: #ffffff;
+      color: rgba(20, 23, 29, 0.92);
       line-height: 1.6;
       flex: 1;
     }
@@ -315,7 +339,7 @@
     /* ── Playing card shimmer ────────────────────────────────── */
     .card.is-playing .card-front,
     .card.is-playing .card-back {
-      border-color: rgba(255, 255, 255, 0.45);
+      border-color: rgba(213, 0, 28, 0.55);
     }
 
     .card.is-playing .card-front::before,
@@ -326,7 +350,7 @@
       background: linear-gradient(
         115deg,
         transparent 15%,
-        rgba(255, 255, 255, 0.07) 50%,
+        rgba(213, 0, 28, 0.08) 50%,
         transparent 85%
       );
       background-size: 300% 100%;
@@ -345,7 +369,7 @@
 
     /* ── Locked state (while intro VO plays) ────────────────── */
     .card-grid.is-locked .card {
-      opacity: 0.38;
+      opacity: 0.9;
       pointer-events: none;
     }
 

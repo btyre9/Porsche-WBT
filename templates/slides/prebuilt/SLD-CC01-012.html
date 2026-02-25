@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Clear Boundaries, Clear Responsibilities</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      overflow: hidden;
+      background: #111317;
+      font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    :root {
+      --accent:         #d5001c;
+      --dark-0:         #111317;
+      --dark-1:         #1e2128;
+      --dark-2:         #2a2f39;
+      --text:           #ffffff;
+      --text-body:      rgba(255, 255, 255, 0.88);
+      --text-sub:       rgba(255, 255, 255, 0.55);
+
+      /* Technician — emerald green */
+      --tech-bg:        rgba(22, 163, 74, 0.08);
+      --tech-border:    rgba(34, 197, 94, 0.28);
+      --tech-check:     #4ade80;
+      --tech-check-bg:  rgba(74, 222, 128, 0.16);
+      --tech-dot:       rgba(74, 222, 128, 0.65);
+      --tech-cat-bg:    rgba(22, 163, 74, 0.05);
+      --tech-cat-bdr:   rgba(34, 197, 94, 0.14);
+
+      /* Service Advisor — steel blue */
+      --sa-bg:          rgba(29, 78, 216, 0.08);
+      --sa-border:      rgba(59, 130, 246, 0.28);
+      --sa-accent:      #60a5fa;
+      --sa-accent-bg:   rgba(99, 160, 255, 0.16);
+      --sa-dot:         rgba(99, 160, 255, 0.70);
+      --sa-cat-bg:      rgba(29, 78, 216, 0.05);
+      --sa-cat-bdr:     rgba(59, 130, 246, 0.14);
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--dark-0) 0%, var(--dark-1) 48%, var(--dark-2) 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 62px 120px 40px;
+      gap: 18px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 120px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__title {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    /* ── Two-column row ──────────────────────────────────────────────── */
+    .columns-row {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 20px;
+    }
+
+    /* ── Column ──────────────────────────────────────────────────────── */
+    .col {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .col--tech {
+      background: var(--tech-bg);
+      border: 1.5px solid var(--tech-border);
+    }
+
+    .col--sa {
+      background: var(--sa-bg);
+      border: 1.5px solid var(--sa-border);
+    }
+
+    /* ── Column content area ─────────────────────────────────────────── */
+    .col-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 24px;
+    }
+
+    /* ── Column portrait image ───────────────────────────────────────── */
+    .col-image {
+      flex: 0 0 320px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .col-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* Left-edge blend: short fade so most of the photo is clearly visible */
+    .col-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right,
+        rgba(17, 19, 23, 0.92) 0%,
+        rgba(17, 19, 23, 0.30) 18%,
+        transparent 36%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Top / bottom micro-vignette */
+    .col-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(17, 19, 23, 0.35) 0%, transparent 16%),
+        linear-gradient(to top,    rgba(17, 19, 23, 0.35) 0%, transparent 16%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── Column header ───────────────────────────────────────────────── */
+    .col-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .col-header__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .col-header__icon--tech {
+      background: var(--tech-check-bg);
+      color: var(--tech-check);
+    }
+
+    .col-header__icon--sa {
+      background: var(--sa-accent-bg);
+      color: var(--sa-accent);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+
+    .col-header__label {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    /* ── Category block ──────────────────────────────────────────────── */
+    .category {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .category__title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      flex-shrink: 0;
+    }
+
+    /* ── Category marker ─────────────────────────────────────────────── */
+    .cat-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .cat-mark--check {
+      background: var(--tech-check-bg);
+      color: var(--tech-check);
+    }
+
+    .cat-mark--sa {
+      background: var(--sa-accent-bg);
+      color: var(--sa-accent);
+      font-size: 9px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Sub-bullet list ─────────────────────────────────────────────── */
+    .sub-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sub-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-body);
+    }
+
+    .sub-list li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    .col--tech .sub-list li::before { background: var(--tech-dot); }
+    .col--sa   .sub-list li::before { background: var(--sa-dot); }
+
+    /* ── Role callout ────────────────────────────────────────────────── */
+    .role-callout {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 28px;
+      background: rgba(213, 0, 28, 0.07);
+      border: 1.5px solid rgba(213, 0, 28, 0.25);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+    }
+
+    .callout-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(213, 0, 28, 0.80);
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 130px;
+    }
+
+    .callout-sep {
+      width: 1px;
+      height: 40px;
+      background: rgba(213, 0, 28, 0.22);
+      flex-shrink: 0;
+    }
+
+    .callout-text {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-body);
+    }
+
+    .callout-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide" data-slide-id="SLD-CC01-012" data-vo-cues="true">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header__accent" id="hdr-accent"></div>
+      <h1 class="header__title" id="hdr-title">Clear Boundaries, Clear Responsibilities</h1>
+    </div>
+
+    <!-- Two-column content -->
+    <div class="columns-row">
+
+      <!-- ── TECHNICIAN COLUMN ────────────────────────────────── -->
+      <div class="col col--tech" id="col-tech">
+
+        <div class="col-content">
+          <div class="col-header">
+            <div class="col-header__icon col-header__icon--tech">✓</div>
+            <div class="col-header__label">What Technicians Should Handle</div>
+          </div>
+
+          <div class="category" id="tech-cat-1">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--check">✓</span>
+              Technical explanations
+            </div>
+            <ul class="sub-list">
+              <li>What you found during diagnosis</li>
+              <li>Why repairs are necessary</li>
+              <li>How systems work</li>
+              <li>What the consequences are of waiting</li>
+            </ul>
+          </div>
+
+          <div class="category" id="tech-cat-2">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--check">✓</span>
+              Vehicle condition
+            </div>
+            <ul class="sub-list">
+              <li>Showing worn or damaged parts</li>
+              <li>Demonstrating problems</li>
+              <li>Explaining severity levels</li>
+              <li>Visual evidence and measurements</li>
+            </ul>
+          </div>
+
+          <div class="category" id="tech-cat-3">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--check">✓</span>
+              Repair necessity
+            </div>
+            <ul class="sub-list">
+              <li>Why this specific repair is recommended</li>
+              <li>What Porsche engineering specifies</li>
+              <li>Safety or performance implications</li>
+              <li>Professional recommendations based on expertise</li>
+            </ul>
+          </div>
+        </div><!-- /.col-content -->
+
+        <div class="col-image">
+          <img src="../assets/images/Ptech-Macan-customer.webp" alt="Porsche technician with Macan customer">
+        </div>
+
+      </div><!-- /.col--tech -->
+
+      <!-- ── SERVICE ADVISOR COLUMN ──────────────────────────── -->
+      <div class="col col--sa" id="col-sa">
+
+        <div class="col-content">
+          <div class="col-header">
+            <div class="col-header__icon col-header__icon--sa">SA</div>
+            <div class="col-header__label">What Remains with Service Advisors</div>
+          </div>
+
+          <div class="category" id="sa-cat-1">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--sa">SA</span>
+              Pricing discussions and negotiations
+            </div>
+            <ul class="sub-list">
+              <li>Final cost quotes</li>
+              <li>Payment options</li>
+              <li>Discounts or promotional offers</li>
+            </ul>
+          </div>
+
+          <div class="category" id="sa-cat-2">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--sa">SA</span>
+              Timing promises
+            </div>
+            <ul class="sub-list">
+              <li>Specific completion commitments</li>
+              <li>Scheduling and loaner coordination</li>
+              <li>Delivery promises</li>
+            </ul>
+          </div>
+
+          <div class="category" id="sa-cat-3">
+            <div class="category__title">
+              <span class="cat-mark cat-mark--sa">SA</span>
+              Warranty issues
+            </div>
+            <ul class="sub-list">
+              <li>Coverage determinations</li>
+              <li>Claim processing</li>
+              <li>Policy interpretations</li>
+            </ul>
+          </div>
+        </div><!-- /.col-content -->
+
+        <div class="col-image">
+          <img src="../assets/images/Porsche-service-advisor.webp" alt="Porsche service advisor">
+        </div>
+
+      </div><!-- /.col--sa -->
+
+    </div><!-- /.columns-row -->
+
+    <!-- "Your Role is Clear" callout -->
+    <div class="role-callout" id="role-callout">
+      <div class="callout-label">Your Role is Clear</div>
+      <div class="callout-sep"></div>
+      <p class="callout-text">
+        <strong>You provide the technical expertise and honest assessment.</strong>
+        The service advisor handles the business transaction. This division allows you to
+        maintain credibility as an objective expert.
+      </p>
+    </div>
+
+  </div><!-- /.slide -->
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('[data-slide-id]');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+
+  <script>
+    // ── Initial hidden states ─────────────────────────────────────────────────
+    gsap.set('#col-tech',     { opacity: 0, x: -24 });
+    gsap.set('#col-sa',       { opacity: 0, x:  24 });
+    gsap.set('#tech-cat-1',   { opacity: 0 });
+    gsap.set('#tech-cat-2',   { opacity: 0 });
+    gsap.set('#tech-cat-3',   { opacity: 0 });
+    gsap.set('#sa-cat-1',     { opacity: 0 });
+    gsap.set('#sa-cat-2',     { opacity: 0 });
+    gsap.set('#sa-cat-3',     { opacity: 0 });
+    gsap.set('#role-callout', { opacity: 0, y: 12 });
+  </script>
+
+  <script>
+/* Player compat shim — replaces SandboxRuntime in promoted slides */
+(function () {
+  var _tHandlers = [];
+  var _eHandlers = [];
+  var _lastTime = -1;
+  var _wasPlaying = false;
+  var _endedFired = false;
+
+  function getCR() {
+    try { return window.parent && window.parent.CourseRuntime; } catch (_) { return null; }
+  }
+
+  var fakeInteractionAudio = {
+    src: '',
+    play: function () {
+      var cr = getCR();
+      if (cr && this.src) cr.playInteractionAudio({ src: this.src });
+      return Promise.resolve();
+    },
+    pause: function () {}
+  };
+
+  var fakeAudio = {
+    get currentTime() {
+      var cr = getCR();
+      return cr ? (cr.getAudioCurrentTime() || 0) : 0;
+    },
+    get duration() {
+      var cr = getCR();
+      return cr && cr.getAudioDuration ? (cr.getAudioDuration() || 0) : 0;
+    },
+    addEventListener: function (type, fn) {
+      if (type === 'timeupdate') _tHandlers.push(fn);
+      else if (type === 'ended') _eHandlers.push(fn);
+    },
+    removeEventListener: function () {}
+  };
+
+  window.SandboxRuntime = {
+    voAudio: fakeAudio,
+    interactionAudio: fakeInteractionAudio,
+    init: function () {},
+    playInteractionClip: function (id) {
+      var cr = getCR(); if (cr) cr.window.parent?.CourseRuntime?.playInteractionClip(id);
+    }
+  };
+
+  function poll() {
+    var cr = getCR();
+    if (cr) {
+      var t = cr.getAudioCurrentTime ? cr.getAudioCurrentTime() : 0;
+      var playing = cr.isAudioPlaying ? cr.isAudioPlaying() : false;
+      if (t !== _lastTime) {
+        _lastTime = t;
+        var e = { target: fakeAudio, type: 'timeupdate' };
+        for (var i = 0; i < _tHandlers.length; i++) {
+          try { _tHandlers[i](e); } catch (_e) {}
+        }
+      }
+      if (_wasPlaying && !playing && !_endedFired && _eHandlers.length) {
+        var dur = cr.getAudioDuration ? cr.getAudioDuration() : 0;
+        if (dur > 0 && t >= dur - 0.5) {
+          _endedFired = true;
+          var ee = { target: fakeAudio, type: 'ended' };
+          for (var j = 0; j < _eHandlers.length; j++) {
+            try { _eHandlers[j](ee); } catch (_e) {}
+          }
+        }
+      }
+      _wasPlaying = playing;
+      if (!playing && t === 0) _endedFired = false;
+    }
+    requestAnimationFrame(poll);
+  }
+
+  requestAnimationFrame(poll);
+
+  // Listen for player-play-state to freeze/resume GSAP and CSS animations
+  (function () {
+    var styleInjected = false;
+    function ensurePauseStyle() {
+      if (styleInjected) return;
+      styleInjected = true;
+      var s = document.createElement('style');
+      s.textContent = 'html.slide-paused * { animation-play-state: paused !important; }';
+      document.head.appendChild(s);
+    }
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'player-play-state') return;
+      ensurePauseStyle();
+      if (e.data.playing) {
+        if (window.gsap) window.gsap.globalTimeline.resume();
+        document.documentElement.classList.remove('slide-paused');
+      } else {
+        if (window.gsap) window.gsap.globalTimeline.pause();
+        document.documentElement.classList.add('slide-paused');
+      }
+    });
+  })();
+})();
+</script>
+
+  <script>
+    // ── VO timestamps (seconds) — update when VO is recorded ─────────────────
+    //   5.0   "Technicians are responsible for three key areas..."
+    //   8.0   "Technical explanations — what you found..."
+    //  21.0   "Vehicle condition — showing worn or damaged parts..."
+    //  33.0   "And repair necessity — why this specific repair is recommended..."
+    //  46.0   "What remains with service advisors..."
+    //  50.0   "Pricing discussions — final cost quotes, payment options..."
+    //  58.0   "Timing promises..."
+    //  66.0   "And warranty issues..."
+    //  74.0   "Your role is clear..."
+    //  90.0   VO ends — continue button available
+    var T_TECH_COL = 5.0;
+    var T_TECH_1   = 8.0;
+    var T_TECH_2   = 20.0;
+    var T_TECH_3   = 33.0;
+    var T_SA_COL   = 51.0;
+    var T_SA_1     = 50.0;
+    var T_SA_2     = 63.0;
+    var T_SA_3     = 75.0;
+    var T_CALLOUT  = 98.0;
+
+    // ── One-shot reveal helper ────────────────────────────────────────────────
+    var revealed = {};
+    function reveal(id, props) {
+      if (revealed[id]) return;
+      revealed[id] = true;
+      gsap.to('#' + id, Object.assign(
+        { opacity: 1, x: 0, y: 0, duration: 0.50, ease: 'power2.out' },
+        props || {}
+      ));
+    }
+
+    // ── VO-driven reveals ─────────────────────────────────────────────────────
+    SandboxRuntime.voAudio.addEventListener('timeupdate', function () {
+      var t = SandboxRuntime.voAudio.currentTime;
+
+      if (t >= T_TECH_COL) reveal('col-tech',    { duration: 0.55 });
+      if (t >= T_TECH_1)   reveal('tech-cat-1',  { duration: 0.40 });
+      if (t >= T_TECH_2)   reveal('tech-cat-2',  { duration: 0.40 });
+      if (t >= T_TECH_3)   reveal('tech-cat-3',  { duration: 0.40 });
+      if (t >= T_SA_COL)   reveal('col-sa',      { duration: 0.55 });
+      if (t >= T_SA_1)     reveal('sa-cat-1',    { duration: 0.40 });
+      if (t >= T_SA_2)     reveal('sa-cat-2',    { duration: 0.40 });
+      if (t >= T_SA_3)     reveal('sa-cat-3',    { duration: 0.40 });
+      if (t >= T_CALLOUT)  reveal('role-callout', { duration: 0.55 });
+    });
+
+    // ── Header entrance on DOMContentLoaded ──────────────────────────────────
+    window.addEventListener('DOMContentLoaded', function () {
+      gsap.from('#hdr-accent', {
+        opacity: 0, scaleX: 0, transformOrigin: 'left center',
+        duration: 0.40, ease: 'power2.out'
+      });
+      gsap.from('#hdr-title', {
+        opacity: 0, y: 16,
+        duration: 0.50, ease: 'power2.out', delay: 0.12
+      });
+    });
+
+    // ── VO ended ─────────────────────────────────────────────────────────────
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.window.parent?.CourseRuntime?.playInteractionClip('SLD-CC01-002-next-button');
+    });
+  </script>
+
+</body>
+</html>

@@ -45,6 +45,11 @@
     .anim-slide-right {
       opacity: 0;
       transform: translateX(-30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .anim-slide-right.is-visible {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     .Lo1::before {
@@ -67,9 +72,9 @@
 
     <!-- Right Side Image -->
     <div data-layer="right-side-portrait-image" class="RightSidePortraitImage anim-fade" id="slide-image"
-      style="width: 576px; height: 872px; right: 24px; top: 24px; position: absolute; overflow: hidden; border-radius: 12px;">
+      style="width: 576px; height: 872px; right: 50px; top: 80px; position: absolute; overflow: hidden; border-radius: 12px;">
       <img src="../../assets/images/Ptechs-Customer-06.webp" alt="Porsche technician with customer"
-        style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+        style="width: 100%; height: 80%; object-fit: fill; object-position: center;">
     </div>
 
     <div data-layer="all-text-container" class="AllTextContainer"
@@ -173,11 +178,68 @@
     (function () {
       var headerAccent = document.getElementById('red-accent');
       var headerTitle  = document.getElementById('slide-title');
-      function entranceAnimation() {
-        if (headerAccent) setTimeout(function () { headerAccent.classList.add('is-visible'); }, 0);
-        if (headerTitle)  setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      var introText    = document.getElementById('intro-text');
+      var objectives   = ['objective-1', 'objective-2', 'objective-3', 'objective-4']
+                           .map(function(id) { return document.getElementById(id); });
+
+      var slideImage = document.getElementById('slide-image');
+
+      // Header entrance (immediate)
+      if (headerAccent) setTimeout(function () { headerAccent.classList.add('is-visible'); }, 0);
+      if (headerTitle)  setTimeout(function () { headerTitle.classList.add('is-visible'); }, 180);
+      if (introText)    setTimeout(function () { introText.classList.add('is-visible'); }, 350);
+      if (slideImage)   setTimeout(function () { slideImage.classList.add('is-visible'); }, 600);
+
+      // Objective stagger — VO-driven if audio available, else timed fallback
+      var objectiveTimes = [7.0, 17.0, 29.0, 39.0];
+      var fired = [false, false, false, false];
+
+      function tryReveal(t) {
+        objectives.forEach(function(el, i) {
+          if (!fired[i] && t >= objectiveTimes[i]) {
+            fired[i] = true;
+            if (el) el.classList.add('is-visible');
+          }
+        });
       }
-      entranceAnimation();
+
+      // Get current audio time from player or sandbox runtime
+      function getAudioTime() {
+        try {
+          if (window.parent && window.parent.CourseRuntime) {
+            var ct = window.parent.CourseRuntime.getAudioCurrentTime();
+            if (Number.isFinite(ct) && ct > 0) return ct;
+          }
+        } catch (_) {}
+        if (window.SandboxRuntime && window.SandboxRuntime.voAudio) {
+          var sat = window.SandboxRuntime.voAudio.currentTime;
+          if (Number.isFinite(sat) && sat > 0) return sat;
+        }
+        return 0;
+      }
+
+      // Virtual clock — only advances while playing, respects pause state
+      var virtualTime = 0;
+      var lastTick = Date.now();
+
+      function tick() {
+        var now = Date.now();
+        var delta = now - lastTick;
+        lastTick = now;
+
+        if (!document.documentElement.classList.contains('slide-paused')) {
+          var audioTime = getAudioTime();
+          if (audioTime > 0) {
+            virtualTime = audioTime;
+          } else {
+            virtualTime += delta / 1000;
+          }
+          tryReveal(virtualTime);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      tick();
     })();
   </script>
 </body>

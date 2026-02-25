@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>Module 1 Results — CC01</title>
+  <style>
+    @font-face { font-family: "Porsche Next TT"; src: url("../assets/fonts/porsche-next-tt.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Porsche Next TT"; src: url("../assets/fonts/porsche-next-tt-bold.ttf") format("truetype"); font-weight: 700; font-style: normal; font-display: block; }
+    :root { --bg-0: #111317; --bg-1: #1e2128; --bg-2: #2a2f39; --text-strong: #ffffff; --text-body: rgba(255,255,255,0.9); --text-muted: rgba(255,255,255,0.60); --accent: #d5001c; --green: #22c55e; --amber: #f59e0b; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1920px; height: 920px; overflow: hidden; font-family: "Porsche Next TT", Arial, Helvetica, sans-serif; }
+
+    /* ── Backdrop ── */
+    .backdrop { position: absolute; inset: 0; background: radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%), linear-gradient(140deg, var(--bg-0) 0%, var(--bg-1) 48%, var(--bg-2) 100%); }
+    .backdrop::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; }
+    .backdrop::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.52); }
+
+    /* ── Slide ── */
+    .slide { position: relative; width: 1920px; height: 920px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+    /* ── Modal card ── */
+    .modal-card { position: relative; z-index: 10; width: 1080px; background: #1e2128; border: 1px solid rgba(255,255,255,0.14); border-radius: 20px; box-shadow: 0 32px 80px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.06) inset; display: flex; flex-direction: column; overflow: hidden; opacity: 0; transform: translateY(24px) scale(0.98); transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1); }
+    .modal-card.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ── Header (matching FQ checkered design) ── */
+    .modal-header { flex-shrink: 0; display: flex; align-items: stretch; padding: 0; background: #111317; border-radius: 20px 20px 0 0; overflow: hidden; min-height: 80px; }
+    .modal-header__flag { flex-shrink: 0; width: 80px; background: repeating-conic-gradient(#d8d8d8 0% 25%, #1a1c21 0% 50%) 0 0 / 16px 16px; }
+    .modal-header__divider { flex-shrink: 0; width: 4px; background: var(--accent); }
+    .modal-header__text { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 16px 32px; gap: 3px; }
+    .modal-header__eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); opacity: 0.88; }
+    .modal-header__title { margin: 0; font-size: 30px; font-weight: 700; color: #fff; letter-spacing: 0.01em; }
+
+    /* ── Body ── */
+    .modal-body { flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 36px 44px 28px; }
+
+    /* ── Score hero ── */
+    .score-hero { display: flex; align-items: center; gap: 32px; }
+    .score-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; flex-shrink: 0; }
+    .score-icon--pass { background: rgba(34,197,94,0.14); border: 2px solid rgba(34,197,94,0.40); color: var(--green); }
+    .score-icon--fail { background: rgba(245,158,11,0.11); border: 2px solid rgba(245,158,11,0.35); color: var(--amber); }
+    .score-info { display: flex; flex-direction: column; gap: 6px; }
+    .score-fraction { line-height: 1; color: var(--text-strong); }
+    .score-fraction .score-num { font-size: 60px; font-weight: 700; }
+    .score-fraction .score-sep { font-size: 38px; font-weight: 400; color: var(--text-muted); margin: 0 6px; }
+    .score-fraction .score-den { font-size: 38px; font-weight: 400; color: var(--text-muted); }
+    .score-status { font-size: 13px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; }
+    .score-status--pass { color: var(--green); }
+    .score-status--fail { color: var(--amber); }
+
+    /* ── Progress bar ── */
+    .score-bar-row { display: flex; align-items: center; gap: 16px; }
+    .score-bar-track { flex: 1; height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 5px; width: 0; transition: width 0.9s cubic-bezier(0.22,1,0.36,1) 0.35s; }
+    .score-bar-fill--pass { background: linear-gradient(90deg, #16a34a, var(--green)); }
+    .score-bar-fill--fail { background: linear-gradient(90deg, #d97706, var(--amber)); }
+    .score-bar-pct { font-size: 24px; font-weight: 700; min-width: 62px; text-align: right; }
+    .score-bar-pct--pass { color: var(--green); }
+    .score-bar-pct--fail { color: var(--amber); }
+
+    /* ── Threshold note ── */
+    .threshold-note { font-size: 12px; color: var(--text-muted); letter-spacing: 0.03em; margin-top: -8px; }
+
+    /* ── Message ── */
+    .score-message { font-size: 18px; line-height: 1.65; color: var(--text-body); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 22px; }
+
+    /* ── Footer ── */
+    .modal-footer { flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding: 0 44px 32px; }
+
+    /* ── Action buttons ── */
+    .action-btn { padding: 14px 44px; border: none; border-radius: 8px; font-family: inherit; font-size: 17px; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s, box-shadow 0.2s, transform 0.12s; }
+    .action-btn--pass { background: var(--accent); color: #fff; box-shadow: 0 4px 20px rgba(213,0,28,0.35); }
+    .action-btn--pass:hover { background: #b8001a; box-shadow: 0 6px 28px rgba(213,0,28,0.50); }
+    .action-btn--pass:active { transform: scale(0.98); }
+    .action-btn--fail { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.22); }
+    .action-btn--fail:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.38); }
+    .action-btn--fail:active { transform: scale(0.98); }
+
+    /* ════════════════════════════════════════════════
+       CERTIFICATE — screen: hidden / print: full page
+       ════════════════════════════════════════════════ */
+    .certificate { display: none; }
+
+    @media print {
+      /* Hide everything except the certificate */
+      .slide, script { display: none !important; }
+      .certificate { display: block !important; }
+
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      @page { size: 8.5in 11in portrait; margin: 0; }
+
+      html, body {
+        width: 8.5in;
+        height: 11in;
+        overflow: visible;
+        transform: none !important;
+        margin: 0 !important;
+      }
+    }
+
+    /* ── Certificate: uses the official Porsche template JPG as background ──
+       Dynamic text is absolutely positioned over it.
+       Adjust the % values below if fine-tuning is needed after a test print. ── */
+
+    /* Wrapper — portrait US Letter */
+    .certificate {
+      position: relative;
+      width: 8.5in;
+      height: 11in;
+      overflow: hidden;
+      font-family: "Porsche Next TT", "Arial Narrow", Arial, sans-serif;
+    }
+
+    /* Template image fills the page */
+    .cert-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    /* ── Learner name — baseline sits on the rule line ── */
+    .cert-overlay-name {
+      position: absolute;
+      top: 36%;
+      left: 50%;
+      transform: translate(-50%, -100%);
+      margin: 0;
+      font-size: 22pt;
+      font-weight: 400;
+      color: #1a1a1a;
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Course title — placeholder removed from JPG, no cover needed ── */
+    .cert-overlay-course {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      font-size: 22pt;
+      font-weight: 700;
+      font-style: italic;
+      color: #1a1a1a;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* ── Year — gold block covers the baked-in year on the seal ── */
+    .cert-overlay-year {
+      position: absolute;
+      top: 74.5%;
+      left: 77%;
+      transform: translate(-19%, -50%);
+      margin: 0;
+      font-size: 20pt;
+      font-weight: 700;
+      color: #3d2000;
+      text-align: center;
+      letter-spacing: 0.04em;
+      background: #FBE3A2;
+      padding: 5px 14px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════ SCREEN UI ════════════ -->
+  <div class="slide" data-slide-id="FQ-CC01-SCORE" data-vo-cues="true">
+    <div class="backdrop"></div>
+    <div class="modal-card" id="modal-card" role="main" aria-labelledby="modal-title">
+
+      <!-- Checkered flag header — matching FQ slides -->
+      <div class="modal-header">
+        <div class="modal-header__flag" aria-hidden="true"></div>
+        <div class="modal-header__divider" aria-hidden="true"></div>
+        <div class="modal-header__text">
+          <span class="modal-header__eyebrow">Module 1 · Final Quiz</span>
+          <h2 class="modal-header__title" id="modal-title">Your Results</h2>
+        </div>
+      </div>
+
+      <!-- Score body — populated by JS -->
+      <div class="modal-body" id="modal-body"></div>
+
+      <!-- Action button — populated by JS -->
+      <div class="modal-footer" id="modal-footer"></div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ CERTIFICATE (print-only) ════════════
+       Background: the official Porsche WBT certificate template JPG.
+       Only the learner name, course title, and year are overlaid dynamically.
+       Fine-tune the `top`/`left` % values in the CSS above after a test print.
+  ════════════════════════════════════════════════════════ -->
+  <div class="certificate" id="certificate" aria-hidden="true">
+
+    <!-- Template image (crest, signature, seal, silhouette — all from the JPG) -->
+    <img class="cert-bg" src="../assets/images/certificate-template.jpg" alt="">
+
+    <!-- Learner name — positioned above the horizontal rule -->
+    <p class="cert-overlay-name" id="cert-name">Porsche Technician</p>
+
+    <!-- Course title -->
+    <p class="cert-overlay-course">Customer Communications — Module 1</p>
+
+    <!-- Year — overlaid on the gold seal -->
+    <p class="cert-overlay-year" id="cert-year">2026</p>
+
+  </div>
+
+  <!-- Scale to viewport -->
+  <script>(function () { var slide = document.querySelector('[data-slide-id]'); function scaleSlide() { var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920); slide.style.transform = 'scale(' + s + ')'; slide.style.transformOrigin = 'top left'; slide.style.marginLeft = ((window.innerWidth - 1920 * s) / 2) + 'px'; slide.style.marginTop = ((window.innerHeight - 920 * s) / 2) + 'px'; } window.addEventListener('resize', scaleSlide); scaleSlide(); })();</script>
+
+  <script>
+    (function () {
+      // ── Read score from URL params (sandbox) ──────────────────────────────
+      // In production the SCORM player handles official scoring; these params
+      // are injected by sandbox/index.html for preview purposes only.
+      var params  = new URLSearchParams(window.location.search);
+      var score   = parseInt(params.get('score') || '0', 10);
+      var total   = parseInt(params.get('total') || '10', 10);
+      var pct     = total > 0 ? Math.round((score / total) * 100) : 0;
+      var passed  = pct >= 80;
+
+      // ── Learner name: SCORM API → URL param → fallback ───────────────────
+      function getLearnerName() {
+        try {
+          // SCORM 1.2
+          if (window.API) {
+            var n = window.API.LMSGetValue('cmi.core.student_name');
+            if (n && n !== '') return formatSCORMName(n);
+          }
+        } catch (e) {}
+        try {
+          // SCORM 2004
+          if (window.API_1484_11) {
+            var n = window.API_1484_11.GetValue('cmi.learner_name');
+            if (n && n !== '') return formatSCORMName(n);
+          }
+        } catch (e) {}
+        // Sandbox: use URL param ?name=First+Last, else generic placeholder
+        return params.get('name') || 'Porsche Technician';
+      }
+
+      function formatSCORMName(name) {
+        // SCORM often delivers "Last, First" — convert to "First Last"
+        if (name.indexOf(',') !== -1) {
+          var parts = name.split(',').map(function (s) { return s.trim(); });
+          return parts[1] + ' ' + parts[0];
+        }
+        return name;
+      }
+
+      var learnerName = getLearnerName();
+      var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // ── Populate certificate overlays ────────────────────────────────────
+      document.getElementById('cert-name').textContent = learnerName;
+      document.getElementById('cert-year').textContent = new Date().getFullYear();
+
+      // ── Build score body ──────────────────────────────────────────────────
+      var iconClass  = passed ? 'score-icon--pass' : 'score-icon--fail';
+      var iconChar   = passed ? '✓' : '✗';
+      var statClass  = passed ? 'score-status--pass' : 'score-status--fail';
+      var statLabel  = passed ? 'Module 1 Complete' : 'Score Required: 80%';
+      var barClass   = passed ? 'score-bar-fill--pass' : 'score-bar-fill--fail';
+      var pctClass   = passed ? 'score-bar-pct--pass' : 'score-bar-pct--fail';
+      var message    = passed
+        ? 'Congratulations! You\'ve demonstrated a strong understanding of what it means to be a Brand Ambassador in the Porsche service environment. Your Certificate of Completion is ready to download below.'
+        : 'Great effort! A score of 80% or higher is required to earn your certificate. We encourage you to review the module material — take your time, and give it another try when you\'re ready.';
+
+      document.getElementById('modal-body').innerHTML =
+        '<div class="score-hero">' +
+          '<div class="score-icon ' + iconClass + '">' + iconChar + '</div>' +
+          '<div class="score-info">' +
+            '<div class="score-fraction">' +
+              '<span class="score-num">' + score + '</span>' +
+              '<span class="score-sep"> / </span>' +
+              '<span class="score-den">' + total + '</span>' +
+            '</div>' +
+            '<p class="score-status ' + statClass + '">' + statLabel + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="score-bar-row">' +
+          '<div class="score-bar-track"><div class="score-bar-fill ' + barClass + '" id="bar-fill"></div></div>' +
+          '<span class="score-bar-pct ' + pctClass + '">' + pct + '%</span>' +
+        '</div>' +
+        '<p class="threshold-note">Passing score: 80%&nbsp;&nbsp;·&nbsp;&nbsp;Your score: ' + pct + '%</p>' +
+        '<p class="score-message">' + message + '</p>';
+
+      // Animate bar after paint
+      setTimeout(function () {
+        var bar = document.getElementById('bar-fill');
+        if (bar) bar.style.width = pct + '%';
+      }, 380);
+
+      // ── Action button ─────────────────────────────────────────────────────
+      var footer = document.getElementById('modal-footer');
+      if (passed) {
+        footer.innerHTML = '<button class="action-btn action-btn--pass" id="action-btn">&#8595;&nbsp;&nbsp;Download Certificate of Completion</button>';
+        document.getElementById('action-btn').addEventListener('click', function () {
+          window.print();
+        });
+      } else {
+        footer.innerHTML = '<button class="action-btn action-btn--fail" id="action-btn">&#8635;&nbsp;&nbsp;Retake the Module</button>';
+        document.getElementById('action-btn').addEventListener('click', function () {
+          // Tells sandbox/index.html to reset score and return to slide 1
+          window.parent.postMessage({ type: 'sandbox-goto', target: 'start' }, '*');
+        });
+      }
+
+      // ── Certificate preview mode (?preview=cert) ─────────────────────────
+      // Append to URL to see the certificate on screen without printing.
+      // Remove the param (or just navigate normally) to restore the quiz results view.
+      if (params.get('preview') === 'cert') {
+        document.querySelector('.slide').style.display = 'none';
+        var cert = document.getElementById('certificate');
+        cert.style.display = 'block';
+        cert.style.margin = '0 auto';
+        cert.style.boxShadow = '0 8px 40px rgba(0,0,0,0.35)';
+        document.body.style.background = '#888';
+        document.body.style.width = 'auto';
+        document.body.style.height = 'auto';
+        document.body.style.overflow = 'auto';
+        document.body.style.display = 'flex';
+        document.body.style.justifyContent = 'center';
+        document.body.style.padding = '40px 0';
+      }
+
+      // ── Entrance animation ────────────────────────────────────────────────
+      if (params.get('preview') !== 'cert') {
+        setTimeout(function () {
+          document.getElementById('modal-card').classList.add('is-visible');
+        }, 120);
+      }
+
+    })();
+  </script>
+
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script src="../assets/js/slide-runtime.js"></script>
+  <script></script>
+</body>
+</html>

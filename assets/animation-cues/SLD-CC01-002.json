@@ -1,0 +1,8 @@
+[
+  { "time": 0.3,  "target": ".slide__bg-image",       "animation": "fadeIn"   },
+  { "time": 0.5,  "target": ".slide__eyebrow",         "animation": "fadeIn"   },
+  { "time": 1.2,  "target": ".slide__heading-line1",   "animation": "slideUp"  },
+  { "time": 1.6,  "target": ".slide__heading-line2",   "animation": "slideUp"  },
+  { "time": 2.5,  "target": ".slide__description",     "animation": "fadeIn"   },
+  { "time": 3.0,  "target": ".carousel-wrapper",       "animation": "fadeIn"   }
+]

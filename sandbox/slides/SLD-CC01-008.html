@@ -526,7 +526,7 @@
     <!-- Header -->
     <header class="header">
       <div class="header__accent anim-fade" id="header-accent" aria-hidden="true"></div>
-      <p class="header__kicker anim-fade" id="header-kicker">CC01 · Module 1 · Customer Satisfaction</p>
+      
       <h1 class="header__title anim-slide-up" id="header-title">You Directly Influence Customer Satisfaction Scores</h1>
     </header>
 
@@ -704,6 +704,11 @@
 
       function tick(ts) {
         if (revealed) return;
+        if (isPaused) {
+          imageZoomLastTs = 0;
+          imageZoomRaf = window.requestAnimationFrame(tick);
+          return;
+        }
         if (!imageZoomLastTs) imageZoomLastTs = ts;
         var dt = (ts - imageZoomLastTs) / 1000;
         imageZoomLastTs = ts;
@@ -774,6 +779,9 @@
     
     // Slide-level timing (independent of VO clip switching)
     var slideStartMs = Date.now();
+    var pausedMs = 0;
+    var pauseStartMs = null;
+    var isPaused = false;
     var cardsAnimated = false;
     var currentVoClip = null;
     var part2Started = false;
@@ -786,7 +794,7 @@
     };
 
     function getSlideClockSec() {
-      return (Date.now() - slideStartMs) / 1000;
+      return (Date.now() - slideStartMs - pausedMs) / 1000;
     }
 
     function playVoClip(clipKey) {
@@ -875,16 +883,18 @@
     }
 
     function visualTimelineTick() {
-      var t = getSlideClockSec();
-      if (!cardsAnimated && t >= 12) {
-        animateDimCards();
-      }
-      pulseCues.forEach(function (cue) {
-        if (!cue.fired && t >= cue.time) {
-          cue.fired = true;
-          pulseCard(cue.cardIndex);
+      if (!isPaused) {
+        var t = getSlideClockSec();
+        if (!cardsAnimated && t >= 12) {
+          animateDimCards();
         }
-      });
+        pulseCues.forEach(function (cue) {
+          if (!cue.fired && t >= cue.time) {
+            cue.fired = true;
+            pulseCard(cue.cardIndex);
+          }
+        });
+      }
       window.requestAnimationFrame(visualTimelineTick);
     }
 
@@ -908,6 +918,23 @@
     }, 40);
 
     visualTimelineTick();
+
+    // Respond to player play/pause — freeze slide clock and RAF-based animations.
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'player-play-state') return;
+      if (e.data.playing) {
+        if (isPaused) {
+          pausedMs += Date.now() - pauseStartMs;
+          pauseStartMs = null;
+          isPaused = false;
+        }
+      } else {
+        if (!isPaused) {
+          isPaused = true;
+          pauseStartMs = Date.now();
+        }
+      }
+    });
 
 </script>
 </body>

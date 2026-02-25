@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "start-player": "browser-sync start --server output/course --startPath /player/index.html --port 8080 --no-notify",
+    "start-sandbox": "browser-sync start --server . --startPath /sandbox/index.html --port 3000 --no-notify --watch",
+    "build": "python rebuild.py"
+  },
   "dependencies": {
     "gsap": "^3.14.2"
   },

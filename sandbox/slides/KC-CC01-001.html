@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=1920">
-  <title>Knowledge Check — CC01 Module 1</title>
+  <title>Knowledge Check 1</title>
   <style>
     @font-face {
       font-family: "Porsche Next TT";
@@ -338,7 +338,7 @@
 </head>
 <body>
 
-  <div class="slide" data-slide-id="KC-CC01-001">
+  <div class="slide" data-slide-id="KC-CC01-001" data-review-slide="SLD-CC01-008">
 
     <!-- Dimmed backdrop -->
     <div class="backdrop"></div>
@@ -513,10 +513,24 @@
 
         // Update button
         submitBtn.classList.remove('is-ready');
-        submitBtn.classList.add('is-submitted');
-        submitBtn.disabled = true;
-        submitBtn.setAttribute('aria-disabled', 'true');
-        submitBtn.textContent = isCorrect ? 'Correct ✓' : 'Submitted';
+        if (isCorrect) {
+          submitBtn.classList.add('is-submitted');
+          submitBtn.disabled = true;
+          submitBtn.setAttribute('aria-disabled', 'true');
+          submitBtn.textContent = 'Correct ✓';
+        } else {
+          submitBtn.classList.add('is-ready');
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute('disabled');
+          submitBtn.setAttribute('aria-disabled', 'false');
+          submitBtn.textContent = 'Back to Review ←';
+          submitBtn.addEventListener('click', function () {
+            var reviewSlide = (document.querySelector('[data-review-slide]') || {}).dataset.reviewSlide;
+            if (reviewSlide && window.parent && window.parent.CourseRuntime) {
+              window.parent.CourseRuntime.goToSlideId(reviewSlide);
+            }
+          }, { once: true });
+        }
       }
 
       rows.forEach(function (row) {

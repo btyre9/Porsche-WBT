@@ -147,6 +147,7 @@
       flex: 1;
       position: relative;
       min-height: 0;
+      margin-top: -40px;
     }
 
     /* Connecting lines SVG */
@@ -232,6 +233,34 @@
 
     .node-btn:active { transform: scale(1.04); }
 
+    /* Locked state — before VO completes */
+    .node-btn:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    .node-btn:disabled:hover {
+      background: var(--card-bg);
+      border-color: var(--card-border);
+      transform: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    /* Hint label shown while buttons are locked */
+    .hub-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.40);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .hub-hint.hidden { opacity: 0; }
+
     /* Visited state — subtle red ring once clicked */
     .node-btn.is-visited {
       border-color: rgba(213, 0, 28, 0.55);
@@ -257,6 +286,17 @@
       text-align: center;
       white-space: nowrap;
       letter-spacing: 0.03em;
+    }
+
+    /* ── Hub pulse ───────────────────────────────────────────── */
+    @keyframes hub-pulse {
+      0%, 100% { transform: scale(1);     }
+      50%       { transform: scale(1.024); }
+    }
+
+    .hub-area {
+      animation: hub-pulse 3.8s ease-in-out infinite;
+      transform-origin: center center;
     }
 
     /* ── Entrance animations ─────────────────────────────────── */
@@ -295,7 +335,7 @@
       max-height: 80vh;
       overflow-y: auto;
       box-shadow: 0 32px 64px rgba(0, 0, 0, 0.55);
-      animation: modalZoomIn 0.18s ease;
+      animation: modalZoomIn 1.18s ease;
     }
 
     .modal-header {
@@ -345,7 +385,7 @@
     }
 
     .modal-body p {
-      font-size: 16px;
+      font-size: 28px;
       color: var(--text-body);
       line-height: 1.65;
       margin-bottom: 20px;
@@ -467,6 +507,7 @@
           <span class="node-label">Passion</span>
         </div>
 
+        <p class="hub-hint" id="hub-hint">Listen to the introduction before exploring</p>
       </div><!-- /.hub-area -->
     </div><!-- /.body-row -->
 
@@ -746,6 +787,27 @@
         }
       });
     }
+
+    // ── Hub button lock until VO completes ────────────────────
+    (function () {
+      var nodeBtns = document.querySelectorAll('.node-btn');
+      var hint = document.getElementById('hub-hint');
+
+      function lockButtons() {
+        nodeBtns.forEach(function (btn) { btn.disabled = true; });
+      }
+
+      function unlockButtons() {
+        nodeBtns.forEach(function (btn) { btn.disabled = false; });
+        if (hint) hint.classList.add('hidden');
+      }
+
+      lockButtons();
+
+      SandboxRuntime.voAudio.addEventListener('ended', function () {
+        unlockButtons();
+      });
+    })();
 
     positionHub();
     setupModals();

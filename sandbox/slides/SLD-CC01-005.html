@@ -571,6 +571,11 @@
       autoplay: false,
       basePath: "../"
     });
+
+    SandboxRuntime.voAudio.addEventListener('ended', function () {
+      SandboxRuntime.interactionAudio.src = '../audio/interaction/SLD-CC01-002-next-button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
+    });
   </script>
 </body>
 </html>

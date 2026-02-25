@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <title>When You Interact with Customers</title>
+  <style>
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../assets/fonts/porsche-next-tt.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Porsche Next TT";
+      src: url("../assets/fonts/porsche-next-tt-bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --accent:      #d5001c;
+      --green:       #22c55e;
+      --dark-0:      #111317;
+      --dark-1:      #1e2128;
+      --dark-2:      #2a2f39;
+      --text:        #ffffff;
+      --text-sub:    rgba(255, 255, 255, 0.65);
+      --text-body:   rgba(255, 255, 255, 0.85);
+      --border:      rgba(255, 255, 255, 0.12);
+      --border-hover:rgba(255, 255, 255, 0.30);
+      --card-front:  #F2F0EF;
+      --card-back:   #F2F0EF;
+      --card-face-text: #14171d;
+      --card-face-subtext: rgba(20, 23, 29, 0.72);
+      --card-face-border: rgba(17, 19, 23, 0.22);
+      --card-face-border-hover: rgba(17, 19, 23, 0.42);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background: var(--dark-0);
+      font-family: "Porsche Next TT", Arial, Helvetica, sans-serif;
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--dark-0) 0%, var(--dark-1) 48%, var(--dark-2) 100%);
+      overflow: hidden;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header-accent {
+      position: absolute;
+      top: 62px;
+      left: 120px;
+      width: 120px;
+      height: 8px;
+      background: var(--accent);
+      z-index: 1;
+    }
+
+    .headline {
+      position: absolute;
+      top: 92px;
+      left: 120px;
+      width: 1400px;
+      color: var(--text);
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 58px;
+      z-index: 1;
+    }
+
+    /* ── Subtext zone (instructions ↔ summary swap) ──────────── */
+    .subtext-zone {
+      position: absolute;
+      top: 222px;
+      left: 120px;
+      right: 120px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1;
+    }
+
+    .subtext {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-sub);
+      max-width: 1300px;
+      transition: opacity 0.35s ease;
+    }
+
+    .subtext.is-hidden { opacity: 0; pointer-events: none; }
+
+    .subtext.summary {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      color: var(--text-body);
+      transition: opacity 0.5s ease 0.3s;
+    }
+
+    .subtext.summary.is-visible { opacity: 1; }
+
+    /* Progress counter */
+    .progress-counter {
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.35);
+      transition: color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .progress-counter.is-complete { color: var(--green); }
+
+    /* ── Card grid ───────────────────────────────────────────── */
+    .card-grid {
+      position: absolute;
+      top: 278px;
+      left: 120px;
+      width: 1680px;
+      height: 600px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 288px);
+      gap: 24px;
+      z-index: 1;
+    }
+
+    /* ── Flip card wrapper ───────────────────────────────────── */
+    .card {
+      perspective: 1200px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.025);
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.is-flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      border: 1.5px solid var(--card-face-border);
+      overflow: hidden;
+      transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    }
+
+    .card-front {
+      background: var(--card-front) !important;
+    }
+
+    .card-back {
+      background: var(--card-back) !important;
+    }
+
+    /* ── Card front face ─────────────────────────────────────── */
+    .card-front {
+      background: var(--card-front);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 28px 24px 20px;
+    }
+
+    .card:hover .card-front {
+      border-color: var(--card-face-border-hover);
+      background: #ffffff !important;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Visited state — green tint border */
+    .card.is-visited .card-front {
+      border-color: rgba(34, 197, 94, 0.40);
+      background: var(--card-front);
+    }
+
+    /* Visited checkmark badge */
+    .card.is-visited .card-front::after {
+      content: "✓";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 26px;
+      height: 26px;
+      background: rgba(34, 197, 94, 0.18);
+      border: 1.5px solid rgba(34, 197, 94, 0.55);
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 23px;
+      text-align: center;
+    }
+
+    .card-icon {
+      width: 72px;
+      height: 72px;
+      filter: brightness(0) saturate(100%);
+      opacity: 0.90;
+      flex-shrink: 0;
+      transition: opacity 0.22s;
+    }
+
+    .card:hover .card-icon { opacity: 1; }
+    .card.is-visited .card-icon { opacity: 1; }
+
+    .card-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--card-face-text);
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .card-cue {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--card-face-subtext);
+      letter-spacing: 0.02em;
+      transition: color 0.22s;
+    }
+
+    .card:hover .card-cue { color: rgba(20, 23, 29, 0.9); }
+
+    .card.is-visited .card-cue {
+      color: rgba(34, 197, 94, 0.75);
+    }
+
+    .cue-icon {
+      width: 13px;
+      height: 13px;
+      filter: brightness(0) saturate(100%);
+      opacity: 0.56;
+      transition: opacity 0.22s;
+    }
+
+    .card:hover .cue-icon { opacity: 0.85; }
+
+    /* ── Card back face ──────────────────────────────────────── */
+    .card-back {
+      background: var(--card-back);
+      border-color: var(--card-face-border);
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 28px;
+      gap: 10px;
+    }
+
+    .card:hover .card-back {
+      background: #ffffff !important;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .card-back-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--card-face-subtext);
+    }
+
+    .card-back-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--card-face-text);
+      line-height: 1.2;
+    }
+
+    .card-back-divider {
+      width: 36px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .card-back-text {
+      font-size: 15.5px;
+      font-weight: 400;
+      color: rgba(20, 23, 29, 0.92);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* ── Playing card shimmer ────────────────────────────────── */
+    .card.is-playing .card-front,
+    .card.is-playing .card-back {
+      border-color: rgba(213, 0, 28, 0.55);
+    }
+
+    .card.is-playing .card-front::before,
+    .card.is-playing .card-back::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 15%,
+        rgba(213, 0, 28, 0.08) 50%,
+        transparent 85%
+      );
+      background-size: 300% 100%;
+      animation: card-shimmer 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 5;
+      border-radius: inherit;
+    }
+
+    @keyframes card-shimmer {
+      0%   { background-position: -100% center; }
+      55%  { background-position: 200% center; }
+      100% { background-position: 200% center; }
+    }
+
+
+    /* ── Locked state (while intro VO plays) ────────────────── */
+    .card-grid.is-locked .card {
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .locked-msg {
+      position: absolute;
+      top: 256px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.38);
+      font-style: italic;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      z-index: 2;
+      transition: opacity 0.5s ease;
+    }
+
+    .locked-msg.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .locked-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1;   transform: scale(1);   }
+      50%       { opacity: 0.3; transform: scale(0.6); }
+    }
+
+    /* ── Entrance animations ─────────────────────────────────── */
+    .anim-fade {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .anim-fade.is-visible { opacity: 1; }
+
+    .anim-slide-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="slide" data-slide-id="SLD-CC01-009" data-vo-cues="true">
+
+    <!-- Header -->
+    <div id="header-accent" class="header-accent anim-fade"></div>
+    <h1 id="headline" class="headline anim-slide-up">You Interact with Customers<br>More Than You Think</h1>
+
+    <!-- Instructions / summary swap zone -->
+    <div class="subtext-zone anim-fade" id="subtext-zone">
+      <p id="instructions" class="subtext instructions">
+        Click each scenario to explore when and how you communicate with customers. All of these are opportunities to be a Brand Ambassador.
+      </p>
+      <p id="summary" class="subtext summary">
+        Each of these scenarios is an opportunity to strengthen the customer's connection to Porsche. Your technical expertise combined with professional communication makes you invaluable in these moments.
+      </p>
+      <span class="progress-counter" id="progress-counter">0 of 6 explored</span>
+    </div>
+
+    <!-- Locked message (hidden once intro VO ends) -->
+    <div class="locked-msg" id="locked-msg">
+      <span class="locked-dot"></span>
+      Introduction is playing — cards unlock when complete
+    </div>
+
+    <!-- Card grid -->
+    <div class="card-grid" id="card-grid">
+
+      <!-- Card 1: Video Updates -->
+      <div class="card" data-card="video" role="button" tabindex="0"
+           aria-label="Video Updates — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/video.svg" alt="">
+            <span class="card-title">Video Updates</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 1</span>
+            <span class="card-back-title">Video Updates</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">Recording brief updates showing work findings is now standard practice. The customer sees you, hears your voice, and sees their vehicle—even when you're not face-to-face. This is often the customer's first "interaction" with you, and it sets their impression of your professionalism and expertise.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Customer Requests -->
+      <div class="card" data-card="requests" role="button" tabindex="0"
+           aria-label="Customer Requests to Speak With You — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/chat.svg" alt="">
+            <span class="card-title">Customer Requests<br>to Speak With You</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 2</span>
+            <span class="card-back-title">Direct Customer Requests</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">Customers often request direct conversation after receiving significant repair estimates, when facing complex problems, for repeat issues, or when they have technical questions the service advisor can't answer. They want credibility and technical depth from the expert who diagnosed their vehicle.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Vehicle Walkthroughs -->
+      <div class="card" data-card="walkthroughs" role="button" tabindex="0"
+           aria-label="Vehicle Walkthroughs — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/car.svg" alt="">
+            <span class="card-title">Vehicle Walkthroughs</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 3</span>
+            <span class="card-back-title">Vehicle Walkthroughs</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">Showing customers what you found—worn brakes, leaking seals, damaged components—is powerful. Visual demonstration builds understanding and trust. You explain why particular service is needed and demonstrate repairs that were completed.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Phone Conversations -->
+      <div class="card" data-card="phone" role="button" tabindex="0"
+           aria-label="Phone Conversations — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/phone.svg" alt="">
+            <span class="card-title">Phone Conversations</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 4</span>
+            <span class="card-back-title">Phone Conversations</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">Customers call back with follow-up technical questions. Service advisors transfer calls when they need your expertise. You call to explain findings before proceeding with work. These phone interactions require the same professionalism as face-to-face conversations.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Enthusiast Discussions -->
+      <div class="card" data-card="enthusiast" role="button" tabindex="0"
+           aria-label="Enthusiast Discussions — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/coupe.svg" alt="">
+            <span class="card-title">Enthusiast Discussions</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 5</span>
+            <span class="card-back-title">Enthusiast Discussions</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">Porsche owners are often enthusiasts who want to discuss technical details, performance characteristics, or modifications. These "car person to car person" conversations are opportunities to share your passion and knowledge with someone who genuinely appreciates it.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: Problem Resolution -->
+      <div class="card" data-card="resolution" role="button" tabindex="0"
+           aria-label="Problem Resolution — click to explore">
+        <div class="card-inner">
+          <div class="card-front">
+            <img class="card-icon" src="../assets/icons/wrenches.svg" alt="">
+            <span class="card-title">Problem Resolution</span>
+            <span class="card-cue">
+              <img class="cue-icon" src="../assets/icons/arrow-compact-right.svg" alt="">
+              Click to explore
+            </span>
+          </div>
+          <div class="card-back">
+            <span class="card-back-label">Scenario 6</span>
+            <span class="card-back-title">Problem Resolution</span>
+            <div class="card-back-divider"></div>
+            <p class="card-back-text">When something didn't go as expected, customers need reassurance from the person who did the work. Your direct communication can rebuild trust after a service issue and demonstrate your commitment to making things right.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.card-grid -->
+
+
+  </div><!-- /.slide -->
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('[data-slide-id]');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script>
+/* Player compat shim — replaces SandboxRuntime in promoted slides */
+(function () {
+  var _tHandlers = [];
+  var _eHandlers = [];
+  var _lastTime = -1;
+  var _wasPlaying = false;
+  var _endedFired = false;
+
+  function getCR() {
+    try { return window.parent && window.parent.CourseRuntime; } catch (_) { return null; }
+  }
+
+  var fakeInteractionAudio = {
+    src: '',
+    play: function () {
+      var cr = getCR();
+      if (cr && this.src) cr.playInteractionAudio({ src: this.src });
+      return Promise.resolve();
+    },
+    pause: function () {}
+  };
+
+  var fakeAudio = {
+    get currentTime() {
+      var cr = getCR();
+      return cr ? (cr.getAudioCurrentTime() || 0) : 0;
+    },
+    get duration() {
+      var cr = getCR();
+      return cr && cr.getAudioDuration ? (cr.getAudioDuration() || 0) : 0;
+    },
+    addEventListener: function (type, fn) {
+      if (type === 'timeupdate') _tHandlers.push(fn);
+      else if (type === 'ended') _eHandlers.push(fn);
+    },
+    removeEventListener: function () {}
+  };
+
+  window.SandboxRuntime = {
+    voAudio: fakeAudio,
+    interactionAudio: fakeInteractionAudio,
+    init: function () {},
+    playInteractionClip: function (id) {
+      var cr = getCR(); if (cr) cr.window.parent?.CourseRuntime?.playInteractionClip(id);
+    }
+  };
+
+  function poll() {
+    var cr = getCR();
+    if (cr) {
+      var t = cr.getAudioCurrentTime ? cr.getAudioCurrentTime() : 0;
+      var playing = cr.isAudioPlaying ? cr.isAudioPlaying() : false;
+      if (t !== _lastTime) {
+        _lastTime = t;
+        var e = { target: fakeAudio, type: 'timeupdate' };
+        for (var i = 0; i < _tHandlers.length; i++) {
+          try { _tHandlers[i](e); } catch (_e) {}
+        }
+      }
+      if (_wasPlaying && !playing && !_endedFired && _eHandlers.length) {
+        var dur = cr.getAudioDuration ? cr.getAudioDuration() : 0;
+        if (dur > 0 && t >= dur - 0.5) {
+          _endedFired = true;
+          var ee = { target: fakeAudio, type: 'ended' };
+          for (var j = 0; j < _eHandlers.length; j++) {
+            try { _eHandlers[j](ee); } catch (_e) {}
+          }
+        }
+      }
+      _wasPlaying = playing;
+      if (!playing && t === 0) _endedFired = false;
+    }
+    requestAnimationFrame(poll);
+  }
+
+  requestAnimationFrame(poll);
+
+  // Listen for player-play-state to freeze/resume GSAP and CSS animations
+  (function () {
+    var styleInjected = false;
+    function ensurePauseStyle() {
+      if (styleInjected) return;
+      styleInjected = true;
+      var s = document.createElement('style');
+      s.textContent = 'html.slide-paused * { animation-play-state: paused !important; }';
+      document.head.appendChild(s);
+    }
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'player-play-state') return;
+      ensurePauseStyle();
+      if (e.data.playing) {
+        if (window.gsap) window.gsap.globalTimeline.resume();
+        document.documentElement.classList.remove('slide-paused');
+      } else {
+        if (window.gsap) window.gsap.globalTimeline.pause();
+        document.documentElement.classList.add('slide-paused');
+      }
+    });
+  })();
+})();
+</script>
+  <script>
+    // ── Entrance animations ─────────────────────────────────────
+    (function () {
+      var accent   = document.getElementById('header-accent');
+      var headline = document.getElementById('headline');
+      var subtextZ = document.getElementById('subtext-zone');
+
+      setTimeout(function () { accent.classList.add('is-visible'); },   0);
+      setTimeout(function () { headline.classList.add('is-visible'); }, 180);
+      setTimeout(function () { subtextZ.classList.add('is-visible'); }, 320);
+
+      if (window.gsap) {
+        gsap.from('.card', {
+          opacity: 0,
+          y: 28,
+          duration: 0.45,
+          stagger: 0.07,
+          delay: 0.52,
+          ease: 'power2.out'
+        });
+      }
+    })();
+
+    // ── Audio + card interaction logic ──────────────────────────
+    (function () {
+      var TOTAL = 6;
+      var viewedCards  = new Set();
+      var outroPlayed  = false;
+      var waitForOutro = false; // true once all 6 viewed, waiting for card audio to end
+
+      // Card ID → audio filename mapping (matches HTML card order)
+      var CARD_AUDIO = {
+        'video':        'SLD-CC01-009_Card1',
+        'requests':     'SLD-CC01-009_Card2',
+        'walkthroughs': 'SLD-CC01-009_Card3',
+        'phone':        'SLD-CC01-009_Card4',
+        'enthusiast':   'SLD-CC01-009_Card5',
+        'resolution':   'SLD-CC01-009_Card6'
+      };
+
+      var cards        = document.querySelectorAll('.card');
+      var grid         = document.getElementById('card-grid');
+      var lockedMsg    = document.getElementById('locked-msg');
+      var instructions = document.getElementById('instructions');
+      var summary      = document.getElementById('summary');
+      var counter      = document.getElementById('progress-counter');
+
+      // Single shared audio player for all card clips
+      var cardAudio      = new Audio();
+      var playingCard    = null; // reference to the card whose audio is active
+
+      // ── Lock / unlock cards ───────────────────────────────────
+      grid.classList.add('is-locked');
+
+      function unlockCards() {
+        grid.classList.remove('is-locked');
+        lockedMsg.classList.add('is-hidden');
+      }
+
+      // ── Slide intro VO ended → unlock cards ───────────────────
+      setTimeout(function () {
+        var vo = SandboxRuntime.voAudio;
+        if (vo) {
+          vo.addEventListener('ended', unlockCards);
+          vo.addEventListener('error', unlockCards);
+        }
+      }, 0);
+
+      // ── Shimmer helpers ───────────────────────────────────────
+      function setPlaying(card) {
+        if (playingCard && playingCard !== card) {
+          playingCard.classList.remove('is-playing');
+        }
+        playingCard = card;
+        if (card) card.classList.add('is-playing');
+      }
+
+      function clearPlaying() {
+        if (playingCard) playingCard.classList.remove('is-playing');
+        playingCard = null;
+      }
+
+      // ── Outro + next-button chime ─────────────────────────────
+      function playOutro() {
+        if (outroPlayed) return;
+        outroPlayed  = true;
+        waitForOutro = false;
+        var outro = new Audio('../assets/audio/vo/SLD-CC01-009-Outro.mp3');
+        outro.addEventListener('ended', function () {
+          var chime = new Audio('../assets/interaction-audio/SLD-CC01-002-next-button.mp3');
+          chime.play().catch(function (e) {
+            console.warn('[SLD-009] Could not play next-button chime:', e);
+          });
+        });
+        outro.play().catch(function (e) {
+          console.warn('[SLD-009] Could not play outro:', e);
+        });
+      }
+
+      // ── Card audio ────────────────────────────────────────────
+      cardAudio.addEventListener('ended', function () {
+        clearPlaying();
+        if (waitForOutro) playOutro();
+      });
+
+      function playCardAudio(card) {
+        var cardId = card.dataset.card;
+        cardAudio.pause();
+        cardAudio.currentTime = 0;
+        cardAudio.src = '../assets/audio/vo/' + CARD_AUDIO[cardId] + '.mp3';
+        setPlaying(card);
+        cardAudio.play().catch(function (e) {
+          console.warn('[SLD-009] Could not play card audio:', e);
+          clearPlaying();
+        });
+      }
+
+      function stopCardAudio() {
+        cardAudio.pause();
+        cardAudio.currentTime = 0;
+        clearPlaying();
+        if (waitForOutro) playOutro();
+      }
+
+      // ── Progress counter ──────────────────────────────────────
+      function updateCounter() {
+        var n = viewedCards.size;
+        counter.textContent = n + ' of ' + TOTAL + ' explored';
+        if (n === TOTAL) counter.classList.add('is-complete');
+      }
+
+      // ── All cards visited ─────────────────────────────────────
+      function revealComplete() {
+        instructions.classList.add('is-hidden');
+        summary.classList.add('is-visible');
+        waitForOutro = true; // outro triggers when current card audio ends
+      }
+
+      // ── Card click ────────────────────────────────────────────
+      function handleActivate(card) {
+        var isOpening = !card.classList.contains('is-flipped');
+        card.classList.toggle('is-flipped');
+
+        if (isOpening) {
+          // Flipping to back — play this card's audio once
+          playCardAudio(card);
+
+          // Mark as visited (first time only)
+          var cardId = card.dataset.card;
+          if (!viewedCards.has(cardId)) {
+            viewedCards.add(cardId);
+            card.classList.add('is-visited');
+            updateCounter();
+            if (viewedCards.size === TOTAL) {
+              revealComplete();
+            }
+          }
+        } else {
+          // Flipping back to front — stop audio, remove shimmer
+          stopCardAudio();
+        }
+      }
+
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () { handleActivate(card); });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleActivate(card);
+          }
+        });
+      });
+
+      updateCounter();
+    })();
+  </script>
+
+</body>
+</html>

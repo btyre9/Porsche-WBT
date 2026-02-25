@@ -51,6 +51,11 @@
      * Inject caption container and controls into the slide
      */
     injectUI: function () {
+      // Inject CSS pause rule for html.slide-paused
+      var pauseStyle = document.createElement('style');
+      pauseStyle.textContent = 'html.slide-paused * { animation-play-state: paused !important; }';
+      document.head.appendChild(pauseStyle);
+
       // Caption container
       this.captionContainer = document.createElement('div');
       this.captionContainer.id = 'sandbox-captions';
@@ -274,21 +279,25 @@
     },
 
     /**
-     * Play VO audio
+     * Play VO audio — also resumes GSAP and CSS animations
      */
     play: function () {
       this.voAudio.play();
       this.isPlaying = true;
       this.updatePlayButton();
+      if (window.gsap) window.gsap.globalTimeline.resume();
+      document.documentElement.classList.remove('slide-paused');
     },
 
     /**
-     * Pause VO audio
+     * Pause VO audio — also freezes GSAP and CSS animations
      */
     pause: function () {
       this.voAudio.pause();
       this.isPlaying = false;
       this.updatePlayButton();
+      if (window.gsap) window.gsap.globalTimeline.pause();
+      document.documentElement.classList.add('slide-paused');
     },
 
     /**

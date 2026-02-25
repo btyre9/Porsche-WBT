@@ -18,31 +18,138 @@ import shutil
 from pathlib import Path
 
 
+# Player compat shim — injected in place of sandbox-runtime.js
+# Creates window.SandboxRuntime with fake voAudio that polls CourseRuntime,
+# and fake interactionAudio that delegates to CourseRuntime.playInteractionAudio.
+_PLAYER_SHIM = """\
+<script>
+/* Player compat shim — replaces SandboxRuntime in promoted slides */
+(function () {
+  var _tHandlers = [];
+  var _eHandlers = [];
+  var _lastTime = -1;
+  var _wasPlaying = false;
+  var _endedFired = false;
+
+  function getCR() {
+    try { return window.parent && window.parent.CourseRuntime; } catch (_) { return null; }
+  }
+
+  var fakeInteractionAudio = {
+    src: '',
+    play: function () {
+      var cr = getCR();
+      if (cr && this.src) cr.playInteractionAudio({ src: this.src });
+      return Promise.resolve();
+    },
+    pause: function () {}
+  };
+
+  var fakeAudio = {
+    get currentTime() {
+      var cr = getCR();
+      return cr ? (cr.getAudioCurrentTime() || 0) : 0;
+    },
+    get duration() {
+      var cr = getCR();
+      return cr && cr.getAudioDuration ? (cr.getAudioDuration() || 0) : 0;
+    },
+    addEventListener: function (type, fn) {
+      if (type === 'timeupdate') _tHandlers.push(fn);
+      else if (type === 'ended') _eHandlers.push(fn);
+    },
+    removeEventListener: function () {}
+  };
+
+  window.SandboxRuntime = {
+    voAudio: fakeAudio,
+    interactionAudio: fakeInteractionAudio,
+    init: function () {},
+    playInteractionClip: function (id) {
+      var cr = getCR(); if (cr) cr.playInteractionClip(id);
+    }
+  };
+
+  function poll() {
+    var cr = getCR();
+    if (cr) {
+      var t = cr.getAudioCurrentTime ? cr.getAudioCurrentTime() : 0;
+      var playing = cr.isAudioPlaying ? cr.isAudioPlaying() : false;
+      if (t !== _lastTime) {
+        _lastTime = t;
+        var e = { target: fakeAudio, type: 'timeupdate' };
+        for (var i = 0; i < _tHandlers.length; i++) {
+          try { _tHandlers[i](e); } catch (_e) {}
+        }
+      }
+      if (_wasPlaying && !playing && !_endedFired && _eHandlers.length) {
+        var dur = cr.getAudioDuration ? cr.getAudioDuration() : 0;
+        if (dur > 0 && t >= dur - 0.5) {
+          _endedFired = true;
+          var ee = { target: fakeAudio, type: 'ended' };
+          for (var j = 0; j < _eHandlers.length; j++) {
+            try { _eHandlers[j](ee); } catch (_e) {}
+          }
+        }
+      }
+      _wasPlaying = playing;
+      if (!playing && t === 0) _endedFired = false;
+    }
+    requestAnimationFrame(poll);
+  }
+
+  requestAnimationFrame(poll);
+
+  // Listen for player-play-state to freeze/resume GSAP and CSS animations
+  (function () {
+    var styleInjected = false;
+    function ensurePauseStyle() {
+      if (styleInjected) return;
+      styleInjected = true;
+      var s = document.createElement('style');
+      s.textContent = 'html.slide-paused * { animation-play-state: paused !important; }';
+      document.head.appendChild(s);
+    }
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'player-play-state') return;
+      ensurePauseStyle();
+      if (e.data.playing) {
+        if (window.gsap) window.gsap.globalTimeline.resume();
+        document.documentElement.classList.remove('slide-paused');
+      } else {
+        if (window.gsap) window.gsap.globalTimeline.pause();
+        document.documentElement.classList.add('slide-paused');
+      }
+    });
+  })();
+})();
+</script>"""
+
 # Path mappings: sandbox path -> player path
+# Slides live at output/course/slides/ so assets are at ../assets/ relative to them.
 PATH_MAPPINGS = [
     # Audio VO
-    (r'\.\./audio/vo/', 'assets/audio/vo/'),
-    (r'\.\.\/audio\/vo\/', 'assets/audio/vo/'),
+    (r'\.\./audio/vo/', '../assets/audio/vo/'),
+    (r'\.\.\/audio\/vo\/', '../assets/audio/vo/'),
 
     # Interaction audio
-    (r'\.\./audio/interaction/', 'assets/interaction-audio/'),
-    (r'\.\.\/audio\/interaction\/', 'assets/interaction-audio/'),
+    (r'\.\./audio/interaction/', '../assets/interaction-audio/'),
+    (r'\.\.\/audio\/interaction\/', '../assets/interaction-audio/'),
 
     # Captions
-    (r'\.\./captions/', 'assets/audio/'),
-    (r'\.\.\/captions\/', 'assets/audio/'),
+    (r'\.\./captions/', '../assets/audio/'),
+    (r'\.\.\/captions\/', '../assets/audio/'),
 
     # Animation cues
-    (r'\.\./animation-cues/', 'assets/animation-cues/'),
-    (r'\.\.\/animation-cues\/', 'assets/animation-cues/'),
+    (r'\.\./animation-cues/', '../assets/animation-cues/'),
+    (r'\.\.\/animation-cues\/', '../assets/animation-cues/'),
 
     # Shared assets (already correct relative path from prebuilt)
     (r'\.\./\.\./assets/', '../assets/'),
     (r'\.\.\/\.\.\/assets\/', '../assets/'),
 
-    # Sandbox runtime -> Player runtime
-    (r'\.\./sandbox-runtime\.js', '../assets/js/slide-runtime.js'),
-    (r'\.\.\/sandbox-runtime\.js', '../assets/js/slide-runtime.js'),
+    # Sandbox runtime -> Player compat shim (replaced by transform_html)
+    (r'<script\s+src=["\'](?:\.\./)?sandbox-runtime\.js["\']>\s*</script>', _PLAYER_SHIM),
 ]
 
 # Script replacements: sandbox init -> player compatible
@@ -74,9 +181,9 @@ def get_sandbox_paths(project_root: Path, slide_id: str) -> dict:
 def get_player_paths(project_root: Path, slide_id: str) -> dict:
     """Get all player destination paths for a slide."""
     return {
-        'slide': project_root / 'templates' / 'slides' / 'prebuilt' / f'slide-{slide_id}.html',
+        'slide': project_root / 'templates' / 'slides' / 'prebuilt' / f'{slide_id}.html',
         'vo_audio': project_root / 'assets' / 'audio' / 'vo' / f'{slide_id}.mp3',
-        'captions': project_root / 'assets' / 'audio' / f'slide-{slide_id}.vtt',
+        'captions': project_root / 'assets' / 'captions' / f'{slide_id}.vtt',
         'animation_cues': project_root / 'assets' / 'animation-cues' / f'{slide_id}.json',
         'interaction_audio_dir': project_root / 'assets' / 'interaction-audio',
     }
@@ -108,7 +215,7 @@ def transform_html(html_content: str, slide_id: str) -> str:
     # Update data-slide-id if needed
     result = re.sub(
         r'data-slide-id="[^"]*"',
-        f'data-slide-id="slide-{slide_id}"',
+        f'data-slide-id="{slide_id}"',
         result
     )
 
@@ -119,6 +226,20 @@ def transform_html(html_content: str, slide_id: str) -> str:
             r'\1 data-vo-cues="true"',
             result
         )
+
+    # Auto-inject "Click Next to continue" audio for SLD slides that don't
+    # already have a custom interactionAudio.src handler.
+    if slide_id.startswith('SLD-') and 'interactionAudio.src' not in result:
+        inject = (
+            '\n<script>\n'
+            '/* Auto-injected: play click-next audio after VO completes */\n'
+            "SandboxRuntime.voAudio.addEventListener('ended', function () {\n"
+            "  SandboxRuntime.interactionAudio.src = '../assets/interaction-audio/SLD-CC01-002-next-button.mp3';\n"
+            "  SandboxRuntime.interactionAudio.play().catch(function () {});\n"
+            '});\n'
+            '</script>\n'
+        )
+        result = result.replace('</body>', inject + '</body>', 1)
 
     return result
 
@@ -175,10 +296,14 @@ def promote_slide(
         player_paths['slide'].write_text(transformed_html, encoding='utf-8')
         print(f"  Wrote: {player_paths['slide']}")
 
-    # 2. Copy VO audio
+    # 2. Copy VO audio (main clip + any slide sub-clips like SLD-CC01-004-*.mp3)
     print("\n2. Copying VO audio...")
     if not copy_file(sandbox_paths['vo_audio'], player_paths['vo_audio'], dry_run):
         print(f"  (No VO audio found at {sandbox_paths['vo_audio']})")
+    vo_dir = sandbox_paths['vo_audio'].parent
+    vo_dest_dir = player_paths['vo_audio'].parent
+    for sub_clip in sorted(vo_dir.glob(f'{slide_id}-*.mp3')):
+        copy_file(sub_clip, vo_dest_dir / sub_clip.name, dry_run)
 
     # 3. Copy captions
     print("\n3. Copying captions...")

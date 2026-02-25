@@ -346,9 +346,10 @@
       basePath: '../'
     });
 
-    // Notify when VO ends
+    // Play "click next button" cue when VO ends
     SandboxRuntime.voAudio.addEventListener('ended', function () {
-      playInteractionClip('next-button');
+      SandboxRuntime.interactionAudio.src = '../audio/vo/Click_the_next_button.mp3';
+      SandboxRuntime.interactionAudio.play().catch(function () {});
     });
 
     // ── Background image: fade in immediately on load ──

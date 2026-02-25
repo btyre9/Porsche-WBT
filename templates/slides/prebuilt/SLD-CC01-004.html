@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>You Are a Brand Ambassador</title>
+  <style>
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Porsche Next TT';
+      src: url('../assets/fonts/porsche-next-tt-bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      overflow: hidden;
+      background: #111317;
+      font-family: 'Porsche Next TT', 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    :root {
+      --accent:        #d5001c;
+      --dark-0:        #111317;
+      --dark-1:        #1e2128;
+      --dark-2:        #2a2f39;
+      --text:          #ffffff;
+      --text-sub:      rgba(255, 255, 255, 0.60);
+      --text-body:     rgba(255, 255, 255, 0.88);
+      --card-bg:       rgba(255, 255, 255, 0.05);
+      --card-border:   rgba(255, 255, 255, 0.13);
+      --card-hover:    rgba(255, 255, 255, 0.10);
+    }
+
+    /* ── Slide shell ─────────────────────────────────────────── */
+    .slide {
+      position: relative;
+      width: 1920px;
+      height: 920px;
+      overflow: hidden;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, #343a48 0%, transparent 60%),
+        linear-gradient(140deg, var(--dark-0) 0%, var(--dark-1) 48%, var(--dark-2) 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 62px 120px 44px;
+      gap: 24px;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .header__accent {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 120px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .header__title {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.08;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .header__sub {
+      font-size: 17px;
+      color: var(--text-sub);
+      line-height: 1.55;
+      max-width: 980px;
+    }
+
+    /* ── Body row: image + hub ───────────────────────────────── */
+    .body-row {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 48px;
+      /* Pull image panel left so it's 24px from the slide edge */
+      margin-left: -8px;
+    }
+
+    /* ── Image panel ─────────────────────────────────────────── */
+    .image-panel {
+      width: 500px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+      display: block;
+    }
+
+    /* Subtle right-edge gradient to blend into the dark bg */
+    .image-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right,
+        transparent 70%,
+        rgba(17, 19, 23, 0.55) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* ── Hub area ────────────────────────────────────────────── */
+    .hub-area {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+      margin-top: -40px;
+    }
+
+    /* Connecting lines SVG */
+    .connecting-lines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .connecting-lines line {
+      stroke: rgba(255, 255, 255, 0.30);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 3;
+    }
+
+    /* ── Center circle ───────────────────────────────────────── */
+    .center-circle {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(213, 0, 28, 0.10);
+      border: 2px solid rgba(213, 0, 28, 0.38);
+      box-shadow:
+        0 0 0 8px rgba(213, 0, 28, 0.06),
+        0 16px 40px rgba(0, 0, 0, 0.40);
+    }
+
+    .center-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0%;
+    }
+
+    /* ── Outer node ──────────────────────────────────────────── */
+    .outer-node {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .node-btn {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+      color: white;
+    }
+
+    .node-btn:hover {
+      background: var(--card-hover);
+      border-color: rgba(255, 255, 255, 0.38);
+      transform: scale(1.09);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.40);
+    }
+
+    .node-btn:focus {
+      outline: none;
+      border-color: rgba(213, 0, 28, 0.65);
+      box-shadow: 0 0 0 3px rgba(213, 0, 28, 0.28);
+    }
+
+    .node-btn:active { transform: scale(1.04); }
+
+    /* Locked state — before VO completes */
+    .node-btn:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    .node-btn:disabled:hover {
+      background: var(--card-bg);
+      border-color: var(--card-border);
+      transform: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    /* Hint label shown while buttons are locked */
+    .hub-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.40);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .hub-hint.hidden { opacity: 0; }
+
+    /* Visited state — subtle red ring once clicked */
+    .node-btn.is-visited {
+      border-color: rgba(213, 0, 28, 0.55);
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.28),
+        0 0 0 3px rgba(213, 0, 28, 0.20);
+    }
+
+    .node-btn img {
+      width: 40px;
+      height: 40px;
+      filter: brightness(0) invert(1);
+      opacity: 0.88;
+      transition: opacity 0.2s;
+    }
+
+    .node-btn:hover img { opacity: 1; }
+
+    .node-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.72);
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Hub pulse ───────────────────────────────────────────── */
+    @keyframes hub-pulse {
+      0%, 100% { transform: scale(1);     }
+      50%       { transform: scale(1.024); }
+    }
+
+    .hub-area {
+      animation: hub-pulse 3.8s ease-in-out infinite;
+      transform-origin: center center;
+    }
+
+    /* ── Entrance animations ─────────────────────────────────── */
+    .anim-fade { opacity: 0; transition: opacity 0.4s ease; }
+    .anim-fade.is-visible { opacity: 1; }
+
+    .anim-slide-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .anim-slide-up.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Modal overlay ───────────────────────────────────────── */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.18s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--dark-1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      width: 640px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.55);
+      animation: modalZoomIn 1.18s ease;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: var(--dark-1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 22px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .modal-header h2 {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .close-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .close-button:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 28px;
+    }
+
+    .modal-body p {
+      font-size: 28px;
+      color: var(--text-body);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .modal-body h3 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.40);
+      margin-bottom: 14px;
+    }
+
+    .modal-body ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-body ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .modal-body ul li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes modalZoomIn {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);   }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide" data-slide-id="SLD-CC01-004" data-vo-cues="true">
+
+    <!-- Header: title lives here, well clear of the image -->
+    <div class="header">
+      <div class="header__accent anim-fade" id="hdr-accent"></div>
+      <h1 class="header__title anim-slide-up" id="hdr-title">You Are a Brand Ambassador</h1>
+      <p class="header__sub anim-fade" id="hdr-sub">At your level, you're not just a technician — you're a Brand Ambassador. This means you represent Porsche in every customer interaction. Click each attribute to learn more.</p>
+    </div>
+
+    <!-- Body: image left (inset, no text overlay) + hub right -->
+    <div class="body-row anim-fade" id="body-row">
+
+      <!-- Photo — face clearly visible, no overlapping text -->
+      <div class="image-panel">
+        <img src="../assets/images/PTech-customer13.webp"
+             alt="Porsche Brand Ambassador Technician">
+      </div>
+
+      <!-- Circle hub -->
+      <div class="hub-area" id="hubArea">
+        <svg class="connecting-lines" id="connectingLines" width="100%" height="100%"></svg>
+
+        <!-- Center circle -->
+        <div class="center-circle" id="centerCircle">
+          <img src="../assets/images/Technician+Brand-Ambassador_FLAT.webp" alt="Brand Ambassador">
+        </div>
+
+        <!-- Node 1: Technical Expertise -->
+        <div class="outer-node" data-position="0" data-modal="modal1">
+          <button class="node-btn" aria-label="Technical Expertise">
+            <img src="../assets/icons/wrench.svg" alt="">
+          </button>
+          <span class="node-label">Technical Expertise</span>
+        </div>
+
+        <!-- Node 2: Professionalism -->
+        <div class="outer-node" data-position="72" data-modal="modal2">
+          <button class="node-btn" aria-label="Professionalism">
+            <img src="../assets/icons/star.svg" alt="">
+          </button>
+          <span class="node-label">Professionalism</span>
+        </div>
+
+        <!-- Node 3: Communication -->
+        <div class="outer-node" data-position="144" data-modal="modal3">
+          <button class="node-btn" aria-label="Communication">
+            <img src="../assets/icons/chat.svg" alt="">
+          </button>
+          <span class="node-label">Communication</span>
+        </div>
+
+        <!-- Node 4: Appearance & Demeanor -->
+        <div class="outer-node" data-position="216" data-modal="modal4">
+          <button class="node-btn" aria-label="Appearance and Demeanor">
+            <img src="../assets/icons/user.svg" alt="">
+          </button>
+          <span class="node-label">Appearance &amp; Demeanor</span>
+        </div>
+
+        <!-- Node 5: Passion -->
+        <div class="outer-node" data-position="288" data-modal="modal5">
+          <button class="node-btn" aria-label="Passion">
+            <img src="../assets/icons/heart.svg" alt="">
+          </button>
+          <span class="node-label">Passion</span>
+        </div>
+
+        <p class="hub-hint" id="hub-hint">Listen to the introduction before exploring</p>
+      </div><!-- /.hub-area -->
+    </div><!-- /.body-row -->
+
+  </div><!-- /.slide -->
+
+  <!-- ── Modals (outside .slide so position:fixed covers full viewport) ── -->
+
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Technical Expertise</h2>
+        <button class="close-button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Your technical skills are the foundation of your role as a Brand Ambassador. Customers trust you because of your expertise.</p>
+        <h3>Key Elements</h3>
+        <ul>
+          <li>Gold-level diagnostic and repair capabilities</li>
+          <li>Deep knowledge of Porsche systems and engineering</li>
+          <li>Continuous learning and certification</li>
+          <li>Problem-solving excellence</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Professionalism</h2>
+        <button class="close-button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Professionalism extends beyond technical work. It's reflected in everything you do and how you conduct yourself.</p>
+        <h3>Key Elements</h3>
+        <ul>
+          <li>How you present yourself</li>
+          <li>How you communicate</li>
+          <li>Your attention to detail</li>
+          <li>Reliability and consistency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal3" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Communication</h2>
+        <button class="close-button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Clear, confident communication builds trust and helps customers understand the value of your work.</p>
+        <h3>Key Elements</h3>
+        <ul>
+          <li>Explaining technical concepts clearly</li>
+          <li>Building customer confidence</li>
+          <li>Managing expectations</li>
+          <li>Active listening</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal4" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Appearance &amp; Demeanor</h2>
+        <button class="close-button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>First impressions matter. Your appearance and demeanor set the tone for every customer interaction.</p>
+        <h3>Key Elements</h3>
+        <ul>
+          <li>Clean, professional presentation</li>
+          <li>Approachable and confident</li>
+          <li>Respectful of customer concerns</li>
+          <li>Positive body language</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal5" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Passion</h2>
+        <button class="close-button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Your enthusiasm for Porsche is contagious. Customers can sense when you genuinely care about their vehicle.</p>
+        <h3>Key Elements</h3>
+        <ul>
+          <li>Enthusiasm for Porsche engineering</li>
+          <li>Pride in your work</li>
+          <li>Commitment to excellence</li>
+          <li>Sharing knowledge with excitement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scale to viewport -->
+  <script>
+    (function () {
+      var slide = document.querySelector('[data-slide-id]');
+      function scaleSlide() {
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 920);
+        slide.style.transform       = 'scale(' + s + ')';
+        slide.style.transformOrigin = 'top left';
+        slide.style.marginLeft      = ((window.innerWidth  - 1920 * s) / 2) + 'px';
+        slide.style.marginTop       = ((window.innerHeight -  920 * s) / 2) + 'px';
+      }
+      window.addEventListener('resize', scaleSlide);
+      scaleSlide();
+    })();
+  </script>
+
+  <script src="../assets/vendor/gsap/gsap.min.js"></script>
+  <script>
+/* Player compat shim — replaces SandboxRuntime in promoted slides */
+(function () {
+  var _tHandlers = [];
+  var _eHandlers = [];
+  var _lastTime = -1;
+  var _wasPlaying = false;
+  var _endedFired = false;
+
+  function getCR() {
+    try { return window.parent && window.parent.CourseRuntime; } catch (_) { return null; }
+  }
+
+  var fakeInteractionAudio = {
+    src: '',
+    play: function () {
+      var cr = getCR();
+      if (cr && this.src) cr.playInteractionAudio({ src: this.src });
+      return Promise.resolve();
+    },
+    pause: function () {}
+  };
+
+  var fakeAudio = {
+    get currentTime() {
+      var cr = getCR();
+      return cr ? (cr.getAudioCurrentTime() || 0) : 0;
+    },
+    get duration() {
+      var cr = getCR();
+      return cr && cr.getAudioDuration ? (cr.getAudioDuration() || 0) : 0;
+    },
+    addEventListener: function (type, fn) {
+      if (type === 'timeupdate') _tHandlers.push(fn);
+      else if (type === 'ended') _eHandlers.push(fn);
+    },
+    removeEventListener: function () {}
+  };
+
+  window.SandboxRuntime = {
+    voAudio: fakeAudio,
+    interactionAudio: fakeInteractionAudio,
+    init: function () {},
+    playInteractionClip: function (id) {
+      var cr = getCR(); if (cr) cr.window.parent?.CourseRuntime?.playInteractionClip(id);
+    }
+  };
+
+  function poll() {
+    var cr = getCR();
+    if (cr) {
+      var t = cr.getAudioCurrentTime ? cr.getAudioCurrentTime() : 0;
+      var playing = cr.isAudioPlaying ? cr.isAudioPlaying() : false;
+      if (t !== _lastTime) {
+        _lastTime = t;
+        var e = { target: fakeAudio, type: 'timeupdate' };
+        for (var i = 0; i < _tHandlers.length; i++) {
+          try { _tHandlers[i](e); } catch (_e) {}
+        }
+      }
+      if (_wasPlaying && !playing && !_endedFired && _eHandlers.length) {
+        var dur = cr.getAudioDuration ? cr.getAudioDuration() : 0;
+        if (dur > 0 && t >= dur - 0.5) {
+          _endedFired = true;
+          var ee = { target: fakeAudio, type: 'ended' };
+          for (var j = 0; j < _eHandlers.length; j++) {
+            try { _eHandlers[j](ee); } catch (_e) {}
+          }
+        }
+      }
+      _wasPlaying = playing;
+      if (!playing && t === 0) _endedFired = false;
+    }
+    requestAnimationFrame(poll);
+  }
+
+  requestAnimationFrame(poll);
+
+  // Listen for player-play-state to freeze/resume GSAP and CSS animations
+  (function () {
+    var styleInjected = false;
+    function ensurePauseStyle() {
+      if (styleInjected) return;
+      styleInjected = true;
+      var s = document.createElement('style');
+      s.textContent = 'html.slide-paused * { animation-play-state: paused !important; }';
+      document.head.appendChild(s);
+    }
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'player-play-state') return;
+      ensurePauseStyle();
+      if (e.data.playing) {
+        if (window.gsap) window.gsap.globalTimeline.resume();
+        document.documentElement.classList.remove('slide-paused');
+      } else {
+        if (window.gsap) window.gsap.globalTimeline.pause();
+        document.documentElement.classList.add('slide-paused');
+      }
+    });
+  })();
+})();
+</script>
+
+  <script>
+    // ── Entrance animations ────────────────────────────────────
+    (function () {
+      var accent  = document.getElementById('hdr-accent');
+      var title   = document.getElementById('hdr-title');
+      var sub     = document.getElementById('hdr-sub');
+      var bodyRow = document.getElementById('body-row');
+
+      setTimeout(function () { accent.classList.add('is-visible');  },   0);
+      setTimeout(function () { title.classList.add('is-visible');   }, 180);
+      setTimeout(function () { sub.classList.add('is-visible');     }, 320);
+      setTimeout(function () { bodyRow.classList.add('is-visible'); }, 460);
+    })();
+
+    // Lock the player's Next button until all 5 nodes are visited
+    window.parent.postMessage({ type: 'sandbox-lock-next' }, '*');
+
+    // ── Completion tracking ────────────────────────────────────
+    var visited = new Set();
+    var TOTAL   = 5;
+
+    function markVisited(modalId) {
+      if (visited.has(modalId)) return;
+      visited.add(modalId);
+
+      // Red ring on the visited node button
+      var node = document.querySelector('[data-modal="' + modalId + '"]');
+      if (node) node.querySelector('.node-btn').classList.add('is-visited');
+
+      // When all 5 are explored, unlock the player's Next button
+      if (visited.size >= TOTAL) {
+        window.parent.postMessage({ type: 'sandbox-unlock-next' }, '*');
+      }
+    }
+
+    // ── Circle hub positioning ─────────────────────────────────
+    var RADIUS   = 265;
+    var CENTER_R = 118; // center circle radius (110) + gap (8)
+    var NODE_R   =  54; // node button radius   ( 50) + gap (4)
+    var BTN_HALF = 50;  // half of node button height (100px)
+
+    function positionHub() {
+      var area    = document.getElementById('hubArea');
+      var lines   = document.getElementById('connectingLines');
+      var centerC = document.getElementById('centerCircle');
+      var cx      = area.offsetWidth  / 2;
+      var cy      = area.offsetHeight / 2;
+
+      // Center circle
+      centerC.style.left      = cx + 'px';
+      centerC.style.top       = cy + 'px';
+      centerC.style.transform = 'translate(-50%, -50%)';
+
+      // Clear old lines
+      lines.innerHTML = '';
+
+      // Outer nodes
+      document.querySelectorAll('.outer-node').forEach(function (node) {
+        var angle = parseInt(node.dataset.position, 10);
+        var rad   = ((angle - 90) * Math.PI) / 180;
+        var nx    = cx + Math.cos(rad) * RADIUS;
+        var ny    = cy + Math.sin(rad) * RADIUS;
+
+        node.style.left = nx + 'px';
+        node.style.top  = ny + 'px';
+        // Shift up by BTN_HALF so the BUTTON's center sits exactly at (nx, ny)
+        // (the label hangs below the button, outside the circumference)
+        node.style.transform = 'translate(-50%, -' + BTN_HALF + 'px)';
+
+        // Unit vector from center circle → button center
+        var dx   = nx - cx;
+        var dy   = ny - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var ux   = dx / dist;
+        var uy   = dy / dist;
+
+        // Spoke: trimmed from center circle edge to button edge
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx + ux * CENTER_R);
+        line.setAttribute('y1', cy + uy * CENTER_R);
+        line.setAttribute('x2', nx - ux * NODE_R);
+        line.setAttribute('y2', ny - uy * NODE_R);
+        lines.appendChild(line);
+      });
+    }
+
+    // ── Modal system ──────────────────────────────────────────
+    var modalAudio = new Audio();
+    modalAudio.preload = 'none';
+
+    var modalAudioClips = {
+      modal1: '../assets/audio/vo/SLD-CC01-004-technical-expertise.mp3',
+      modal2: '../assets/audio/vo/SLD-CC01-004-professionalism.mp3',
+      modal3: '../assets/audio/vo/SLD-CC01-004-communication.mp3',
+      modal4: '../assets/audio/vo/SLD-CC01-004-appearance.mp3',
+      modal5: '../assets/audio/vo/SLD-CC01-004-passion.mp3'
+    };
+
+    function openModal(modalId) {
+      var modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.classList.add('active');
+      modal.querySelector('.close-button').focus();
+
+      // Mark this node as visited (tracks toward completion)
+      markVisited(modalId);
+
+      // Stop any previous clip, then play this modal's VO
+      modalAudio.pause();
+      var src = modalAudioClips[modalId];
+      if (src) {
+        modalAudio.src = src;
+        modalAudio.currentTime = 0;
+        modalAudio.play().catch(function (e) {
+          console.warn('[SLD-004] Modal audio failed:', e);
+        });
+      }
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      modalAudio.pause();
+      modalAudio.currentTime = 0;
+      var trigger = document.querySelector('[data-modal="' + modal.id + '"] .node-btn');
+      if (trigger) trigger.focus();
+    }
+
+    function setupModals() {
+      document.querySelectorAll('.outer-node').forEach(function (node) {
+        node.querySelector('.node-btn').addEventListener('click', function () {
+          openModal(node.dataset.modal);
+        });
+      });
+
+      document.querySelectorAll('.close-button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          closeModal(btn.closest('.modal'));
+        });
+      });
+
+      document.querySelectorAll('.modal').forEach(function (modal) {
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closeModal(modal);
+        });
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          var active = document.querySelector('.modal.active');
+          if (active) closeModal(active);
+        }
+      });
+    }
+
+    // ── Hub button lock until VO completes ────────────────────
+    (function () {
+      var nodeBtns = document.querySelectorAll('.node-btn');
+      var hint = document.getElementById('hub-hint');
+
+      function lockButtons() {
+        nodeBtns.forEach(function (btn) { btn.disabled = true; });
+      }
+
+      function unlockButtons() {
+        nodeBtns.forEach(function (btn) { btn.disabled = false; });
+        if (hint) hint.classList.add('hidden');
+      }
+
+      lockButtons();
+
+      SandboxRuntime.voAudio.addEventListener('ended', function () {
+        unlockButtons();
+      });
+    })();
+
+    positionHub();
+    setupModals();
+    window.addEventListener('resize', positionHub);
+  </script>
+
+<script>
+/* Auto-injected: play click-next audio after VO completes */
+SandboxRuntime.voAudio.addEventListener('ended', function () {
+  SandboxRuntime.interactionAudio.src = '../assets/interaction-audio/SLD-CC01-002-next-button.mp3';
+  SandboxRuntime.interactionAudio.play().catch(function () {});
+});
+</script>
+</body>
+</html>
