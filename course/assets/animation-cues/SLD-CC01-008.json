@@ -1,0 +1,6 @@
+[
+  { "time": 12.0, "target": ".dim-card",     "note": "VO: CSI dimensions introduced — staggered fade-up reveal" },
+  { "time": 20.0, "target": "#sq-card",      "note": "VO: 'Click on Service Quality to see why this dimension matters most...'" },
+  { "time": 35.0, "target": "#detail-panel", "note": "VO resumes after interaction pause — detail panel should be open" },
+  { "time": 80.0, "target": "#continue-btn", "note": "VO ends — Continue available" }
+]

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "followVoiceover": true,
+  "cues": [
+    { "at": 0.2, "target": "ins-slide-cc01-sld-004.headline", "action": "in", "preset": "fadeUp", "duration": 0.6 },
+    { "at": 0.8, "target": "ins-slide-cc01-sld-004.definition", "action": "in", "preset": "fade", "duration": 0.5 },
+    { "at": 1.2, "target": "ins-slide-cc01-sld-004.subhead", "action": "in", "preset": "fade", "duration": 0.45 },
+    { "at": 1.8, "target": "ins-topics-1.row", "action": "in", "preset": "slideRight", "duration": 0.45 },
+    { "at": 2.2, "target": "ins-topics-2.row", "action": "in", "preset": "slideRight", "duration": 0.45 },
+    { "at": 2.6, "target": "ins-topics-3.row", "action": "in", "preset": "slideRight", "duration": 0.45 },
+    { "at": 3.0, "target": "ins-topics-4.row", "action": "in", "preset": "slideRight", "duration": 0.45 },
+    { "at": 3.4, "target": "ins-topics-5.row", "action": "in", "preset": "slideRight", "duration": 0.45 },
+    { "at": 4.4, "target": "ins-topic-flyout-1.panel", "action": "in", "preset": "slideLeft", "duration": 0.4 }
+  ]
+}

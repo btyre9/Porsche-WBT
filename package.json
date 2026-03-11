@@ -1,13 +1,20 @@
 {
   "scripts": {
-    "start-player": "browser-sync start --server output/course --startPath /player/index.html --port 8080 --no-notify",
-    "start-sandbox": "browser-sync start --server . --startPath /sandbox/index.html --port 3000 --no-notify --watch",
-    "build": "python rebuild.py"
+    "start-player": "browser-sync start --server course --startPath /index.html --port 8080 --no-notify",
+    "test-scorm": "browser-sync start --server output/course --startPath /player/index.html --port 8081 --no-notify",
+    "sync": "node scripts/sync-output.js",
+    "package": "node scripts/sync-output.js && node scripts/package-scorm.js",
+    "import-storyboard": "node scripts/import-storyboard.js",
+    "generate-vo": "node scripts/generate-vo.js",
+    "generate-vtt": "node scripts/generate-vtt.js",
+    "export-tts": "node scripts/export-tts.js"
   },
   "dependencies": {
     "gsap": "^3.14.2"
   },
   "devDependencies": {
-    "browser-sync": "^3.0.4"
+    "browser-sync": "^3.0.4",
+    "docx": "^9.6.0",
+    "mammoth": "^1.11.0"
   }
 }

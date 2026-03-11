@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "followVoiceover": true,
+  "cues": [
+    { "at": 0.2, "target": "bg-image", "action": "in", "preset": "fade", "duration": 0.6 },
+    { "at": 0.5, "target": "eyebrow", "action": "in", "preset": "slideRight", "duration": 0.5 },
+    { "at": 0.9, "target": "heading", "action": "in", "preset": "fadeUp", "duration": 0.65 },
+    { "at": 1.6, "target": "description", "action": "in", "preset": "fade", "duration": 0.5 },
+    { "at": 2.4, "target": "feature-1", "action": "in", "preset": "fadeUp", "duration": 0.45 },
+    { "at": 2.8, "target": "feature-2", "action": "in", "preset": "fadeUp", "duration": 0.45 },
+    { "at": 3.2, "target": "feature-3", "action": "in", "preset": "fadeUp", "duration": 0.45 }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "clips": {
+    "ins-topics-1-click-technical-expertise": {
+      "src": "assets/audio/vo/CC01_SLD_004.mp3",
+      "start": 1.8,
+      "end": 8.1
+    },
+    "ins-topics-2-click-professionalism": {
+      "src": "assets/audio/vo/CC01_SLD_004.mp3",
+      "start": 8.2,
+      "end": 14.6
+    },
+    "ins-topics-3-click-communication": {
+      "src": "assets/audio/vo/CC01_SLD_004.mp3",
+      "start": 14.7,
+      "end": 20.8
+    },
+    "ins-topics-4-click-appearance-demeanor": {
+      "src": "assets/audio/vo/CC01_SLD_004.mp3",
+      "start": 20.9,
+      "end": 27.2
+    },
+    "ins-topics-5-click-passion": {
+      "src": "assets/audio/vo/CC01_SLD_004.mp3",
+      "start": 27.3,
+      "end": 33.8
+    }
+  }
+}

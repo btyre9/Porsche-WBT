@@ -1,0 +1,10 @@
+[
+  { "time": 0, "target": "#header-accent", "animation": "fadeIn" },
+  { "time": 0.35, "target": "#header-kicker", "animation": "fadeIn" },
+  { "time": 0.6, "target": "#header-title", "animation": "slideUp" },
+  { "time": 11.0, "target": "#reason-1", "animation": "slideUp" },
+  { "time": 34.0, "target": "#reason-2", "animation": "slideUp" },
+  { "time": 55.0, "target": "#reason-3", "animation": "slideUp" },
+  { "time": 77.0, "target": "#bottom-line", "animation": "fadeIn" },
+  { "time": 77.2, "target": "#continue-btn", "animation": "fadeIn" }
+]

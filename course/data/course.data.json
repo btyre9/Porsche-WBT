@@ -1,0 +1,371 @@
+{
+  "meta": {
+    "id": "porsche-safety-001",
+    "title": "Customer Communications - Module 1",
+    "version": "0.1.0",
+    "language": "en-US",
+    "pass_threshold": 80,
+    "vo_start_delay_ms": 1000
+  },
+  "slides": [
+    {
+      "id": "SLD-CC01-001",
+      "template_id": "prebuilt-static",
+      "slide_title": "Expert Technician as Brand Ambassador",
+      "voiceover": "",
+      "caption_text": "Expert Technician as Brand Ambassador",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-002",
+      "template_id": "prebuilt-static",
+      "slide_title": "Beyond the Wrench",
+      "voiceover": "",
+      "caption_text": "Beyond the Wrench",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-003",
+      "template_id": "prebuilt-static",
+      "slide_title": "Learning Objectives",
+      "voiceover": "",
+      "caption_text": "Learning Objectives",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-004",
+      "template_id": "prebuilt-static",
+      "slide_title": "You Are a Brand Ambassador",
+      "voiceover": "",
+      "caption_text": "You Are a Brand Ambassador",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-005",
+      "template_id": "prebuilt-static",
+      "slide_title": "Why Brand Ambassadors Matter",
+      "voiceover": "",
+      "caption_text": "Why Brand Ambassadors Matter",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-006",
+      "template_id": "prebuilt-static",
+      "slide_title": "What Sets You Apart",
+      "voiceover": "",
+      "caption_text": "What Sets You Apart",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-007",
+      "template_id": "prebuilt-static",
+      "slide_title": "Financial Reality",
+      "voiceover": "",
+      "caption_text": "Financial Reality",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-008",
+      "template_id": "prebuilt-static",
+      "slide_title": "Your Impact on Customer Satisfaction",
+      "voiceover": "",
+      "caption_text": "Your Impact on Customer Satisfaction",
+      "on_screen_text": "",
+      "audio_vo": "assets/audio/vo/SLD-CC01-008-1.mp3",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "KC-CC01-001",
+      "template_id": "prebuilt-static",
+      "slide_title": "Knowledge Check 1",
+      "voiceover": "",
+      "caption_text": "Knowledge Check 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "KC-CC01-002",
+      "template_id": "prebuilt-static",
+      "slide_title": "Knowledge Check 2",
+      "voiceover": "",
+      "caption_text": "Knowledge Check 2",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-009",
+      "template_id": "prebuilt-static",
+      "slide_title": "When You Interact with Customers",
+      "voiceover": "",
+      "caption_text": "When You Interact with Customers",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-010",
+      "template_id": "prebuilt-static",
+      "slide_title": "Understanding Customer Expectations",
+      "voiceover": "",
+      "caption_text": "Understanding Customer Expectations",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-011",
+      "template_id": "prebuilt-static",
+      "slide_title": "Technical Expert AND Communicator",
+      "voiceover": "",
+      "caption_text": "Technical Expert AND Communicator",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "KC-CC01-003",
+      "template_id": "prebuilt-static",
+      "slide_title": "Knowledge Check 3",
+      "voiceover": "",
+      "caption_text": "Knowledge Check 3",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "KC-CC01-004",
+      "template_id": "prebuilt-static",
+      "slide_title": "Knowledge Check 4",
+      "voiceover": "",
+      "caption_text": "Knowledge Check 4",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-012",
+      "template_id": "prebuilt-static",
+      "slide_title": "Clear Boundaries, Clear Responsibilities",
+      "voiceover": "",
+      "caption_text": "Clear Boundaries, Clear Responsibilities",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "SLD-CC01-013",
+      "template_id": "prebuilt-static",
+      "slide_title": "You ARE Porsche",
+      "voiceover": "",
+      "caption_text": "You ARE Porsche",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-001",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-002",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-003",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-004",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-005",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-006",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-007",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-008",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-009",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz — CC01 Module 1",
+      "voiceover": "",
+      "caption_text": "Final Quiz — CC01 Module 1",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-010",
+      "template_id": "prebuilt-static",
+      "slide_title": "Final Quiz",
+      "voiceover": "",
+      "caption_text": "Final Quiz",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    },
+    {
+      "id": "FQ-CC01-SCORE",
+      "template_id": "prebuilt-static",
+      "slide_title": "Module 1 Results — CC01",
+      "voiceover": "",
+      "caption_text": "Module 1 Results — CC01",
+      "on_screen_text": "",
+      "audio_vo": "",
+      "intro_animation": "",
+      "element_animations": [],
+      "raw": {}
+    }
+  ],
+  "quiz": {
+    "runtime": {
+      "immediate_feedback_types": [
+        "mcq",
+        "tf",
+        "fill-in-blank",
+        "matching",
+        "scenario"
+      ],
+      "sfx": {
+        "correct": "assets/audio/sfx/correct.mp3",
+        "incorrect": "assets/audio/sfx/incorrect.mp3"
+      },
+      "scorm_report_enabled": true
+    },
+    "knowledge_checks": [],
+    "final_quiz": {
+      "questions": [],
+      "passing_score": 80,
+      "immediate_feedback": false,
+      "shuffle_answers": true
+    }
+  }
+}
