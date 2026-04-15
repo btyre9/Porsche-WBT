@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/ALIBI8I/.claude/projects/g--My-Drive-00-Projects-Porsche-WBT-Template/memory/**)",
+      "Read(//g/My Drive/00-Projects/CC02/output/**)",
+      "Read(//g/My Drive/00-Projects/CC02/**)",
+      "Read(//g/My Drive/00-Projects/**)"
+    ],
+    "additionalDirectories": [
+      "G:\\My Drive\\00-Projects\\CC02\\course\\assets\\vendor",
+      "\\tmp",
+      "G:\\My Drive\\00-Projects\\CC02\\course\\assets\\mgfx"
+    ]
+  }
+}

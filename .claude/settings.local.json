@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:designsystem.porsche.com)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(node:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find \"/Users/home/Library/CloudStorage/GoogleDrive-briantyre@gmail.com/My Drive/00-Projects/Porsche-WBT-Template/course/slides\" -name \"*.gdoc\" -delete)",
+      "Bash(find \"/Users/home/Library/CloudStorage/GoogleDrive-briantyre@gmail.com/My Drive/00-Projects/Porsche-WBT-Template/scripts/templates\" -name \"*.gdoc\" -delete)",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(cp -r \"G:/My Drive/00-Projects/Porsche-WBT-Template\" \"C:/Users/ALIBI8I/iCloudDrive/02-Projects/Porsche/\" --exclude=\"node_modules\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(rsync -av --exclude='node_modules' \"G:/My Drive/00-Projects/Porsche-WBT-Template\" \"C:/Users/ALIBI8I/iCloudDrive/02-Projects/Porsche/\")",
+      "Bash(robocopy \"G:\\\\\\\\My Drive\\\\\\\\00-Projects\\\\\\\\Porsche-WBT-Template\" \"C:\\\\\\\\Users\\\\\\\\ALIBI8I\\\\\\\\iCloudDrive\\\\\\\\02-Projects\\\\\\\\Porsche\\\\\\\\Porsche-WBT-Template\" /E /XD node_modules /NFL /NDL /NJH /NJS)",
+      "Bash(echo \"Done, exit: $?\")",
+      "Bash(robocopy \"G:\\\\\\\\My Drive\\\\\\\\00-Projects\\\\\\\\Porsche-WBT-Template\" \"C:\\\\\\\\Users\\\\\\\\ALIBI8I\\\\\\\\iCloudDrive\\\\\\\\02-Projects\\\\\\\\Porsche\\\\\\\\Porsche-WBT-Template\" /E /XD \"node_modules\" /NFL /NDL /NJH /NJS)",
+      "Read(//c/Users/ALIBI8I/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/1ae01d7e-52f6-40a2-b232-bef87c1334c2/6c0fd5c0-cf7a-4c52-839d-338b099d72b3/skills/docx/**)",
+      "Bash(extract-text \"C:\\\\Users\\\\ALIBI8I\\\\iCloudDrive\\\\02-Projects\\\\Porsche\\\\CC03\\\\CC04_WBT_SB_listening.docx\")",
+      "Bash(pandoc \"C:\\\\Users\\\\ALIBI8I\\\\iCloudDrive\\\\02-Projects\\\\Porsche\\\\CC03\\\\CC04_WBT_SB_listening.docx\" -t markdown)",
+      "Bash(npm run:*)",
+      "Bash(npx browser-sync:*)",
+      "Bash(nohup npx:*)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(npm install:*)",
+      "Read(//tmp/**)",
+      "Bash(powershell -Command \"Start-Process cmd -ArgumentList '/k cd /d \\\\\"G:\\\\My Drive\\\\00-Projects\\\\Porsche-WBT-Template\\\\\" && npx browser-sync start --server course --startPath /slides/SLD_CC04_001.html --port 8080 --no-notify' -WindowStyle Normal\")",
+      "Bash(powershell -Command \"Start-Process cmd -ArgumentList '/k npx --yes http-server \\\\\"G:\\\\My Drive\\\\00-Projects\\\\Porsche-WBT-Template\\\\course\\\\\" -p 8080 -c-1 --cors' -WindowStyle Normal\")",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f['path']\\) for f in data.get\\('tree',[]\\) if f['type']=='blob']\")",
+      "Bash(robocopy \"G:\\\\My Drive\\\\00-Projects\\\\Porsche-WBT-Template\" \"C:\\\\Projects\\\\Porsche-WBT-Template\" /E /XD node_modules /XF desktop.ini \"*.gdoc\")",
+      "Bash(cmd /c robocopy \"G:\\\\My Drive\\\\00-Projects\\\\Porsche-WBT-Template\" \"C:\\\\Projects\\\\Porsche-WBT-Template\" /E /XD node_modules /XF desktop.ini \"*.gdoc\" /NFL /NJH)",
+      "Bash(powershell -Command ':*)"
+    ]
+  }
+}

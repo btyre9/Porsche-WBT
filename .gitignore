@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Generated slide output — rebuild with generate-slides.js
+course/slides/
+
+# SCORM package output
+output/
+
+# Generated storyboard intermediates
+storyboard/course.md
+storyboard/vo_manifest.csv
+course/data/tts_script.csv
+course/assets/captions/
+
+# Google Drive stubs
+*.gdoc
+desktop.ini
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+nohup.out

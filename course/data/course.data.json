@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "id": "module-id-here",
+    "title": "[Module Title Here]",
+    "version": "1.0.0",
+    "language": "en-US",
+    "pass_threshold": 80,
+    "vo_start_delay_ms": 1000
+  },
+  "slides": [
+    {
+      "id": "SLD_CC04_001",
+      "title": "Listening Skills That Build Trust",
+      "audio_vo": "assets/audio/vo/SLD_CC04_001_INTRO.mp3"
+    },
+    {
+      "id": "SLD_CC04_002",
+      "title": "You Hear All Day. But Are You Listening?",
+      "audio_vo": "assets/audio/vo/SLD_CC04_002_INTRO.mp3"
+    }
+  ],
+  "quiz": {
+    "final_quiz": {
+      "passing_score": 80,
+      "questions": []
+    }
+  }
+}

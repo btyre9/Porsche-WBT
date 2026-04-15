@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>{{SLIDE_TITLE}}</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <!-- Scale slide to viewport — sets --scale on <html>, consumed by slide-base.css -->
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Hero image — right side, full height, bleeds to edge ────────────── */
+    .hero-image {
+      position: absolute;
+      right: 0; top: 0;
+      width: 68%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 1;
+      display: block;
+    }
+
+    /* ── Gradient scrim — blends image into dark left panel ──────────────── */
+    .hero-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(
+        to right,
+        var(--pds-bg-base)          0%,
+        var(--pds-bg-base)          28%,
+        rgba(14, 14, 18, 0.82)      50%,
+        rgba(14, 14, 18, 0.20)      70%,
+        transparent                100%
+      );
+      pointer-events: none;
+    }
+
+    /* ── Content panel — left column ─────────────────────────────────────── */
+    .content {
+      position: absolute;
+      left: 0; top: 0;
+      width: 56%;
+      height: 100%;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--pds-slide-pad-y) 0 var(--pds-slide-pad-y) 120px;
+    }
+
+    /* ── Red accent bar — sits just above the slide title ───────────────── */
+    .red-accent {
+      width: 120px;
+      height: 8px;
+      background: var(--pds-accent);
+      margin-bottom: 20px;
+    }
+
+    /* ── Hero title ──────────────────────────────────────────────────────── */
+    .title {
+      font-size: var(--pds-font-size-hero);
+      font-weight: var(--pds-font-weight-regular);
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      color: var(--pds-text-primary);
+      margin: 0 0 4px 0;
+      max-width: 720px;
+    }
+
+    /* ── Lottie decorative title underline ───────────────────────────────── */
+    /*    margin-top is set dynamically by positionTitleLine() in JS.         */
+    /*    Tune PULL_ABOVE_LAST_LINE in the script if the placement shifts.    */
+    #title-line-anim {
+      width: 520px;
+      height: 77px;
+      margin-left: -22px;  /* optical alignment with title left edge */
+      /* margin-top: computed at runtime — see positionTitleLine() */
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <!-- L1: Hero image (right side, bleeds to edge) -->
+  <img
+    class="hero-image"
+    src="{{IMAGE_PATH}}"
+    alt=""
+    draggable="false"
+  >
+
+  <!-- L2: Gradient scrim — dark on left, transparent on right -->
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <!-- L3: Content panel (left) -->
+  <main class="content" role="main">
+
+    <div class="red-accent anim-fade-up" style="--anim-delay: 0.2s;" aria-hidden="true"></div>
+
+    <h1 class="title anim-fade-up" style="--anim-delay: 0.38s;">{{SLIDE_TITLE}}</h1>
+
+    <!--
+      Lottie decorative underline — plays after the title entrance completes.
+      Source: assets/mgfx/title_line_intro01.json
+      This file is shared across all modules.
+    -->
+    <div id="title-line-anim" aria-hidden="true"></div>
+
+  </main>
+
+</div>
+
+<script src="../assets/vendor/lottie/lottie.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  /* ── Trigger CSS entrance animations ─────────────────────────────────── */
+  document.querySelectorAll('.anim-fade-up').forEach(function (el) {
+    el.classList.add('is-visible');
+  });
+
+  /* ── Lottie position — anchors to the actual last line of the title ───── */
+  /*                                                                          */
+  /*    Line wrapping is a browser runtime event — the parser cannot         */
+  /*    predict how many lines the title will occupy. This function uses      */
+  /*    document.createRange() to find the exact pixel bottom of the last    */
+  /*    line, then positions the Lottie container relative to that point.    */
+  /*                                                                          */
+  /*    TUNE: PULL_ABOVE_LAST_LINE controls how far the Lottie top sits      */
+  /*    above the last-line's bottom edge. Increase to move the decorative   */
+  /*    line higher (more overlap with text); decrease to move it lower.     */
+
+  var PULL_ABOVE_LAST_LINE = 36; /* px — tuning knob */
+
+  function positionTitleLine() {
+    var titleEl = document.querySelector('.title');
+    var animEl  = document.getElementById('title-line-anim');
+    if (!titleEl || !animEl) return;
+
+    /* Walk to the last text node inside the title */
+    var walker = document.createTreeWalker(titleEl, NodeFilter.SHOW_TEXT, null, false);
+    var lastText = null, node;
+    while ((node = walker.nextNode())) lastText = node;
+    if (!lastText || !lastText.length) return;
+
+    /* Bounding rect of the last character gives the exact last-line bottom */
+    var range = document.createRange();
+    range.setStart(lastText, lastText.length - 1);
+    range.setEnd(lastText,   lastText.length);
+
+    var lastCharRect  = range.getBoundingClientRect();
+    var titleRect     = titleEl.getBoundingClientRect();
+    var titleMarginBottom = parseFloat(getComputedStyle(titleEl).marginBottom) || 0;
+
+    /*  Lottie natural top (no margin-top):  titleRect.bottom + titleMarginBottom
+     *  We want Lottie top at:              lastCharRect.bottom − PULL_ABOVE_LAST_LINE
+     *  Therefore:
+     *    margin-top = (lastCharRect.bottom − PULL_ABOVE_LAST_LINE)
+     *               − (titleRect.bottom + titleMarginBottom)               */
+    var marginTop = (lastCharRect.bottom - PULL_ABOVE_LAST_LINE)
+                  - (titleRect.bottom    + titleMarginBottom);
+
+    animEl.style.marginTop = marginTop + 'px';
+  }
+
+  /* Run after fonts are loaded (most accurate) with rAF fallback */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(positionTitleLine);
+  } else {
+    requestAnimationFrame(positionTitleLine);
+  }
+  /* Recalculate on resize — font-size is responsive via clamp() */
+  window.addEventListener('resize', positionTitleLine);
+
+  /* ── Lottie load & play ───────────────────────────────────────────────── */
+  /*    Fires after the title anim-fade-up completes                         */
+  /*    (0.38s delay + 0.6s duration ≈ 1.0s total)                           */
+  var titleLineEl = document.getElementById('title-line-anim');
+  if (titleLineEl && window.lottie) {
+    var titleLineAnim = lottie.loadAnimation({
+      container: titleLineEl,
+      renderer:  'svg',
+      loop:      false,
+      autoplay:  false,
+      path:      '../assets/mgfx/title_line_intro01.json',
+    });
+    setTimeout(function () { titleLineAnim.play(); }, 1000);
+  }
+
+}());
+</script>
+
+</body>
+</html>
