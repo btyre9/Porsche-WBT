@@ -50,7 +50,7 @@ const { generateVo }   = require('./generate-vo');
 // Constants
 // ---------------------------------------------------------------------------
 
-const VALID_TRIGGERS = new Set(['INTRO', 'CLICK', 'TAB', 'STEP']);
+const VALID_TRIGGERS = new Set(['INTRO', 'CLICK', 'TAB', 'STEP', 'SUMMARY']);
 
 const SLIDE_HEADING_RE = /^(?:#{1,2}\s*)?(slide|screen|scene)\s*[-_ ]*\d+/i;
 
@@ -200,7 +200,7 @@ function isRecognizedFieldKey(key) {
   if (!key) return false;
   if (PREFERRED_KEY_ORDER.includes(key)) return true;
   if (MULTILINE_FIELDS.has(key)) return true;
-  if (/^Voiceover-(INTRO|CLICK|TAB|STEP)(-.+)?$/i.test(key)) return true;
+  if (/^Voiceover-(INTRO|CLICK|TAB|STEP|SUMMARY)(-.+)?$/i.test(key)) return true;
   if (/^Choice-\d+$/i.test(key)) return true;
   if (/^Objective-\d+$/i.test(key)) return true;
   if (/^Animation-Element-.+$/i.test(key)) return true;
@@ -556,7 +556,7 @@ function splitVoiceoverWithMarkers(rawText) {
 }
 
 function extractVoSegments(slide, prefix, courseId, slideNum) {
-  const triggerOrder = { INTRO: 0, CLICK: 1, TAB: 2, STEP: 3 };
+  const triggerOrder = { INTRO: 0, CLICK: 1, TAB: 2, STEP: 3, SUMMARY: 4 };
   const segments = [];
   const usedKeys = new Set();
 
@@ -626,7 +626,7 @@ function orderSlideKeys(slide) {
   const all     = Object.keys(slide).filter((k) => k !== 'section_heading');
   const ordered = PREFERRED_KEY_ORDER.filter((k) => all.includes(k));
 
-  const triggerOrder = { INTRO: 0, CLICK: 1, TAB: 2, STEP: 3 };
+  const triggerOrder = { INTRO: 0, CLICK: 1, TAB: 2, STEP: 3, SUMMARY: 4 };
   const voKeys = all
     .filter((k) => k.startsWith('Voiceover-'))
     .sort((a, b) => {
