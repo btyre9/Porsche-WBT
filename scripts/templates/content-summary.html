@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>{{SLIDE_TITLE}}</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Split layout ────────────────────────────────────────────────────── */
+    .slide {
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    /* ── Left panel — summary content ────────────────────────────────────── */
+    .summary-panel {
+      flex-shrink: 0;
+      width: 1040px;
+      height: 920px;
+      background: #0D0D0F;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 72px 80px 72px 100px;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* Decorative bars */
+    .deco-shapes {
+      position: absolute;
+      left: -28px; top: 0;
+      width: 72px; height: 920px;
+      z-index: 1; pointer-events: none;
+    }
+    .deco-bar {
+      position: absolute; left: 0; width: 56px;
+      background: #1A1A1E;
+      transform: skewY(-8deg); transform-origin: top left;
+    }
+    .deco-bar:nth-child(1) { top: 60px;  height: 260px; }
+    .deco-bar:nth-child(2) { top: 340px; height: 220px; opacity: 0.70; }
+    .deco-bar:nth-child(3) { top: 580px; height: 200px; opacity: 0.45; }
+
+    .red-accent {
+      flex-shrink: 0;
+      width: 120px; height: 8px;
+      background: var(--pds-accent);
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      font-size: var(--pds-font-size-xs);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+      margin-bottom: 10px;
+    }
+
+    .headline {
+      font-size: var(--pds-font-size-2xl);
+      font-weight: var(--pds-font-weight-bold);
+      line-height: 1.05;
+      color: var(--pds-text-primary);
+      margin: 0 0 16px 0;
+    }
+
+    .summary-intro {
+      font-size: var(--pds-font-size-md);
+      color: var(--pds-text-muted);
+      margin: 0 0 28px 0;
+      line-height: 1.45;
+    }
+
+    /* ── Summary points list ─────────────────────────────────────────────── */
+    .summary-points {
+      list-style: none;
+      margin: 0 0 28px 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .summary-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: var(--pds-font-size-sm);
+      color: var(--pds-contrast-high);
+      line-height: 1.45;
+    }
+
+    .summary-dot {
+      flex-shrink: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--pds-accent);
+      margin-top: 8px;
+    }
+
+    /* ── Closing text ────────────────────────────────────────────────────── */
+    .summary-closing {
+      font-size: var(--pds-font-size-sm);
+      font-style: italic;
+      color: var(--pds-text-secondary);
+      line-height: 1.55;
+      margin: 0 0 28px 0;
+      padding-left: 22px;
+      border-left: 3px solid rgba(213,0,28,0.45);
+    }
+
+    /* ── Next module callout ─────────────────────────────────────────────── */
+    .summary-next {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.10);
+      border-radius: 12px;
+    }
+    .summary-next__icon {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(213,0,28,0.15);
+      border: 1px solid rgba(213,0,28,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--pds-accent);
+      margin-top: 1px;
+    }
+    .summary-next__text {
+      flex: 1;
+    }
+    .summary-next__label {
+      display: block;
+      font-size: 11px;
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+      margin-bottom: 5px;
+    }
+    .summary-next__body {
+      font-size: var(--pds-font-size-sm);
+      color: var(--pds-text-secondary);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* ── Right photo panel ───────────────────────────────────────────────── */
+    .summary-image {
+      flex: 1;
+      height: 920px;
+      position: relative;
+      overflow: hidden;
+    }
+    .summary-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .summary-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        to right,
+        #0D0D0F 0%,
+        rgba(13,13,15,0.45) 14%,
+        rgba(13,13,15,0.00) 35%
+      );
+    }
+    /* Subtle bottom vignette */
+    .summary-image::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 200px;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(13,13,15,0.6) 0%, transparent 100%);
+    }
+
+    /* ── Entrance animations ─────────────────────────────────────────────── */
+    .anim-block {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .anim-block.is-visible { opacity: 1; transform: none; }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <!-- Left: summary content -->
+  <div class="summary-panel">
+    <div class="deco-shapes" aria-hidden="true">
+      <div class="deco-bar"></div>
+      <div class="deco-bar"></div>
+      <div class="deco-bar"></div>
+    </div>
+
+    <div class="red-accent anim-block" id="el-accent"></div>
+    <p class="eyebrow anim-block" id="el-eyebrow">{{EYEBROW}}</p>
+    <h2 class="headline anim-block" id="el-headline">{{SLIDE_TITLE}}</h2>
+    <p class="summary-intro anim-block" id="el-intro">{{SUMMARY_INTRO}}</p>
+
+    <ul class="summary-points anim-block" id="el-points">
+{{SUMMARY_POINTS_HTML}}
+    </ul>
+
+    <p class="summary-closing anim-block" id="el-closing">{{SUMMARY_CLOSING}}</p>
+
+    <div class="summary-next anim-block" id="el-next">
+      <div class="summary-next__icon">&#8594;</div>
+      <div class="summary-next__text">
+        <span class="summary-next__label">Up Next</span>
+        <p class="summary-next__body">{{SUMMARY_NEXT}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: image -->
+  <div class="summary-image">
+    <img src="{{IMAGE_PATH}}" alt="" draggable="false">
+  </div>
+
+</div>
+
+<script src="../assets/vendor/gsap/gsap.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  var ids     = ['el-accent', 'el-eyebrow', 'el-headline', 'el-intro', 'el-points', 'el-closing', 'el-next'];
+  var delays  = [0, 100, 200, 340, 460, 600, 740];
+
+  ids.forEach(function (id, i) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    setTimeout(function () { el.classList.add('is-visible'); }, delays[i]);
+  });
+
+}());
+</script>
+
+</body>
+</html>

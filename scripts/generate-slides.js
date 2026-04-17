@@ -213,19 +213,146 @@ function buildObjectivesHtml(slide) {
 }
 
 // ---------------------------------------------------------------------------
+// Tab items (content-tab template)
+// ---------------------------------------------------------------------------
+
+function buildTabsHtml(slide, slideId) {
+  const sep = slideId.includes('_') ? '_' : '-';
+  const items = [];
+  for (const [key, value] of Object.entries(slide)) {
+    const m = key.match(/^Tab-Title-(.+)$/);
+    if (!m) continue;
+    const label = m[1];
+    const body = slide[`Tab-Body-${label}`] || '';
+    const audioPath = `../assets/audio/vo/${slideId}${sep}TAB${sep}${label}.mp3`;
+    items.push({ label, title: value, body, audioPath });
+  }
+  if (!items.length) return '<!-- no tabs -->';
+  const buttons = items.map((t, i) =>
+    `      <button class="tab-btn${i === 0 ? ' is-active' : ''}" data-tab="${escAttr(t.label)}" data-audio="${escAttr(t.audioPath)}" role="tab" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${escHtml(t.title)}</button>`
+  ).join('\n');
+  const panels = items.map((t, i) =>
+    `      <div class="tab-panel${i === 0 ? ' is-active' : ''}" id="panel-${escAttr(t.label)}" role="tabpanel">\n        <ul class="bullet-list">\n${buildBulletListHtml(t.body)}\n        </ul>\n      </div>`
+  ).join('\n');
+  return `    <div class="tabs-nav" role="tablist">\n${buttons}\n    </div>\n    <div class="tabs-content">\n${panels}\n    </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Step items (content-steps template)
+// ---------------------------------------------------------------------------
+
+function buildStepsHtml(slide, slideId) {
+  const sep = slideId.includes('_') ? '_' : '-';
+  const items = [];
+  for (let i = 1; i <= 15; i++) {
+    const title = slide[`Step-Title-${i}`];
+    if (!title) break;
+    const body = slide[`Step-Body-${i}`] || '';
+    const audioPath = `../assets/audio/vo/${slideId}${sep}STEP${sep}${i}.mp3`;
+    items.push({ n: i, title, body, audioPath });
+  }
+  if (!items.length) return '<!-- no steps -->';
+  const total = items.length;
+  return items.map((s) =>
+    `      <div class="step-item" data-step="${s.n}" data-audio="${escAttr(s.audioPath)}" data-total="${total}">\n` +
+    `        <div class="step-number">${String(s.n).padStart(2, '0')}</div>\n` +
+    `        <div class="step-content">\n` +
+    `          <div class="step-title">${escHtml(s.title)}</div>\n` +
+    `          <ul class="bullet-list">\n${buildBulletListHtml(s.body)}\n          </ul>\n` +
+    `        </div>\n` +
+    `      </div>`
+  ).join('\n');
+}
+
+function buildStepNavHtml(slide) {
+  let total = 0;
+  for (let i = 1; i <= 15; i++) {
+    if (!slide[`Step-Title-${i}`]) break;
+    total++;
+  }
+  if (!total) return '';
+  const dots = Array.from({length: total}, (_, i) =>
+    `      <button class="step-nav-dot${i === 0 ? ' is-active' : ''}" data-step="${i + 1}" aria-label="Step ${i + 1}"></button>`
+  ).join('\n');
+  return `    <div class="step-nav" role="tablist" aria-label="Steps">\n${dots}\n    </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Accordion items (content-accordion template)
+// ---------------------------------------------------------------------------
+
+function buildAccordionHtml(slide, slideId) {
+  const sep = slideId.includes('_') ? '_' : '-';
+  const items = [];
+  for (const [key, value] of Object.entries(slide)) {
+    const m = key.match(/^Accordion-Title-(.+)$/);
+    if (!m) continue;
+    const label = m[1];
+    const body = slide[`Accordion-Body-${label}`] || '';
+    const audioPath = `../assets/audio/vo/${slideId}${sep}TAB${sep}${label}.mp3`;
+    items.push({ label, title: value, body, audioPath });
+  }
+  if (!items.length) return '<!-- no accordion items -->';
+  return items.map((a, i) =>
+    `      <div class="accordion-item${i === 0 ? ' is-open' : ''}" data-accordion="${escAttr(a.label)}" data-audio="${escAttr(a.audioPath)}">\n` +
+    `        <button class="accordion-trigger" aria-expanded="${i === 0 ? 'true' : 'false'}" tabindex="0">\n` +
+    `          <span class="accordion-label">${escHtml(a.title)}</span>\n` +
+    `          <span class="accordion-chevron" aria-hidden="true">&#8250;</span>\n` +
+    `        </button>\n` +
+    `        <div class="accordion-body">\n` +
+    `          <ul class="bullet-list">\n${buildBulletListHtml(a.body)}\n          </ul>\n` +
+    `        </div>\n` +
+    `      </div>`
+  ).join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Summary points (content-summary template)
+// ---------------------------------------------------------------------------
+
+function buildSummaryPointsHtml(slide) {
+  const items = [];
+  for (let i = 1; i <= 10; i++) {
+    const text = slide[`Summary-Point-${i}`];
+    if (!text) break;
+    items.push(
+      `      <li class="summary-point">\n` +
+      `        <span class="summary-dot" aria-hidden="true"></span>\n` +
+      `        <span>${escHtml(text)}</span>\n` +
+      `      </li>`
+    );
+  }
+  return items.join('\n') || '      <!-- no summary points -->';
+}
+
+// ---------------------------------------------------------------------------
+// Card panels (hidden content for card-explore detail panel)
+// ---------------------------------------------------------------------------
+
+function buildCardPanelsHtml(triggers, slide) {
+  if (!triggers.length) return '';
+  return triggers.map(t => {
+    const body = slide ? buildBulletListHtml(slide[`Card-Body-${t.label}`]) : '';
+    return (
+      `  <div class="card-panel" id="panel-${escAttr(t.label)}">\n` +
+      `    <ul class="bullet-list">\n${body}\n    </ul>\n  </div>`
+    );
+  }).join('\n');
+}
+
+// ---------------------------------------------------------------------------
 // Card items (card-explore template)
 // ---------------------------------------------------------------------------
 
-function buildCardsHtml(triggers) {
+function buildCardsHtml(triggers, slide) {
   const letters = ['01', '02', '03', '04', '05', '06'];
   return triggers.map((t, idx) => {
     const num   = letters[idx] || String(idx + 1).padStart(2, '0');
-    const title = camelToWords(t.label);
+    const title = (slide && slide[`Card-Title-${t.label}`]) || camelToWords(t.label);
     return (
-      `      <div class="explore-card pds-card" data-card="${escAttr(t.label)}" id="card-${escAttr(t.label)}" tabindex="0" role="button" aria-label="Explore ${escAttr(title)}">\n` +
+      `      <div class="explore-card pds-card pds-card--interactive is-shimmer" data-card="${escAttr(t.label)}" id="card-${escAttr(t.label)}" tabindex="0" role="button" aria-label="Explore ${escAttr(title)}">\n` +
       `        <div class="card-number">${num}</div>\n` +
       `        <div class="card-title">${escHtml(title)}</div>\n` +
-      `        <div class="card-body"><!-- Add card detail content here --></div>\n` +
       `        <div class="card-chip">Explore &rarr;</div>\n` +
       `      </div>`
     );
@@ -445,18 +572,52 @@ function buildTokens(slide, allSlides, courseTitle, templateHtml) {
     BULLET_TIMES_ARRAY:   buildBulletTimesArray(slide['Col-Left-Body'], slide['Col-Right-Body']),
     CALLOUT_CUE_TIME:     'null  /* TODO: callout emphasis cue time in seconds */',
     // Card-explore template
-    CARDS_HTML:        buildCardsHtml(clicks),
+    CARDS_HTML:        buildCardsHtml(clicks, slide),
     CARD_AUDIO_MAP:    buildCardAudioMap(clicks),
     CARD_INIT_SCRIPT:  buildCardInitScript(clicks),
     TOTAL_CARDS:       String(clicks.length || 3),
     // content-split body — pull quote or plain body copy
     BODY_CONTENT_HTML: bodyContentHtml,
     // KC / FQ templates
-    QUESTION_TEXT:   escHtml(slide['Question'] || ''),
     CHOICES_HTML:    buildChoicesHtml(slide, templateId),
     CORRECT_ANSWER:  String(parseInt(slide['Correct-Answer'], 10) || 1),
     REVIEW_SLIDE:    slide['Review-Slide'] || '',
     QUESTION_NUMBER: String(fqQuestionNumber(allSlides, slideId)),
+    // Option tokens for KC/FQ (support both Option-A/B/C/D and Choice-1/2/3/4 formats)
+    OPTION_A_TEXT:    escHtml(slide['Option-A'] || slide['Choice-1'] || 'Option A'),
+    OPTION_B_TEXT:    escHtml(slide['Option-B'] || slide['Choice-2'] || 'Option B'),
+    OPTION_C_TEXT:    escHtml(slide['Option-C'] || slide['Choice-3'] || 'Option C'),
+    OPTION_D_TEXT:    escHtml(slide['Option-D'] || slide['Choice-4'] || 'Option D'),
+    OPTION_A_CORRECT: (function(){ var co=(slide['Correct-Option']||'').trim().toUpperCase(); var ca=String(parseInt(slide['Correct-Answer'],10)||0); return (co==='A'||ca==='1')?'true':'false'; }()),
+    OPTION_B_CORRECT: (function(){ var co=(slide['Correct-Option']||'').trim().toUpperCase(); var ca=String(parseInt(slide['Correct-Answer'],10)||0); return (co==='B'||ca==='2')?'true':'false'; }()),
+    OPTION_C_CORRECT: (function(){ var co=(slide['Correct-Option']||'').trim().toUpperCase(); var ca=String(parseInt(slide['Correct-Answer'],10)||0); return (co==='C'||ca==='3')?'true':'false'; }()),
+    OPTION_D_CORRECT: (function(){ var co=(slide['Correct-Option']||'').trim().toUpperCase(); var ca=String(parseInt(slide['Correct-Answer'],10)||0); return (co==='D'||ca==='4')?'true':'false'; }()),
+    REVIEW_SLIDE_ID:  slide['Review-Slide'] || '',
+    FQ_EYEBROW:       escHtml(slide['FQ-Eyebrow'] || ''),
+    FQ_QUESTION_LABEL: 'Final Quiz',
+    FQ_QUESTION_NUMBER_LABEL: 'Question ' + String(fqQuestionNumber(allSlides, slideId)),
+    QUESTION_TEXT:    escHtml(slide['Question-Text'] || slide['Question'] || ''),
+    FEEDBACK_CORRECT: escHtml(slide['Feedback-Correct'] || ''),
+    FEEDBACK_INCORRECT: escHtml(slide['Feedback-Incorrect'] || ''),
+    PASS_SCORE:       String(parseInt(slide['Pass-Score'], 10) || 80),
+    PASS_MESSAGE:     escHtml(slide['Pass-Message'] || ''),
+    FAIL_MESSAGE:     escHtml(slide['Fail-Message'] || ''),
+    // New interaction template tokens
+    TABS_HTML:        buildTabsHtml(slide, slideId),
+    STEPS_HTML:       buildStepsHtml(slide, slideId),
+    STEP_NAV_HTML:    buildStepNavHtml(slide),
+    ACCORDION_HTML:   buildAccordionHtml(slide, slideId),
+    SUMMARY_POINTS_HTML: buildSummaryPointsHtml(slide),
+    SUMMARY_INTRO:    escHtml(slide['Summary-Intro'] || ''),
+    SUMMARY_CLOSING:  escHtml(slide['Summary-Closing'] || ''),
+    SUMMARY_NEXT:     escHtml(slide['Summary-Next'] || ''),
+    CARD_PANELS_HTML: buildCardPanelsHtml(clicks, slide),
+    TOTAL_STEPS:      (function(){ var n=0; for(var i=1;i<=15;i++){ if(!slide['Step-Title-'+i]) break; n++; } return String(n); }()),
+    // content-diagram tokens
+    DIAGRAM_STEPS_HTML:      buildDiagramStepsHtml(slide),
+    INTERACTION_PROMPT:      escHtml(slide['Interaction-Prompt']     || 'Click to explore'),
+    INTERACTION_REVEALS_HTML: buildInteractionRevealsHtml(slide),
+    INTERACTION_CONCLUSION:  escHtml(slide['Interaction-Conclusion'] || ''),
   };
 
   return tokens;
@@ -484,6 +645,48 @@ function camelToWords(str) {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
     .trim();
+}
+
+// ---------------------------------------------------------------------------
+// content-diagram builders
+// ---------------------------------------------------------------------------
+
+function buildDiagramStepsHtml(slide) {
+  const raw = slide['Diagram-Steps'] || '';
+  const steps = raw.split('|').map(s => s.trim()).filter(Boolean);
+  if (!steps.length) return '';
+
+  let html = '';
+  steps.forEach(function (label, i) {
+    const isLast      = i === steps.length - 1;
+    // Last step often describes the "problem" — give it a muted node
+    const nodeClass   = isLast ? 'step-node is-problem' : 'step-node';
+    const connH       = isLast ? 0 : 44; // px height of connector line
+
+    html += `      <div class="diagram-step" id="dstep-${i}" data-animate="fade-right" data-delay="${(0.3 + i * 0.12).toFixed(2)}">\n`;
+    html += `        <div class="${nodeClass}">${i + 1}</div>\n`;
+    html += `        <div class="step-label">${escHtml(label)}</div>\n`;
+    html += `      </div>\n`;
+
+    if (!isLast && connH > 0) {
+      html += `      <div class="step-connector" style="top:${200 + i * (48 + connH) + 48}px; height:${connH}px;"></div>\n`;
+    }
+  });
+
+  return html;
+}
+
+function buildInteractionRevealsHtml(slide) {
+  const raw = slide['Interaction-Reveal'] || '';
+  const items = raw.split('|').map(s => s.trim()).filter(Boolean);
+  if (!items.length) return '';
+
+  return items.map(function (text, i) {
+    return `        <div class="reveal-item" id="reveal-${i}" role="listitem">\n` +
+           `          <div class="reveal-dot" aria-hidden="true"></div>\n` +
+           `          <span class="reveal-text">${escHtml(text)}</span>\n` +
+           `        </div>`;
+  }).join('\n');
 }
 
 // ---------------------------------------------------------------------------

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>{{SLIDE_TITLE}}</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Full-slide layout ───────────────────────────────────────────────── */
+    .slide {
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    /* ── Left panel — title / headline ───────────────────────────────────── */
+    .left-panel {
+      flex-shrink: 0;
+      width: 560px;
+      height: 920px;
+      background: #0D0D0F;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 56px 80px 100px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .deco-shapes {
+      position: absolute;
+      left: -28px; top: 0;
+      width: 72px; height: 920px;
+      z-index: 1; pointer-events: none;
+    }
+    .deco-bar {
+      position: absolute; left: 0; width: 56px;
+      background: #1A1A1E;
+      transform: skewY(-8deg); transform-origin: top left;
+    }
+    .deco-bar:nth-child(1) { top: 60px;  height: 260px; }
+    .deco-bar:nth-child(2) { top: 340px; height: 220px; opacity: 0.70; }
+    .deco-bar:nth-child(3) { top: 580px; height: 200px; opacity: 0.45; }
+
+    .red-accent {
+      width: 120px; height: 8px;
+      background: var(--pds-accent);
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      font-size: var(--pds-font-size-xs);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+      margin-bottom: 14px;
+    }
+
+    .headline {
+      font-size: var(--pds-font-size-2xl);
+      font-weight: var(--pds-font-weight-bold);
+      line-height: 1.08;
+      color: var(--pds-text-primary);
+      margin: 0;
+    }
+
+    /* ── Right panel — tab interface ─────────────────────────────────────── */
+    .right-panel {
+      flex: 1;
+      height: 920px;
+      background: #111116;
+      display: flex;
+      flex-direction: column;
+      padding: 72px 100px 72px 80px;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle ambient glow */
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -60px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(213,0,28,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Tab navigation ──────────────────────────────────────────────────── */
+    .tabs-nav {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid rgba(255,255,255,0.10);
+      margin-bottom: 36px;
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      padding: 14px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-family: var(--pds-font-family);
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-semibold);
+      color: var(--pds-text-muted);
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+    .tab-btn:hover { color: var(--pds-text-secondary); }
+    .tab-btn.is-active {
+      color: var(--pds-text-primary);
+      border-bottom-color: var(--pds-accent);
+    }
+
+    /* ── Tab panels ──────────────────────────────────────────────────────── */
+    .tabs-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-panel {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .tab-panel.is-active {
+      display: flex;
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Bullet list ─────────────────────────────────────────────────────── */
+    .bullet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: var(--pds-font-size-md);
+      color: var(--pds-contrast-high);
+      line-height: 1.45;
+    }
+    .bullet-dot {
+      flex-shrink: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--pds-accent);
+      margin-top: 9px;
+    }
+
+    /* ── Entrance animations ─────────────────────────────────────────────── */
+    .anim-block {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .anim-block.is-visible { opacity: 1; transform: none; }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <!-- Left: title panel -->
+  <div class="left-panel">
+    <div class="deco-shapes" aria-hidden="true">
+      <div class="deco-bar"></div>
+      <div class="deco-bar"></div>
+      <div class="deco-bar"></div>
+    </div>
+    <div class="red-accent anim-block" id="el-accent"></div>
+    <p class="eyebrow anim-block" id="el-eyebrow">{{EYEBROW}}</p>
+    <h2 class="headline anim-block" id="el-headline">{{SLIDE_TITLE}}</h2>
+  </div>
+
+  <!-- Right: tab interface -->
+  <div class="right-panel">
+{{TABS_HTML}}
+  </div>
+
+</div>
+
+<script src="../assets/vendor/gsap/gsap.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  /* ── Entrance animations ───────────────────────────────────────────────── */
+  ['el-accent', 'el-eyebrow', 'el-headline'].forEach(function (id, i) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    setTimeout(function () { el.classList.add('is-visible'); }, 80 + i * 120);
+  });
+
+  /* Animate tabs nav in */
+  var tabsNav = document.querySelector('.tabs-nav');
+  if (tabsNav) {
+    tabsNav.style.opacity = '0';
+    tabsNav.style.transform = 'translateY(14px)';
+    tabsNav.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    setTimeout(function () {
+      tabsNav.style.opacity = '';
+      tabsNav.style.transform = '';
+    }, 320);
+  }
+
+  /* ── Tab switching ─────────────────────────────────────────────────────── */
+  var buttons = Array.from(document.querySelectorAll('.tab-btn'));
+  var panels  = Array.from(document.querySelectorAll('.tab-panel'));
+
+  function activateTab(btn) {
+    var label = btn.getAttribute('data-tab');
+    var audio = btn.getAttribute('data-audio');
+
+    /* Deactivate all */
+    buttons.forEach(function (b) {
+      b.classList.remove('is-active');
+      b.setAttribute('aria-selected', 'false');
+      b.setAttribute('tabindex', '-1');
+    });
+    panels.forEach(function (p) {
+      p.classList.remove('is-active');
+    });
+
+    /* Activate target */
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-selected', 'true');
+    btn.setAttribute('tabindex', '0');
+
+    var panel = document.getElementById('panel-' + label);
+    if (panel) {
+      panel.style.opacity = '0';
+      panel.style.transform = 'translateY(10px)';
+      panel.classList.add('is-active');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          panel.style.opacity = '';
+          panel.style.transform = '';
+        });
+      });
+    }
+
+    /* Notify player to play tab VO */
+    if (audio) {
+      window.parent.postMessage({
+        type: 'sandbox-play-interaction',
+        src: audio,
+        id: label,
+        pauseNarration: true,
+        resumeNarration: false
+      }, '*');
+    }
+  }
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () { activateTab(btn); });
+    btn.addEventListener('keydown', function (e) {
+      var idx = buttons.indexOf(btn);
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        activateTab(buttons[(idx + 1) % buttons.length]);
+        buttons[(idx + 1) % buttons.length].focus();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var prev = (idx - 1 + buttons.length) % buttons.length;
+        activateTab(buttons[prev]);
+        buttons[prev].focus();
+      }
+    });
+  });
+
+  /* Activate first tab's VO on load */
+  if (buttons.length > 0) {
+    var firstAudio = buttons[0].getAttribute('data-audio');
+    var firstLabel = buttons[0].getAttribute('data-tab');
+    if (firstAudio) {
+      window.parent.postMessage({
+        type: 'sandbox-play-interaction',
+        src: firstAudio,
+        id: firstLabel,
+        pauseNarration: true,
+        resumeNarration: false
+      }, '*');
+    }
+  }
+
+}());
+</script>
+
+</body>
+</html>

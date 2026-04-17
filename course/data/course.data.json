@@ -15,7 +15,7 @@
     },
     {
       "id": "SLD_CC03_002",
-      "title": "You Hear All Day. But Are You Listening?",
+      "title": "The Difference Between Hearing and Listening",
       "audio_vo": "assets/audio/vo/SLD_CC03_002_INTRO.mp3"
     },
     {
@@ -50,12 +50,12 @@
     },
     {
       "id": "KC_CC03_001",
-      "title": "Slide09",
+      "title": "Knowledge Check 01 — Attentive Body Language",
       "audio_vo": "assets/audio/vo/KC_CC03_001_INTRO.mp3"
     },
     {
       "id": "KC_CC03_002",
-      "title": "Slide10",
+      "title": "Knowledge Check 02 — The 7-38-55 Rule",
       "audio_vo": "assets/audio/vo/KC_CC03_002_INTRO.mp3"
     },
     {
@@ -90,12 +90,12 @@
     },
     {
       "id": "KC_CC03_003",
-      "title": "Slide17",
+      "title": "Knowledge Check 03 — Perception-Check",
       "audio_vo": "assets/audio/vo/KC_CC03_003_INTRO.mp3"
     },
     {
       "id": "KC_CC03_004",
-      "title": "Slide18",
+      "title": "Knowledge Check 04 — Reflective Listening First",
       "audio_vo": "assets/audio/vo/KC_CC03_004_INTRO.mp3"
     },
     {
@@ -105,57 +105,57 @@
     },
     {
       "id": "FQ_CC03_001",
-      "title": "Slide20",
+      "title": "Final Quiz — Question 01",
       "audio_vo": "assets/audio/vo/FQ_CC03_001_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_002",
-      "title": "Slide21",
+      "title": "Final Quiz — Question 02",
       "audio_vo": "assets/audio/vo/FQ_CC03_002_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_003",
-      "title": "Slide22",
+      "title": "Final Quiz — Question 03",
       "audio_vo": "assets/audio/vo/FQ_CC03_003_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_004",
-      "title": "Slide23",
+      "title": "Final Quiz — Question 04",
       "audio_vo": "assets/audio/vo/FQ_CC03_004_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_005",
-      "title": "Slide24",
+      "title": "Final Quiz — Question 05",
       "audio_vo": "assets/audio/vo/FQ_CC03_005_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_006",
-      "title": "Slide25",
+      "title": "Final Quiz — Question 06",
       "audio_vo": "assets/audio/vo/FQ_CC03_006_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_007",
-      "title": "Slide26",
+      "title": "Final Quiz — Question 07",
       "audio_vo": "assets/audio/vo/FQ_CC03_007_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_008",
-      "title": "Slide27",
+      "title": "Final Quiz — Question 08",
       "audio_vo": "assets/audio/vo/FQ_CC03_008_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_009",
-      "title": "Slide28",
+      "title": "Final Quiz — Question 09",
       "audio_vo": "assets/audio/vo/FQ_CC03_009_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_010",
-      "title": "Slide29",
+      "title": "Final Quiz — Question 10",
       "audio_vo": "assets/audio/vo/FQ_CC03_010_INTRO.mp3"
     },
     {
       "id": "FQ_CC03_SCORE",
-      "title": "Slide30",
+      "title": "Final Quiz — Score",
       "audio_vo": "assets/audio/vo/FQ_CC03_SCORE_INTRO.mp3"
     }
   ],

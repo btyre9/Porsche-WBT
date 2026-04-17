@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Quiz Results</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Full-slide backdrop ─────────────────────────────────────────────── */
+    .slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(1400px 700px at 10% -10%, var(--pds-bg-surface) 0%, transparent 60%),
+        var(--pds-bg-base);
+    }
+    .score-backdrop::before {
+      content: '';
+      position: absolute;
+      inset: -100%;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+    .score-backdrop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.50);
+    }
+
+    /* ── Score card ──────────────────────────────────────────────────────── */
+    .score-card {
+      position: relative;
+      z-index: 10;
+      width: 760px;
+      background: var(--pds-bg-surface);
+      border: 1px solid var(--pds-border-strong);
+      border-radius: var(--pds-radius-xl);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(255,255,255,0.06) inset;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(28px) scale(0.97);
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .score-card.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Card header ─────────────────────────────────────────────────────── */
+    .score-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background: #111317;
+      border-radius: var(--pds-radius-xl) var(--pds-radius-xl) 0 0;
+      overflow: hidden;
+      min-height: 72px;
+    }
+    .score-header__flag {
+      flex-shrink: 0;
+      width: 72px;
+      background: repeating-conic-gradient(#d8d8d8 0% 25%, #1a1c21 0% 50%) 0 0 / 14px 14px;
+    }
+    .score-header__divider {
+      flex-shrink: 0;
+      width: 4px;
+      background: var(--pds-accent);
+    }
+    .score-header__text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 14px 28px;
+      gap: 2px;
+    }
+    .score-header__eyebrow {
+      font-size: 11px;
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+      opacity: 0.88;
+    }
+    .score-header__title {
+      margin: 0;
+      font-size: var(--pds-font-size-lg);
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-primary);
+    }
+
+    /* ── Score display ───────────────────────────────────────────────────── */
+    .score-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 44px 48px 36px;
+      gap: 28px;
+    }
+
+    .score-ring {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+    .score-ring svg {
+      width: 160px;
+      height: 160px;
+      transform: rotate(-90deg);
+    }
+    .score-ring__track {
+      fill: none;
+      stroke: rgba(255,255,255,0.08);
+      stroke-width: 10;
+    }
+    .score-ring__fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 408;
+      stroke-dashoffset: 408;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s,
+                  stroke 0.4s ease 0.3s;
+    }
+    .score-ring__fill.pass { stroke: #09D087; }
+    .score-ring__fill.fail { stroke: var(--pds-accent); }
+
+    .score-ring__label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    .score-ring__pct {
+      font-size: 38px;
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-primary);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .score-ring__sub {
+      font-size: 11px;
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--pds-text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Pass / fail badge ───────────────────────────────────────────────── */
+    .result-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.04em;
+    }
+    .result-badge.pass {
+      background: rgba(9,208,135,0.12);
+      border: 1.5px solid rgba(9,208,135,0.40);
+      color: #09D087;
+    }
+    .result-badge.fail {
+      background: rgba(213,0,28,0.10);
+      border: 1.5px solid rgba(213,0,28,0.35);
+      color: var(--pds-accent);
+    }
+    .result-badge__icon {
+      font-size: 16px;
+    }
+
+    /* ── Tally line ──────────────────────────────────────────────────────── */
+    .score-tally {
+      font-size: var(--pds-font-size-sm);
+      color: var(--pds-text-muted);
+      text-align: center;
+    }
+    .score-tally strong { color: var(--pds-text-primary); }
+
+    /* ── Message text ────────────────────────────────────────────────────── */
+    .score-message {
+      width: 100%;
+      padding: 18px 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--pds-radius-md);
+      font-size: var(--pds-font-size-sm);
+      color: var(--pds-text-secondary);
+      line-height: 1.55;
+      margin: 0;
+      text-align: left;
+    }
+
+    /* ── Footer buttons ──────────────────────────────────────────────────── */
+    .score-footer {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      padding: 0 48px 36px;
+    }
+
+    .btn-retake {
+      padding: 12px 32px;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: var(--pds-radius-md);
+      font-family: var(--pds-font-family);
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      display: none;
+    }
+    .btn-retake:hover {
+      border-color: rgba(255,255,255,0.35);
+      color: var(--pds-text-primary);
+      background: rgba(255,255,255,0.05);
+    }
+    .btn-retake.is-visible { display: block; }
+
+    .btn-continue {
+      padding: 12px 32px;
+      background: var(--pds-accent);
+      border: none;
+      border-radius: var(--pds-radius-md);
+      font-family: var(--pds-font-family);
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.12s;
+      display: none;
+    }
+    .btn-continue:hover { background: #b8001a; }
+    .btn-continue:active { transform: scale(0.98); }
+    .btn-continue.is-visible { display: block; }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <div class="score-backdrop"></div>
+
+  <div class="score-card" id="score-card" role="main" aria-live="polite">
+
+    <div class="score-header">
+      <div class="score-header__flag" aria-hidden="true"></div>
+      <div class="score-header__divider" aria-hidden="true"></div>
+      <div class="score-header__text">
+        <span class="score-header__eyebrow">{{FQ_EYEBROW}}</span>
+        <h2 class="score-header__title">Your Results</h2>
+      </div>
+    </div>
+
+    <div class="score-body">
+
+      <!-- Score ring -->
+      <div class="score-ring" aria-hidden="true">
+        <svg viewBox="0 0 160 160">
+          <circle class="score-ring__track" cx="80" cy="80" r="65"/>
+          <circle class="score-ring__fill" id="ring-fill" cx="80" cy="80" r="65"/>
+        </svg>
+        <div class="score-ring__label">
+          <span class="score-ring__pct" id="score-pct">—</span>
+          <span class="score-ring__sub">Score</span>
+        </div>
+      </div>
+
+      <!-- Pass / fail badge -->
+      <div class="result-badge" id="result-badge">
+        <span class="result-badge__icon" id="result-icon"></span>
+        <span id="result-label"></span>
+      </div>
+
+      <!-- Correct / total tally -->
+      <p class="score-tally" id="score-tally"></p>
+
+      <!-- Message -->
+      <p class="score-message" id="score-message"></p>
+
+    </div>
+
+    <div class="score-footer">
+      <button class="btn-retake" id="btn-retake">Retake Quiz</button>
+      <button class="btn-continue" id="btn-continue">Return to Course</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="../assets/vendor/gsap/gsap.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  var PASS_SCORE    = parseInt('{{PASS_SCORE}}', 10) || 80;
+  var PASS_MESSAGE  = '{{PASS_MESSAGE}}';
+  var FAIL_MESSAGE  = '{{FAIL_MESSAGE}}';
+
+  /* ── Fetch results from parent runtime ─────────────────────────────────── */
+  function getResults() {
+    try {
+      if (window.parent && window.parent.CourseRuntime) {
+        var r = window.parent.CourseRuntime.getFinalResults();
+        if (r && typeof r.correct === 'number') return r;
+      }
+    } catch (_) {}
+    /* Fallback: try reading from postMessage state or return placeholder */
+    return { correct: 0, answered: 0, total: 0 };
+  }
+
+  /* ── Render score ───────────────────────────────────────────────────────── */
+  function render() {
+    var results  = getResults();
+    var correct  = results.correct  || 0;
+    var answered = results.answered || results.total || 0;
+    var total    = results.total    || answered;
+    var scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    var passed   = scorePct >= PASS_SCORE;
+
+    /* Score ring */
+    var ringFill = document.getElementById('ring-fill');
+    var circumference = 2 * Math.PI * 65; /* r=65 → ~408.4 */
+    ringFill.setAttribute('stroke-dasharray', String(circumference));
+    ringFill.setAttribute('stroke-dashoffset', String(circumference));
+    ringFill.classList.add(passed ? 'pass' : 'fail');
+
+    /* Animate ring fill */
+    setTimeout(function () {
+      var offset = circumference * (1 - scorePct / 100);
+      ringFill.style.strokeDashoffset = String(offset);
+    }, 400);
+
+    /* Score percentage text */
+    var pctEl = document.getElementById('score-pct');
+    if (pctEl) {
+      /* Count-up animation */
+      var start = 0;
+      var duration = 1000;
+      var startTime = null;
+      function countUp(ts) {
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        pctEl.textContent = Math.round(eased * scorePct) + '%';
+        if (progress < 1) requestAnimationFrame(countUp);
+      }
+      setTimeout(function () { requestAnimationFrame(countUp); }, 350);
+    }
+
+    /* Pass / fail badge */
+    var badge      = document.getElementById('result-badge');
+    var icon       = document.getElementById('result-icon');
+    var label      = document.getElementById('result-label');
+    if (badge && icon && label) {
+      badge.classList.add(passed ? 'pass' : 'fail');
+      icon.textContent  = passed ? '✓' : '✗';
+      label.textContent = passed
+        ? 'Passed — ' + PASS_SCORE + '% required'
+        : 'Not yet — ' + PASS_SCORE + '% required';
+    }
+
+    /* Tally */
+    var tallyEl = document.getElementById('score-tally');
+    if (tallyEl && total > 0) {
+      tallyEl.innerHTML =
+        '<strong>' + correct + '</strong> correct out of <strong>' + total + '</strong> questions';
+    }
+
+    /* Message — replace [SCORE] placeholder in fail message */
+    var msgEl = document.getElementById('score-message');
+    if (msgEl) {
+      var msg = passed ? PASS_MESSAGE : FAIL_MESSAGE.replace('[SCORE]', scorePct + '%');
+      msgEl.textContent = msg || (passed
+        ? 'Congratulations! You have passed the final quiz.'
+        : 'You did not reach the passing score. Please review and try again.');
+    }
+
+    /* Buttons */
+    var btnRetake   = document.getElementById('btn-retake');
+    var btnContinue = document.getElementById('btn-continue');
+
+    if (!passed && btnRetake) {
+      btnRetake.classList.add('is-visible');
+      btnRetake.addEventListener('click', function () {
+        window.parent.postMessage({ type: 'sandbox-goto', target: 'quiz-start' }, '*');
+      });
+    }
+    if (btnContinue) {
+      btnContinue.classList.add('is-visible');
+      btnContinue.addEventListener('click', function () {
+        window.parent.postMessage({ type: 'sandbox-goto', target: 'start' }, '*');
+      });
+    }
+  }
+
+  /* ── Card entrance ──────────────────────────────────────────────────────── */
+  setTimeout(function () {
+    document.getElementById('score-card').classList.add('is-visible');
+    setTimeout(render, 200);
+  }, 120);
+
+}());
+</script>
+
+</body>
+</html>

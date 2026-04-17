@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>{{SLIDE_TITLE}}</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Full-slide layout ───────────────────────────────────────────────── */
+    .slide {
+      display: flex;
+      flex-direction: column;
+      background: #0A0A0C;
+      overflow: hidden;
+    }
+
+    /* ── Top header bar ──────────────────────────────────────────────────── */
+    .slide-header {
+      flex-shrink: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      padding: 0 80px;
+      gap: 20px;
+      background: #0D0D0F;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .header-accent-dot {
+      flex-shrink: 0;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--pds-accent);
+    }
+    .header-label {
+      font-size: var(--pds-font-size-xs);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+    }
+    .header-divider {
+      width: 1px; height: 20px;
+      background: rgba(255,255,255,0.14);
+    }
+    .header-title {
+      font-size: var(--pds-font-size-md);
+      font-weight: var(--pds-font-weight-semibold);
+      color: var(--pds-text-primary);
+      margin: 0;
+    }
+
+    /* ── Video area ──────────────────────────────────────────────────────── */
+    .video-area {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    /* Placeholder — replace with real <video> element when files are ready */
+    .video-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.015) 0px,
+          rgba(255,255,255,0.015) 1px,
+          transparent 1px,
+          transparent 24px
+        ),
+        #0A0A0C;
+    }
+    .placeholder-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: rgba(255,255,255,0.35);
+    }
+    .placeholder-label {
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+    .placeholder-filename {
+      font-size: var(--pds-font-size-xs);
+      color: rgba(255,255,255,0.18);
+      font-family: monospace;
+      letter-spacing: 0.04em;
+    }
+
+    /* TODO: wire up pause points when video is ready.
+       Replace .video-placeholder with:
+       <video id="video-player" src="../assets/video/FILENAME.mp4"
+              playsinline preload="metadata"></video>
+       Add pause-point logic in the script block below. */
+
+    /* ── MC overlay — pause-point question ──────────────────────────────── */
+    .mc-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mc-overlay.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mc-card {
+      width: 920px;
+      background: #1e2128;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.65);
+      overflow: hidden;
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mc-overlay.is-visible .mc-card { transform: none; }
+
+    .mc-header {
+      background: var(--pds-accent);
+      padding: 18px 32px;
+    }
+    .mc-header__title {
+      margin: 0;
+      font-size: var(--pds-font-size-md);
+      font-weight: var(--pds-font-weight-bold);
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+
+    .mc-body { padding: 28px 32px 24px; }
+
+    .mc-question {
+      margin: 0 0 22px 0;
+      font-size: var(--pds-font-size-md);
+      line-height: 1.5;
+      color: var(--pds-text-primary);
+    }
+
+    .mc-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mc-choice {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .mc-choice:hover:not(.is-locked) {
+      border-color: rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.07);
+    }
+    .mc-choice.is-selected  { border-color: rgba(255,255,255,0.50); background: rgba(255,255,255,0.08); }
+    .mc-choice.is-correct   { border-color: rgba(9,208,135,0.65);   background: rgba(9,208,135,0.08); }
+    .mc-choice.is-incorrect { border-color: rgba(252,64,64,0.55);   background: rgba(252,64,64,0.07); }
+    .mc-choice.is-locked    { cursor: default; }
+
+    .mc-choice__letter {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-muted);
+    }
+    .mc-choice.is-correct   .mc-choice__letter { border-color: rgba(9,208,135,0.65);  background: rgba(9,208,135,0.18);  color: var(--pds-success, #09D087); }
+    .mc-choice.is-incorrect .mc-choice__letter { border-color: rgba(252,64,64,0.55); background: rgba(252,64,64,0.16);  color: var(--pds-error, #FC4040); }
+
+    .mc-choice__text {
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-semibold);
+      color: var(--pds-text-secondary);
+      line-height: 1.3;
+    }
+
+    .mc-footer {
+      padding: 0 32px 24px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .mc-submit {
+      padding: 12px 36px;
+      background: var(--pds-accent);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--pds-font-family);
+      font-size: var(--pds-font-size-sm);
+      font-weight: var(--pds-font-weight-bold);
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.32;
+      pointer-events: none;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .mc-submit.is-ready { opacity: 1; pointer-events: auto; }
+    .mc-submit.is-ready:hover { background: #b8001a; }
+
+    /* ── Video controls bar ──────────────────────────────────────────────── */
+    .video-controls {
+      flex-shrink: 0;
+      height: 64px;
+      background: #0D0D0F;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 80px;
+      gap: 20px;
+    }
+    .video-play-btn {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--pds-text-muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .video-play-btn:hover { border-color: var(--pds-accent); color: var(--pds-text-primary); }
+    .video-progress {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+    .video-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--pds-accent);
+      border-radius: 2px;
+      transition: width 0.1s linear;
+    }
+    .video-time {
+      flex-shrink: 0;
+      font-size: var(--pds-font-size-xs);
+      color: var(--pds-text-muted);
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .todo-badge {
+      margin-left: auto;
+      padding: 4px 14px;
+      background: rgba(213,0,28,0.15);
+      border: 1px solid rgba(213,0,28,0.35);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.08em;
+      color: var(--pds-accent);
+      text-transform: uppercase;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <!-- Header -->
+  <header class="slide-header">
+    <div class="header-accent-dot"></div>
+    <span class="header-label">Video Scenario</span>
+    <div class="header-divider"></div>
+    <h2 class="header-title">{{SLIDE_TITLE}}</h2>
+  </header>
+
+  <!-- Video area -->
+  <div class="video-area" id="video-area">
+
+    <!-- VIDEO PLACEHOLDER — replace with <video> element when files exist -->
+    <div class="video-placeholder" id="video-placeholder">
+      <div class="placeholder-icon">&#9654;</div>
+      <div class="placeholder-label">Video Placeholder</div>
+      <div class="placeholder-filename"><!-- Video-File from storyboard --></div>
+    </div>
+
+    <!-- MC Overlay — shown at pause points -->
+    <div class="mc-overlay" id="mc-overlay" role="dialog" aria-modal="true" aria-labelledby="mc-title">
+      <div class="mc-card">
+        <div class="mc-header">
+          <h3 class="mc-header__title" id="mc-title">Check Your Understanding</h3>
+        </div>
+        <div class="mc-body">
+          <p class="mc-question" id="mc-question"><!-- Question text populated by JS --></p>
+          <div class="mc-choices" id="mc-choices" role="radiogroup" aria-label="Answer options">
+            <!-- Choices populated by JS -->
+          </div>
+        </div>
+        <div class="mc-footer">
+          <button class="mc-submit" id="mc-submit" disabled aria-disabled="true">Submit Answer</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Video controls (placeholder — wire up to real video element) -->
+  <div class="video-controls">
+    <button class="video-play-btn" id="video-play-btn" aria-label="Play / Pause">&#9654;</button>
+    <div class="video-progress" id="video-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="video-progress-fill" id="video-progress-fill"></div>
+    </div>
+    <span class="video-time" id="video-time">0:00 / 0:00</span>
+    <span class="todo-badge">Video not yet available</span>
+  </div>
+
+</div>
+
+<script src="../assets/vendor/gsap/gsap.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  /*
+   * TODO: wire up pause points when video is ready.
+   *
+   * Steps to implement:
+   * 1. Replace .video-placeholder with a real <video id="video-player"> element.
+   * 2. Define pausePoints array with { time, question, choices, correct } objects.
+   *    Pull data from storyboard fields: Pause-Question-N, Pause-Choice-N-A/B/C/D, etc.
+   * 3. On timeupdate, check if current time >= next pause point.
+   * 4. Pause video, call showQuestion(pausePoint) to display mc-overlay.
+   * 5. On correct submit, resume video playback.
+   *
+   * Pause point data from storyboard (parsed at generate time):
+   *   Pause-Question-1, Pause-Choice-1-A through D, Pause-Correct-1
+   *   Pause-Feedback-Correct-1, Pause-Feedback-Incorrect-1
+   *   (repeat for additional pause points)
+   */
+
+  var letters = ['A', 'B', 'C', 'D'];
+
+  /* ── MC overlay logic ──────────────────────────────────────────────────── */
+  var overlay    = document.getElementById('mc-overlay');
+  var questionEl = document.getElementById('mc-question');
+  var choicesEl  = document.getElementById('mc-choices');
+  var submitBtn  = document.getElementById('mc-submit');
+
+  var selected  = null;
+  var submitted = false;
+
+  function showQuestion(data) {
+    /* data = { question, choices: ['A text', ...], correct: 'B' } */
+    selected  = null;
+    submitted = false;
+
+    questionEl.textContent = data.question || 'Question text here.';
+    choicesEl.innerHTML    = '';
+    submitBtn.disabled     = true;
+    submitBtn.classList.remove('is-ready');
+
+    (data.choices || ['Choice A', 'Choice B', 'Choice C', 'Choice D']).forEach(function (text, i) {
+      var row = document.createElement('div');
+      row.className = 'mc-choice';
+      row.setAttribute('role', 'radio');
+      row.setAttribute('aria-checked', 'false');
+      row.setAttribute('tabindex', '0');
+      row.dataset.value   = letters[i];
+      row.dataset.correct = (data.correct === letters[i]) ? 'true' : 'false';
+
+      var letterSpan = document.createElement('span');
+      letterSpan.className   = 'mc-choice__letter';
+      letterSpan.textContent = letters[i];
+
+      var textSpan = document.createElement('span');
+      textSpan.className   = 'mc-choice__text';
+      textSpan.textContent = text;
+
+      row.appendChild(letterSpan);
+      row.appendChild(textSpan);
+      choicesEl.appendChild(row);
+
+      row.addEventListener('click', function () { selectChoice(row); });
+      row.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectChoice(row); }
+      });
+    });
+
+    overlay.classList.add('is-visible');
+  }
+
+  function selectChoice(row) {
+    if (submitted) return;
+    Array.from(choicesEl.querySelectorAll('.mc-choice')).forEach(function (r) {
+      r.classList.remove('is-selected');
+      r.setAttribute('aria-checked', 'false');
+    });
+    row.classList.add('is-selected');
+    row.setAttribute('aria-checked', 'true');
+    selected = row;
+    submitBtn.disabled = false;
+    submitBtn.classList.add('is-ready');
+  }
+
+  submitBtn.addEventListener('click', function handleSubmit() {
+    if (!selected || submitted) return;
+    submitted = true;
+    var isCorrect = selected.dataset.correct === 'true';
+
+    Array.from(choicesEl.querySelectorAll('.mc-choice')).forEach(function (r) {
+      r.classList.add('is-locked');
+      r.setAttribute('tabindex', '-1');
+      if (r === selected) {
+        r.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+      }
+    });
+
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('is-ready');
+
+    /* Resume after a short delay */
+    setTimeout(function () {
+      overlay.classList.remove('is-visible');
+      /* TODO: resume video playback here */
+    }, isCorrect ? 1200 : 2000);
+  });
+
+  /* ── Placeholder video controls (no-op until real video exists) ─────────── */
+  var playBtn  = document.getElementById('video-play-btn');
+  var progFill = document.getElementById('video-progress-fill');
+  var timeEl   = document.getElementById('video-time');
+
+  if (playBtn) {
+    playBtn.addEventListener('click', function () {
+      /* TODO: toggle real video playback */
+      console.log('[video-scenario] Play/pause clicked — wire up real video element');
+    });
+  }
+
+  /* ── Dev helper: press Q to show demo question overlay ─────────────────── */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'q' || e.key === 'Q') {
+      showQuestion({
+        question: 'Demo pause-point question — replace with storyboard data.',
+        choices: ['Choice A text', 'Choice B text', 'Choice C text', 'Choice D text'],
+        correct: 'B'
+      });
+    }
+  });
+
+}());
+</script>
+
+</body>
+</html>

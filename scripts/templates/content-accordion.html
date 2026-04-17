@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>{{SLIDE_TITLE}}</title>
+  <link rel="stylesheet" href="../assets/css/pds-tokens.css">
+  <link rel="stylesheet" href="../assets/css/slide-base.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+  <script>(function(){function s(){document.documentElement.style.setProperty('--scale',Math.min(window.innerWidth/1920,window.innerHeight/920));}s();window.addEventListener('resize',s);})();</script>
+  <style>
+
+    /* ── Slide layout ────────────────────────────────────────────────────── */
+    .slide {
+      display: flex;
+      flex-direction: column;
+      background: #0D0D0F;
+      overflow: hidden;
+    }
+
+    /* ── Top header ──────────────────────────────────────────────────────── */
+    .slide-header {
+      flex-shrink: 0;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      padding: 0 100px;
+      gap: 28px;
+      background: #0D0D0F;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .header-accent {
+      flex-shrink: 0;
+      width: 6px;
+      height: 60px;
+      background: var(--pds-accent);
+      border-radius: 3px;
+    }
+    .header-text {}
+    .header-eyebrow {
+      font-size: var(--pds-font-size-xs);
+      font-weight: var(--pds-font-weight-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pds-accent);
+      margin-bottom: 8px;
+    }
+    .header-title {
+      font-size: var(--pds-font-size-2xl);
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-primary);
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    /* ── Accordion container ─────────────────────────────────────────────── */
+    .accordion-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 100px 48px 100px;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    /* ── Accordion item ──────────────────────────────────────────────────── */
+    .accordion-item {
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.25s ease;
+    }
+    .accordion-item.is-open {
+      border-color: rgba(213,0,28,0.40);
+      background: rgba(213,0,28,0.04);
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 32px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: var(--pds-font-family);
+      text-align: left;
+      transition: background 0.2s ease;
+    }
+    .accordion-trigger:hover { background: rgba(255,255,255,0.03); }
+    .accordion-item.is-open .accordion-trigger { background: transparent; }
+
+    .accordion-label {
+      flex: 1;
+      font-size: var(--pds-font-size-md);
+      font-weight: var(--pds-font-weight-bold);
+      color: var(--pds-text-primary);
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+
+    .accordion-chevron {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--pds-text-muted);
+      line-height: 1;
+      transform: rotate(0deg);
+      transition: transform 0.3s ease, border-color 0.25s, color 0.25s;
+    }
+    .accordion-item.is-open .accordion-chevron {
+      transform: rotate(90deg);
+      border-color: rgba(213,0,28,0.45);
+      color: var(--pds-accent);
+    }
+
+    /* ── Accordion body ──────────────────────────────────────────────────── */
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  padding 0.3s ease,
+                  opacity 0.3s ease;
+      padding: 0 32px;
+      opacity: 0;
+    }
+    .accordion-item.is-open .accordion-body {
+      max-height: 400px;
+      padding: 4px 32px 28px;
+      opacity: 1;
+    }
+
+    /* ── Bullet list ─────────────────────────────────────────────────────── */
+    .bullet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: var(--pds-font-size-md);
+      color: var(--pds-contrast-high);
+      line-height: 1.45;
+    }
+    .bullet-dot {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pds-accent);
+      margin-top: 9px;
+    }
+
+    /* ── Entrance animations ─────────────────────────────────────────────── */
+    .anim-block {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .anim-block.is-visible { opacity: 1; transform: none; }
+
+  </style>
+</head>
+<body>
+
+<div class="slide" data-slide-id="{{SLIDE_ID}}">
+
+  <!-- Header -->
+  <header class="slide-header">
+    <div class="header-accent anim-block" id="el-accent"></div>
+    <div class="header-text">
+      <p class="header-eyebrow anim-block" id="el-eyebrow">{{EYEBROW}}</p>
+      <h2 class="header-title anim-block" id="el-headline">{{SLIDE_TITLE}}</h2>
+    </div>
+  </header>
+
+  <!-- Accordion -->
+  <div class="accordion-container" id="accordion-container">
+{{ACCORDION_HTML}}
+  </div>
+
+</div>
+
+<script src="../assets/vendor/gsap/gsap.min.js"></script>
+<script src="../assets/vendor/slide-pause.js"></script>
+<script>
+(function () {
+
+  /* ── Entrance animations ───────────────────────────────────────────────── */
+  ['el-accent', 'el-eyebrow', 'el-headline'].forEach(function (id, i) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    setTimeout(function () { el.classList.add('is-visible'); }, 80 + i * 100);
+  });
+
+  /* Stagger accordion items in */
+  var items = Array.from(document.querySelectorAll('.accordion-item'));
+  items.forEach(function (item, i) {
+    item.style.opacity   = '0';
+    item.style.transform = 'translateY(12px)';
+    item.style.transition = 'opacity 0.45s ease, transform 0.45s ease, border-color 0.25s, background 0.2s';
+    setTimeout(function () {
+      item.style.opacity   = '';
+      item.style.transform = '';
+    }, 280 + i * 80);
+  });
+
+  /* ── Accordion toggle ──────────────────────────────────────────────────── */
+  function openItem(item) {
+    var label = item.getAttribute('data-accordion');
+    var audio = item.getAttribute('data-audio');
+    var trigger = item.querySelector('.accordion-trigger');
+
+    item.classList.add('is-open');
+    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+
+    /* Play VO for this accordion item */
+    if (audio) {
+      window.parent.postMessage({
+        type: 'sandbox-play-interaction',
+        src: audio,
+        id: label,
+        pauseNarration: true,
+        resumeNarration: false
+      }, '*');
+    }
+  }
+
+  function closeItem(item) {
+    var trigger = item.querySelector('.accordion-trigger');
+    item.classList.remove('is-open');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  items.forEach(function (item) {
+    var trigger = item.querySelector('.accordion-trigger');
+    if (!trigger) return;
+
+    trigger.addEventListener('click', function () {
+      var isOpen = item.classList.contains('is-open');
+      if (isOpen) {
+        closeItem(item);
+      } else {
+        /* Close all others */
+        items.forEach(function (other) {
+          if (other !== item) closeItem(other);
+        });
+        openItem(item);
+      }
+    });
+
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        trigger.click();
+      }
+      /* Arrow key navigation between triggers */
+      var idx = items.indexOf(item);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        var next = items[idx + 1];
+        if (next) next.querySelector('.accordion-trigger').focus();
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        var prev = items[idx - 1];
+        if (prev) prev.querySelector('.accordion-trigger').focus();
+      }
+    });
+  });
+
+  /* Play VO for the first open item on load */
+  var firstOpen = items.find(function (item) { return item.classList.contains('is-open'); });
+  if (firstOpen) {
+    var audio = firstOpen.getAttribute('data-audio');
+    var label = firstOpen.getAttribute('data-accordion');
+    if (audio) {
+      window.parent.postMessage({
+        type: 'sandbox-play-interaction',
+        src: audio,
+        id: label,
+        pauseNarration: true,
+        resumeNarration: false
+      }, '*');
+    }
+  }
+
+}());
+</script>
+
+</body>
+</html>
