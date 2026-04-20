@@ -1,8 +1,11 @@
 # Dependencies
 node_modules/
 
-# Generated slide output — rebuild with generate-slides.js
-course/slides/
+# Generated module-specific slides — rebuild with generate-slides.js
+# Generic SLD-XX01-* templates are tracked; module slides (SLD_CC*.html etc.) are not
+course/slides/SLD_*.html
+course/slides/FQ_*.html
+course/slides/KC_*.html
 
 # SCORM package output
 output/
